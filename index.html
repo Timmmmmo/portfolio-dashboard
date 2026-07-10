@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>📊 持仓实时Dashboard</title>
+<title>📊 持仓实时Dashboard · 智能版</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:#0f172a;color:#e2e8f0;padding:16px;min-height:100vh}
@@ -11,6 +11,7 @@ h1{font-size:22px;display:flex;align-items:center;gap:8px}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px}
 .stats{font-size:12px;color:#94a3b8;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .stats .dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:#34d399;animation:pulse 2s infinite}
+.stats .dot.off{background:#f87171;animation:none}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:16px}
 .card{background:#1e293b;border-radius:10px;padding:14px;border:1px solid #334155}
@@ -40,7 +41,7 @@ h1{font-size:22px;display:flex;align-items:center;gap:8px}
 .global-item{background:#0f172a;border-radius:8px;padding:6px;text-align:center}
 .g-name{font-size:10px;color:#94a3b8;display:block}
 .g-val{font-size:13px;font-weight:700;display:block;margin:1px 0}
-.news-section,.analysis-section{background:#1e293b;border-radius:10px;padding:14px;border:1px solid #334155;margin-bottom:16px}
+.news-section{background:#1e293b;border-radius:10px;padding:14px;border:1px solid #334155;margin-bottom:16px}
 .section-title{font-size:13px;color:#38bdf8;margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .news-item{padding:6px 0;border-bottom:1px solid #0f172a;font-size:12px;display:flex;gap:8px;align-items:flex-start}
 .news-item:last-child{border:none}
@@ -52,21 +53,32 @@ h1{font-size:22px;display:flex;align-items:center;gap:8px}
 .a-buy{color:#34d399}
 .a-hold{color:#fbbf24}
 .a-watch{color:#f87171}
+.watch-card{background:linear-gradient(135deg,#1e293b,#1a1a3e);border-radius:10px;padding:14px;border:1px solid #334155;margin-bottom:8px}
+.watch-title{font-size:14px;color:#fbbf24;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.watch-reason{font-size:11px;color:#94a3b8;line-height:1.6}
+.watch-tag{display:inline-block;padding:1px 8px;border-radius:10px;font-size:10px;margin-right:4px;margin-top:4px}
+.watch-tag.hot{background:#450a0a;color:#f87171}
+.watch-tag.new{background:#064e3b;color:#34d399}
+.watch-tag.trend{background:#1e1b4b;color:#818cf8}
 .footer{text-align:center;color:#475569;font-size:11px;padding:12px;border-top:1px solid #1e293b;margin-top:16px}
 .loading{text-align:center;padding:40px;color:#64748b;font-size:14px}
 .loading .spinner{display:inline-block;width:16px;height:16px;border:2px solid #334155;border-top-color:#38bdf8;border-radius:50%;animation:spin .8s linear infinite;margin-right:8px;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
+.market-badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600}
+.market-open{background:#064e3b;color:#34d399}
+.market-closed{background:#1e293b;color:#94a3b8}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>📊 持仓实时Dashboard</h1>
+  <h1>📊 持仓智能Dashboard</h1>
   <div class="stats">
-    <span class="dot"></span>
+    <span class="dot" id="statusDot"></span>
     <span id="statusText">实时</span>
+    <span id="marketBadge"></span>
     <span id="timeDisplay">--:--:--</span>
-    <span id="countdown">下次刷新: 30s</span>
+    <span id="countdown">刷新: 30s</span>
     <button onclick="refreshNow()" style="background:#1e293b;border:1px solid #334155;color:#94a3b8;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:12px">⟳ 刷新</button>
   </div>
 </div>
@@ -87,6 +99,12 @@ h1{font-size:22px;display:flex;align-items:center;gap:8px}
   <div class="loading"><div class="spinner"></div>正在获取数据...</div>
 </div>
 
+<!-- 新关注方向 -->
+<div class="card" style="margin-bottom:16px;border-color:#fbbf24">
+  <div class="section-title" style="color:#fbbf24">🔭 新关注方向 · 基于产业链逻辑</div>
+  <div id="watchlistContainer"></div>
+</div>
+
 <!-- 新闻+分析 -->
 <div class="news-section">
   <div class="section-title">📰 相关新闻</div>
@@ -98,7 +116,7 @@ h1{font-size:22px;display:flex;align-items:center;gap:8px}
 </div>
 
 <div class="footer">
-  📊 每30秒自动刷新 | 实时数据来自腾讯财经API | 页面前端直接抓取
+  📊 盘中每30秒更新价格 | 盘后每小时更新逻辑 | 数据来源: 腾讯财经API
 </div>
 
 <script>
@@ -118,16 +136,32 @@ const HOLDINGS = [
 const INDICES = ['sh000001','sz399001','sz399006','sh000688'];
 const IDX_KEYS = {sh000001:'sh',sz399001:'sz',sz399006:'cy',sh000688:'kc'};
 
-// ========== 核心：fetch数据 ==========
+// ========== 市场状态检测 ==========
+function getMarketState() {
+  const now = new Date();
+  const h = now.getHours(), m = now.getMinutes();
+  const bjt = h * 60 + m;
+  // A股/港股交易时段: 09:30-15:00
+  const isOpen = bjt >= 570 && bjt <= 900; // 570=09:30, 900=15:00
+  // 美股盘前: 19:00-21:30
+  const isPreUS = bjt >= 1140 && bjt <= 1290; // 19:00-21:30
+  // 日韩: 08:00-14:30
+  const isJPKR = bjt >= 480 && bjt <= 870; // 08:00-14:30
+  return { isOpen, isPreUS, isJPKR, hour: h, minute: m };
+}
+
+function getRefreshInterval(state) {
+  if (state.isOpen) return 30; // 盘中30秒
+  return 3600; // 盘后1小时
+}
+
+// ========== 数据获取 ==========
 async function fetchAll() {
   const codes = INDICES.concat(HOLDINGS.map(h => h.id)).join(',');
   const url = `https://qt.gtimg.cn/q=${codes}&_=${Date.now()}`;
-  
   try {
     const resp = await fetch(url, {cache:'no-store'});
-    const text = await resp.text(); // GBK encoded but numbers are ASCII
-    
-    // 解析：每行格式 v_code="f1~f2~f3~..."
+    const text = await resp.text();
     const lines = text.split(';');
     const data = {};
     for (const line of lines) {
@@ -148,13 +182,22 @@ async function fetchAll() {
 
 // ========== 渲染 ==========
 function render(data) {
+  const state = getMarketState();
+  
+  // 更新状态
+  document.getElementById('timeDisplay').textContent = new Date().toLocaleTimeString('zh-CN');
+  
+  const badge = document.getElementById('marketBadge');
+  if (state.isOpen) {
+    badge.innerHTML = '<span class="market-badge market-open">🟢 交易中</span>';
+  } else {
+    badge.innerHTML = '<span class="market-badge market-closed">🔴 已收盘</span>';
+  }
+  
   if (!data) {
     document.getElementById('stockGrid').innerHTML = '<div class="card" style="text-align:center;padding:30px;color:#f87171">⚠️ 获取数据失败，请检查网络后重试</div>';
     return;
   }
-  
-  // 更新时间
-  document.getElementById('timeDisplay').textContent = new Date().toLocaleTimeString('zh-CN');
   
   // 指数
   for (const idx of INDICES) {
@@ -182,13 +225,13 @@ function render(data) {
     let price = 0, chg = 0, priceStr = '--', chgStr = '--', cls = 'chg-flat';
     
     if (parts && parts.length > 4) {
-          const p = parseFloat(parts[3]) || 0;
-          const c = parseFloat(parts[4]) || p;
-          chg = c ? ((p-c)/c*100) : 0;
-          price = p;
-          priceStr = p.toFixed(2);
-          if (h.isHk) priceStr += ' <span style="font-size:11px;color:#94a3b8;font-weight:400">HKD</span>';
-          chgStr = (chg > 0 ? '+' : '') + chg.toFixed(2) + '%';
+      const p = parseFloat(parts[3]) || 0;
+      const c = parseFloat(parts[4]) || p;
+      chg = c ? ((p-c)/c*100) : 0;
+      price = p;
+      priceStr = p.toFixed(2);
+      if (h.isHk) priceStr += ' <span style="font-size:11px;color:#94a3b8;font-weight:400">HKD</span>';
+      chgStr = (chg > 0 ? '+' : '') + chg.toFixed(2) + '%';
       cls = chg > 0.5 ? 'chg-up' : chg < -0.5 ? 'chg-down' : 'chg-flat';
     }
     
@@ -197,11 +240,9 @@ function render(data) {
     else if (chg > 2) { sig = 'buy'; sigText = '📈上涨'; }
     else if (chg < -3) { sig = 'watch'; sigText = '⚠️关注'; }
     else if (chg < -5) { sig = 'sell'; sigText = '💀警惕'; }
-    // 股价为0时特殊处理
     if (price === 0) { sig = 'hold'; sigText = '⏳等待'; }
     
     const dotColor = chg > 0 ? '#34d399' : chg < 0 ? '#f87171' : '#64748b';
-    const msgClass = chg > 0 ? 'msg-ok' : 'msg-warn';
     const logicText = price === 0 ? '数据加载中...' : (chg > 0 ? '✅ ' + h.logic : '💧 ' + h.logic);
     
     html += `<div class="card">
@@ -211,24 +252,26 @@ function render(data) {
         <span class="chg ${cls}">${chgStr}</span>
       </div>
       <div class="chain">🔗 ${h.chain}</div>
-      <div class="msg ${msgClass}">${logicText}</div>
+      <div class="msg ${chg > 0 ? 'msg-ok' : 'msg-warn'}">${logicText}</div>
       <div class="msg msg-warn">⚠️ ${h.risk}</div>
       <div class="signal sig-${sig}">${sigText}</div>
     </div>`;
   }
   document.getElementById('stockGrid').innerHTML = html;
   
-  // 新闻+分析 (静态内容)
   renderNews();
   renderAnalysis();
+  renderWatchlist(state);
 }
 
+// ========== 新闻 ==========
 function renderNews() {
+  const state = getMarketState();
   const news = [
-    {t:'今',tag:'大盘',text:'上证+0.59%深证+0.59%，科创50回调-0.25%',c:'info'},
+    {t: state.isOpen ? '盘中' : '收盘', tag:'大盘', text: state.isOpen ? '实时更新中' : '等待盘后数据', c:'info'},
     {t:'今',tag:'深科技',text:'两天从51→61，+19.7%验证封测逻辑',c:'ok'},
-    {t:'今',tag:'华大',text:'基因测序赛道回暖',c:'ok'},
-    {t:'今',tag:'金宏',text:'关注36支撑位，氦气逻辑未破',c:'warn'},
+    {t:'今',tag:'华大',text:'基因测序赛道回暖，关注可持续性',c:'ok'},
+    {t:'今',tag:'金宏',text:'36支撑位反复测试，氦气逻辑未破',c:'warn'},
     {t:'昨夜',tag:'美股',text:'纳指+1.30%，纳指100+1.62%，科技强势',c:'ok'},
     {t:'7/9',tag:'科创50',text:'昨日+8.41%创纪录！中芯+13.74%',c:'ok'},
     {t:'7/9',tag:'罗洄头',text:'沉默第3天，判断全部应验',c:'info'}
@@ -239,14 +282,15 @@ function renderNews() {
   ).join('');
 }
 
+// ========== 分析 ==========
 function renderAnalysis() {
   const analysis = [
-    {tag:'🧠',text:'科创50今日回调正常，7连涨后休息一下',tp:'hold'},
-    {tag:'🔥',text:'深科技验证"存储封测铲子"逻辑，HBM挤压通用DRAM→封测需求增',tp:'buy'},
-    {tag:'💡',text:'华大加速，基因测序是AI在医疗最直接的应用场景',tp:'buy'},
-    {tag:'⚠️',text:'金宏跌至36左右，但氦气逻辑未破(物理不可替代)，36是重要支撑',tp:'watch'},
-    {tag:'📊',text:'中芯国际(H股)现价85.6 HKD，大涨后正常整理，AI芯片龙头逻辑不变',tp:'hold'},
-    {tag:'🌍',text:'纳指+1.30%+日经+1.71%→全球科技共振仍在',tp:'hold'}
+    {tag:'🧠',text:'科创50今日回调正常，7连涨后休息，下周有望再攻',tp:'hold'},
+    {tag:'🔥',text:'深科技验证"存储封测铲子"逻辑，HBM挤压通用DRAM→封测需求增，中线看好',tp:'buy'},
+    {tag:'💡',text:'华大加速，基因测序是AI在医疗最直接的应用场景，关注下周能否放量',tp:'buy'},
+    {tag:'⚠️',text:'金宏跌至36左右，但氦气逻辑未破(物理不可替代)，36是重要支撑，破35.5需警惕',tp:'watch'},
+    {tag:'📊',text:'中芯(H股)85.6 HKD，大涨后整理，A股折价50%是长期现象，逻辑不变',tp:'hold'},
+    {tag:'🌍',text:'纳指+1.30%+日经+1.77%→全球科技共振仍在，下周A股科技有望延续',tp:'hold'}
   ];
   const tpMap = {buy:'a-buy',hold:'a-hold',watch:'a-watch'};
   document.getElementById('analysisContainer').innerHTML = analysis.map(a =>
@@ -254,17 +298,76 @@ function renderAnalysis() {
   ).join('');
 }
 
+// ========== 新关注方向 ==========
+function renderWatchlist(state) {
+  // 基于产业链逻辑 + 当前市场热点生成的关注方向
+  const watchlist = [
+    {
+      title: '🔬 半导体设备 — 国产替代下一站',
+      tags: ['hot','新方向'],
+      reason: '逻辑：半导体产业链我们从封测(深科技)和特气(金宏)已经布局，但设备环节(刻蚀/薄膜/检测)是国产替代的最薄弱环节，政策支持力度最大。'
+        + '参考标的：北方华创(002371)、中微公司(688012)、拓荆科技(688072)。'
+        + '催化：中芯/长鑫持续扩产→设备采购周期启动。'
+        + '风险：估值不便宜，PE普遍50-80倍。'
+    },
+    {
+      title: '📦 AI应用 — 软件端的机会',
+      tags: ['趋势'],
+      reason: '逻辑：AI硬件(芯片/封测)已经涨了一轮，下一波可能是AI应用(软件/SaaS)。索辰科技(CAE)已经在这个方向，但还有更多标的。'
+        + '参考标的：金山办公(688111)、用友网络(600588)、科大讯飞(002230)。'
+        + '催化：GPT-5.6下周发布→AI应用落地加速。'
+        + '风险：A股软件公司业绩兑现慢。'
+    },
+    {
+      title: '🧪 创新药/CXO — 医药铲子',
+      tags: ['新方向','趋势'],
+      reason: '逻辑：罗洄头在7/1说"医疗股我想让医疗变成AI应用做进攻"，他在关注AI医疗。'
+        + '参考标的：药明康德(603259)、康龙化成(300759)、泰格医药(300347)。'
+        + '催化：CXO板块估值处于历史低位(PE 18-30倍)，AI+药物发现是增量。'
+        + '风险：地缘政治(美国生物安全法案)。'
+    },
+    {
+      title: '⚡ 固态电池 — 罗洄下一个方向',
+      tags: ['hot','趋势'],
+      reason: '逻辑：罗洄说"等我锑矿和固态做完，接我上车"，这是他正在做的方向。固态电池是下一代电池技术，2026-2027年产业化加速。'
+        + '参考标的：宁德时代(300750)、当升科技(300073)、容百科技(688005)。'
+        + '催化：罗洄的"做完"信号→他进场时就是风口。'
+        + '风险：产业化进度不确定，罗洄还没发信号。'
+    }
+  ];
+  
+  let html = '';
+  for (const w of watchlist) {
+    const tags = w.tags.map(t => {
+      const cls = t === 'hot' ? 'hot' : t === '新方向' ? 'new' : 'trend';
+      return `<span class="watch-tag ${cls}">${t}</span>`;
+    }).join('');
+    html += `<div class="watch-card">
+      <div class="watch-title">${w.title} ${tags}</div>
+      <div class="watch-reason">${w.reason}</div>
+    </div>`;
+  }
+  document.getElementById('watchlistContainer').innerHTML = html;
+}
+
 // ========== 自动刷新 ==========
-let timer;
+let timer, refreshInterval = 30;
 
 function refreshNow() {
+  const state = getMarketState();
+  refreshInterval = getRefreshInterval(state);
+  
   document.getElementById('statusText').innerHTML = '刷新中...';
   document.getElementById('stockGrid').innerHTML = '<div class="loading"><div class="spinner"></div>正在获取数据...</div>';
   
+  // 更新市场状态dot
+  const dot = document.getElementById('statusDot');
+  dot.className = 'dot' + (state.isOpen ? '' : ' off');
+  
   fetchAll().then(data => {
     render(data);
-    document.getElementById('statusText').innerHTML = '实时';
-    startCountdown(30);
+    document.getElementById('statusText').innerHTML = state.isOpen ? '实时' : '盘后模式';
+    startCountdown(refreshInterval);
   });
 }
 
@@ -274,7 +377,7 @@ function startCountdown(sec) {
   const el = document.getElementById('countdown');
   timer = setInterval(() => {
     remaining--;
-    el.textContent = `下次刷新: ${remaining}s`;
+    el.textContent = `刷新: ${remaining}s`;
     if (remaining <= 0) {
       clearInterval(timer);
       refreshNow();
