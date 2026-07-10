@@ -60,6 +60,30 @@ h1{font-size:22px;display:flex;align-items:center;gap:8px}
 .watch-tag.hot{background:#450a0a;color:#ef4444}
 .watch-tag.new{background:#450a0a;color:#ef4444}
 .watch-tag.trend{background:#1e1b4b;color:#818cf8}
+/* 连板天梯图 */
+.ladder-section{background:#1e293b;border-radius:10px;padding:14px;border:1px solid #fbbf24;margin-bottom:16px}
+.ladder-title{font-size:14px;color:#fbbf24;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.ladder-grid{display:flex;flex-direction:column;gap:4px}
+.ladder-row{display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:6px;background:#0f172a}
+.ladder-rank{width:28px;text-align:center;font-weight:700;font-size:13px}
+.ladder-rank.gold{color:#fbbf24}
+.ladder-rank.silver{color:#94a3b8}
+.ladder-rank.bronze{color:#cd7f32}
+.ladder-stock{font-size:13px;font-weight:600;color:#e2e8f0;min-width:80px}
+.ladder-code{font-size:10px;color:#475569;min-width:70px}
+.ladder-bar{flex:1;height:20px;border-radius:4px;position:relative;overflow:hidden}
+.ladder-bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:10px;font-weight:600;color:#fff;min-width:30px}
+.ladder-bar.n2 .ladder-bar-fill{background:linear-gradient(90deg,#1e293b,#334155);width:30%}
+.ladder-bar.n3 .ladder-bar-fill{background:linear-gradient(90deg,#334155,#475569);width:45%}
+.ladder-bar.n4 .ladder-bar-fill{background:linear-gradient(90deg,#475569,#64748b);width:60%}
+.ladder-bar.n5 .ladder-bar-fill{background:linear-gradient(90deg,#64748b,#fbbf24);width:75%;color:#0f172a}
+.ladder-bar.n6 .ladder-bar-fill{background:linear-gradient(90deg,#fbbf24,#f97316);width:85%;color:#0f172a}
+.ladder-bar.n7 .ladder-bar-fill{background:linear-gradient(90deg,#f97316,#ef4444);width:95%;color:#fff}
+.ladder-bar.n8 .ladder-bar-fill{background:linear-gradient(90deg,#ef4444,#dc2626);width:100%;color:#fff}
+.ladder-chg{font-size:11px;min-width:55px;text-align:right}
+.ladder-empty{padding:12px;text-align:center;color:#64748b;font-size:12px}
+.ladder-sector{font-size:9px;color:#64748b;padding:1px 4px;border-radius:3px;background:#1e293b}
+.ladder-note{font-size:10px;color:#475569;margin-top:8px;text-align:center}
 .footer{text-align:center;color:#475569;font-size:11px;padding:12px;border-top:1px solid #1e293b;margin-top:16px}
 .loading{text-align:center;padding:40px;color:#64748b;font-size:14px}
 .loading .spinner{display:inline-block;width:16px;height:16px;border:2px solid #334155;border-top-color:#38bdf8;border-radius:50%;animation:spin .8s linear infinite;margin-right:8px;vertical-align:middle}
@@ -103,6 +127,15 @@ h1{font-size:22px;display:flex;align-items:center;gap:8px}
 <div class="card" style="margin-bottom:16px;border-color:#fbbf24">
   <div class="section-title" style="color:#fbbf24">🔭 新关注方向 · 基于产业链逻辑</div>
   <div id="watchlistContainer"></div>
+</div>
+
+<!-- 连板天梯图 -->
+<div class="ladder-section">
+  <div class="ladder-title">📈 连板天梯图 · 60日连板统计</div>
+  <div id="ladderContainer">
+    <div class="ladder-empty"><div class="spinner" style="display:inline-block;width:12px;height:12px;border:2px solid #334155;border-top-color:#38bdf8;border-radius:50%;animation:spin .8s linear infinite;margin-right:6px;vertical-align:middle"></div>正在扫描连板数据...</div>
+  </div>
+  <div class="ladder-note">数据来源: 腾讯财经K线 | 涨停标准: ≥+9.90% | 更新: 2026-07-10 17:15 | GH Actions 每小时扫描</div>
 </div>
 
 <!-- 新闻+分析 -->
@@ -267,6 +300,7 @@ function render(data) {
   renderNews();
   renderAnalysis();
   renderWatchlist(state);
+  renderLadder();
 }
 
 // ========== 新闻 ==========
@@ -355,7 +389,69 @@ function renderWatchlist(state) {
   document.getElementById('watchlistContainer').innerHTML = html;
 }
 
-// ========== 自动刷新 ==========
+// ========== 连板天梯图数据 ==========
+const LIANBAN_DATA = {
+  "update_time": "2026-07-10 17:15",
+  "total": 3,
+  "stocks": [
+    {"code": "sh600118", "name": "中国卫星", "streak": 1, "chg": 10.88, "limit_up": true, "sector": "主板"},
+    {"code": "sz300347", "name": "泰格医药", "streak": 1, "chg": 10.44, "limit_up": true, "sector": "创业板"},
+    {"code": "sh688568", "name": "中科星图", "streak": 1, "chg": 10.39, "limit_up": true, "sector": "科创板"}
+  ]
+};
+
+// ========== 渲染连板天梯图 ==========
+function renderLadder() {
+  const data = LIANBAN_DATA.stocks;
+  const container = document.getElementById('ladderContainer');
+  
+  if (!data || data.length === 0) {
+    container.innerHTML = '<div class="ladder-empty">暂无连板股票（今日无+9.9%以上连板）</div>';
+    return;
+  }
+  
+  // 分组：按连板数
+  const groups = {};
+  for (const s of data) {
+    const key = s.streak;
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(s);
+  }
+  
+  const levels = Object.keys(groups).map(Number).sort((a,b) => b-a);
+  let html = '';
+  
+  for (const level of levels) {
+    const stocks = groups[level];
+    const rankLabel = level >= 5 ? `<span style="color:#ef4444;font-weight:700">${level}连板</span>` : 
+                      level >= 3 ? `<span style="color:#fbbf24;font-weight:700">${level}连板</span>` :
+                      `<span style="color:#94a3b8">${level}连板</span>`;
+    
+    for (const s of stocks) {
+      const barClass = `n${Math.min(level, 8)}`;
+      const chgColor = s.chg > 0 ? '#ef4444' : '#34d399';
+      const chgSign = s.chg > 0 ? '+' : '';
+      const sectorTag = s.sector === '科创板' ? '<span class="ladder-sector" style="color:#38bdf8">科创</span>' :
+                        s.sector === '创业板' ? '<span class="ladder-sector" style="color:#34d399">创业</span>' : '';
+      
+      html += `<div class="ladder-row">
+        <div class="ladder-rank">${level}×</div>
+        <div class="ladder-stock">${s.name}</div>
+        <div class="ladder-code">${s.code.replace('sh','').replace('sz','')} ${sectorTag}</div>
+        <div class="ladder-bar ${barClass}"><div class="ladder-bar-fill">${rankLabel}</div></div>
+        <div class="ladder-chg" style="color:${chgColor}">${chgSign}${s.chg.toFixed(2)}%</div>
+      </div>`;
+    }
+  }
+  
+  // 如果只有1连板，加说明
+  const maxLevel = Math.max(...levels);
+  if (maxLevel <= 1) {
+    html += '<div class="ladder-empty" style="margin-top:8px;padding:8px">⚠️ 今日无2连板以上股票，市场连板效应弱，短线情绪偏谨慎</div>';
+  }
+  
+  container.innerHTML = html;
+}
 let timer, refreshInterval = 30;
 
 function refreshNow() {
