@@ -10,7 +10,7 @@ body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;backgr
 h1{font-size:22px;display:flex;align-items:center;gap:8px}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px}
 .stats{font-size:12px;color:#94a3b8;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.stats .dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:#34d399;animation:pulse 2s infinite}
+.stats .dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:#ef4444;animation:pulse 2s infinite}
 .stats .dot.off{background:#f87171;animation:none}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:16px}
@@ -20,18 +20,18 @@ h1{font-size:22px;display:flex;align-items:center;gap:8px}
 .price-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .price-val{font-size:24px;font-weight:700}
 .chg{padding:2px 8px;border-radius:4px;font-size:14px;font-weight:600}
-.chg-up{background:#064e3b;color:#34d399}
-.chg-down{background:#450a0a;color:#f87171}
+.chg-up{background:#450a0a;color:#ef4444}
+.chg-down{background:#064e3b;color:#34d399}
 .chg-flat{background:#1e293b;color:#94a3b8}
 .chain{font-size:11px;color:#64748b;padding:6px 8px;background:#0f172a;border-radius:6px;margin-top:6px;line-height:1.5}
 .msg{background:#0f172a;border-radius:6px;padding:6px 8px;margin-top:6px;font-size:11px;line-height:1.5;border-left:2px solid #38bdf8}
-.msg-warn{border-left-color:#f87171}
-.msg-ok{border-left-color:#34d399}
+.msg-warn{border-left-color:#34d399}
+.msg-ok{border-left-color:#ef4444}
 .signal{text-align:right;font-size:11px;margin-top:4px;padding:2px 8px;border-radius:4px;display:inline-block;float:right}
-.sig-buy{background:#064e3b;color:#34d399}
+.sig-buy{background:#450a0a;color:#ef4444}
 .sig-hold{background:#1e293b;color:#fbbf24}
-.sig-watch{background:#450a0a;color:#f87171}
-.sig-sell{background:#7f1d1d;color:#ef4444}
+.sig-watch{background:#450a0a;color:#ef4444}
+.sig-sell{background:#064e3b;color:#34d399}
 .idx-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:12px}
 .idx-item{background:#0f172a;border-radius:8px;padding:8px;text-align:center}
 .idx-item .name{font-size:11px;color:#64748b}
@@ -50,22 +50,22 @@ h1{font-size:22px;display:flex;align-items:center;gap:8px}
 .news-text{color:#cbd5e1}
 .analysis-item{padding:4px 0;font-size:12px;display:flex;gap:8px;align-items:flex-start}
 .analysis-tag{background:#0f172a;padding:1px 6px;border-radius:3px;font-size:10px;white-space:nowrap}
-.a-buy{color:#34d399}
+.a-buy{color:#ef4444}
 .a-hold{color:#fbbf24}
-.a-watch{color:#f87171}
+.a-watch{color:#34d399}
 .watch-card{background:linear-gradient(135deg,#1e293b,#1a1a3e);border-radius:10px;padding:14px;border:1px solid #334155;margin-bottom:8px}
 .watch-title{font-size:14px;color:#fbbf24;margin-bottom:6px;display:flex;align-items:center;gap:6px}
 .watch-reason{font-size:11px;color:#94a3b8;line-height:1.6}
 .watch-tag{display:inline-block;padding:1px 8px;border-radius:10px;font-size:10px;margin-right:4px;margin-top:4px}
-.watch-tag.hot{background:#450a0a;color:#f87171}
-.watch-tag.new{background:#064e3b;color:#34d399}
+.watch-tag.hot{background:#450a0a;color:#ef4444}
+.watch-tag.new{background:#450a0a;color:#ef4444}
 .watch-tag.trend{background:#1e1b4b;color:#818cf8}
 .footer{text-align:center;color:#475569;font-size:11px;padding:12px;border-top:1px solid #1e293b;margin-top:16px}
 .loading{text-align:center;padding:40px;color:#64748b;font-size:14px}
 .loading .spinner{display:inline-block;width:16px;height:16px;border:2px solid #334155;border-top-color:#38bdf8;border-radius:50%;animation:spin .8s linear infinite;margin-right:8px;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
 .market-badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600}
-.market-open{background:#064e3b;color:#34d399}
+.market-open{background:#450a0a;color:#ef4444}
 .market-closed{background:#1e293b;color:#94a3b8}
 </style>
 </head>
@@ -208,7 +208,7 @@ function render(data) {
       const p = parseFloat(parts[3]) || 0;
       const c = parseFloat(parts[4]) || p;
       const chg = c ? ((p-c)/c*100) : 0;
-      const color = chg > 0 ? '#34d399' : chg < 0 ? '#f87171' : '#94a3b8';
+      const color = chg > 0 ? '#ef4444' : chg < 0 ? '#34d399' : '#94a3b8';
       document.getElementById(elId).textContent = p.toFixed(2);
       document.getElementById(elId).style.color = color;
       const chgEl = document.getElementById(elId + '_chg');
@@ -242,7 +242,7 @@ function render(data) {
     else if (chg < -5) { sig = 'sell'; sigText = '💀警惕'; }
     if (price === 0) { sig = 'hold'; sigText = '⏳等待'; }
     
-    const dotColor = chg > 0 ? '#34d399' : chg < 0 ? '#f87171' : '#64748b';
+    const dotColor = chg > 0 ? '#ef4444' : chg < 0 ? '#34d399' : '#64748b';
     const logicText = price === 0 ? '数据加载中...' : (chg > 0 ? '✅ ' + h.logic : '💧 ' + h.logic);
     
     html += `<div class="card">
@@ -276,7 +276,7 @@ function renderNews() {
     {t:'7/9',tag:'科创50',text:'昨日+8.41%创纪录！中芯+13.74%',c:'ok'},
     {t:'7/9',tag:'罗洄头',text:'沉默第3天，判断全部应验',c:'info'}
   ];
-  const tc = {ok:'#34d399',warn:'#f87171',info:'#38bdf8'};
+  const tc = {ok:'#ef4444',warn:'#34d399',info:'#38bdf8'};
   document.getElementById('newsContainer').innerHTML = news.map(n =>
     `<div class="news-item"><span class="news-time">${n.t}</span><span class="news-tag" style="color:${tc[n.c]}">${n.tag}</span><span class="news-text">${n.text}</span></div>`
   ).join('');
