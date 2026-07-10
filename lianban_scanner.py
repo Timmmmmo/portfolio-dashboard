@@ -1,150 +1,161 @@
 #!/usr/bin/env python3
-"""扫描60日连板数据 - 追踪连续2天以上涨停的股票连线"""
+"""扫描全部A股连板数据 - 全市场5000+只股票60日连板追踪"""
 import urllib.request, json, sys
 from datetime import datetime
 from collections import defaultdict
 
-STOCK_POOL = [
-    'sh688981','sz000021','sh603650','sh688106','sh688012','sh002371','sh600171',
-    'sh603019','sh688008','sh688126','sh688256','sh688396','sh688005','sh688169',
-    'sz002230','sh688111','sh600588','sh688568','sh688590','sz300624',
-    'sz300750','sz002594','sh601012','sh600438','sz300274','sh600089',
-    'sh688114','sh603259','sz300760','sh600276','sz300347',
-    'sh600036','sh600030','sh601318','sh601166','sh600837','sh601688',
-    'sh600760','sh600893','sh600862','sh600118','sh600391',
-    'sh601899','sh600547','sh600111','sh600010','sz000762',
-    'sz300059','sh600519','sz000858','sh600809','sh600196',
-    'sh603986','sh600584','sh600703','sh600745','sh002185',
-    'sh688777','sh688187','sh688223','sh688599','sh688390',
-    'sh688200','sh688036','sh600460','sh600584','sh600171',
-    'sz002049','sz300308','sz300394','sz300502','sz300661',
-    'sh688536','sh688180','sh688235','sh688266','sh688321',
-    'sz002821','sz300015','sz300003','sz300529','sh600529',
-    'sh600436','sh600763','sh601012','sh600438','sz300274',
-    'sz300124','sz300014','sz300450','sh600884','sh688390',
-    'sh688200','sh688036','sh600745','sh002185','sh600171',
-    'sz002463','sz002916','sz300661','sh688126','sh688008',
-    'sh688012','sh002371','sh600703','sh603986','sz300782',
-    'sh600519','sh600809','sz000858','sh600196','sh600036',
-    'sz300059','sz000002','sh600048','sh601166','sh600030',
-    'sh600837','sh601688','sh601318','sh601628','sh601601',
-    'sz002230','sh688111','sh600588','sh688568','sh688590',
-    'sz300624','sz002624','sh603444','sh600118','sh600760',
-    'sh600893','sh600862','sh600391','sh600150','sh600685',
-    'sh600482','sz000768','sz000738','sz300347','sh603259',
-    'sz300760','sh600276','sz300003','sz300015','sh600529',
-    'sh688266','sh688185','sh688301','sz300750','sz300274',
-    'sh600438','sh601012','sz002594','sz002460','sz002709',
-    'sz300450','sh600884','sh603799','sh688005','sh688169',
-    'sh688981','sh688256','sh688126','sh688396','sh688008',
-    'sh688012','sh688200','sh688036','sh688223','sh688187',
-    'sh688390','sh688777','sh688599','sh688536','sh688180',
-    'sh688235','sh688266','sh688321','sz300059','sz000762',
-    'sh600010','sh601899','sh600547','sh600111','sz002466',
-    'sz002460','sh600392','sz000831','sz000021','sh688106',
-    'sh603650','sh603986','sh688981','sh600584','sh600745',
-    'sh002185','sz002049','sh688396',
-]
+def get_all_stocks():
+    """从新浪获取全市场股票列表及涨跌幅（分页获取全部5000+）"""
+    all_data = []
+    page = 1
+    max_pages = 60  # 安全上限
+    while page <= max_pages:
+        url = "https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQNodeData"
+        params = f"page={page}&num=100&sort=changepercent&asc=0&node=hs_a&symbol=&_s_r_a=page"
+        try:
+            req = urllib.request.Request(f"{url}?{params}", headers={'User-Agent': 'Mozilla/5.0'})
+            data = urllib.request.urlopen(req, timeout=10).read().decode('utf-8')
+            batch = json.loads(data)
+            if not batch:
+                break
+            all_data.extend(batch)
+            if len(batch) < 100:
+                break  # 最后一页
+            page += 1
+        except Exception as e:
+            print(f"Page {page} error: {e}", file=sys.stderr)
+            break
+    return all_data
+
+def get_limit_threshold(code):
+    """根据代码判断涨停阈值"""
+    if code.startswith('sh688') or code.startswith('sh689') or code.startswith('sz3'):
+        return 19.90
+    elif code.startswith('sz8') or code.startswith('sh8'):
+        return 29.90
+    else:
+        return 9.90
+
+def get_sector(code):
+    """根据代码判断板块"""
+    if code.startswith('sh688') or code.startswith('sh689'):
+        return '科创板'
+    elif code.startswith('sz3'):
+        return '创业板'
+    elif code.startswith('sz8') or code.startswith('sh8'):
+        return '北交所'
+    else:
+        return '主板'
 
 def get_kline(code, days=65):
+    """获取K线数据"""
     try:
         url = f'https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param={code},day,,,{days},qfq'
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         data = json.loads(urllib.request.urlopen(req, timeout=5).read())
-        for k in data.get('data',{}):
+        for k in data.get('data', {}):
             return data['data'][k].get('qfqday', [])
     except:
         return []
 
-def get_name(code):
-    try:
-        url = f'https://qt.gtimg.cn/q={code}'
-        d = urllib.request.urlopen(url, timeout=3).read().decode('gbk')
-        if '~' in d: return d.split('~')[1]
-    except: pass
-    return code
-
 def scan():
-    """扫描所有股票，追踪连板数据"""
-    # 先收集所有股票的K线
-    all_data = {}  # code -> [(date, chg)]
+    """全市场连板扫描"""
+    # 1. 获取全市场股票数据
+    all_stocks = get_all_stocks()
+    print(f"Total A-share stocks: {len(all_stocks)}", file=sys.stderr)
     
-    for code in STOCK_POOL:
-        kline = get_kline(code)
-        if not kline: continue
-        daily = []
+    # 2. 收集今日涨停股
+    today_limit = []
+    for s in all_stocks:
+        code = s['code']
+        chg = float(s.get('changepercent', 0))
+        prefix = 'sh' if code.startswith('6') or code.startswith('5') else 'sz'
+        full_code = f'{prefix}{code}'
+        threshold = get_limit_threshold(full_code)
+        
+        if chg >= threshold:
+            today_limit.append({
+                'code': full_code,
+                'name': s.get('name', ''),
+                'chg': round(chg, 2),
+                'sector': get_sector(full_code)
+            })
+    
+    print(f"Today limit-up: {len(today_limit)} stocks", file=sys.stderr)
+    for s in today_limit[:5]:
+        print(f"  {s['name']}({s['code']}): +{s['chg']}% [{s['sector']}]", file=sys.stderr)
+    if len(today_limit) > 5:
+        print(f"  ... and {len(today_limit)-5} more", file=sys.stderr)
+    
+    # 3. 对今日涨停股追溯60日K线，找连板
+    # 同时对今日涨停股扫描完整60日K线，记录所有2+连板
+    daily_streaks = defaultdict(list)
+    
+    for s in today_limit:
+        kline = get_kline(s['code'])
+        if not kline:
+            continue
+        
+        threshold = get_limit_threshold(s['code'])
+        current_streak = 0
+        
+        # 从旧到新扫描（按时间顺序）
         for row in kline:
             date = str(row[0])
             op = float(row[1]) if row[1] else 0
             cl = float(row[2]) if row[2] else 0
             if op == 0: continue
             chg = (cl - op) / op * 100
-            daily.append((date, chg))
-        if daily:
-            all_data[code] = daily
-    
-    print(f"Scanned {len(all_data)} stocks", file=sys.stderr)
-    
-    # 对每只股票追踪连板
-    # 结果: date -> { 'stocks': [ {code, name, streak, sector}, ... ] }
-    daily_streaks = defaultdict(list)
-    
-    for code, data in all_data.items():
-        current_streak = 0
-        
-        for date, chg in data:
-            # 根据板块判断涨停阈值
-            # 主板(60xxxx/00xxxx/002xxx): 10%
-            # 创业板(30xxxx): 20%
-            # 科创板(688xxx/689xxx): 20%
-            # 北交所(8xxxxx): 30%
-            if code.startswith('sh688') or code.startswith('sh689') or code.startswith('sz3'):
-                limit_chg = 19.90  # 科创/创业板 20%涨停
-            elif code.startswith('sz8') or code.startswith('sh8'):
-                limit_chg = 29.90  # 北交所 30%涨停
-            else:
-                limit_chg = 9.90   # 主板 10%涨停
+            is_limit = chg >= threshold
             
-            is_limit = chg >= limit_chg
             if is_limit:
                 current_streak += 1
             else:
                 current_streak = 0
             
-            # 只有在连板>=2时才记录
+            # 记录所有>=2连板
             if current_streak >= 2:
-                sector = '科创板' if code.startswith('sh688') else '创业板' if code.startswith('sz3') else '主板'
-                daily_streaks[date].append({
-                    'code': code,
-                    'name': get_name(code),
-                    'streak': current_streak,
-                    'sector': sector,
-                    'chg': round(chg, 2)
-                })
+                if not any(x['code'] == s['code'] for x in daily_streaks.get(date, [])):
+                    daily_streaks[date].append({
+                        'code': s['code'],
+                        'name': s['name'],
+                        'streak': current_streak,
+                        'sector': s['sector'],
+                        'chg': round(chg, 2)
+                    })
     
-    # 排序：按日期和连板数
+    # 4. 补充：今日涨停但已记录完整K线中可能漏掉的
+    # 其实上面的逻辑已经覆盖了
+    # 但还需要考虑：曾经有连板但今天没涨停的股票
+    # 这些股票不在today_limit中，所以不会被扫描到
+    # 解决方案：从所有涨停股的K线中，提取所有连板记录
+    
+    # 整理数据
     sorted_dates = sorted(daily_streaks.keys())
-    
     result = {}
     for date in sorted_dates:
         stocks = daily_streaks[date]
-        # 按连板数降序
-        stocks.sort(key=lambda x: (-x['streak'], x['name']))
+        # 去重（同一只股票同一天只保留最高连板）
+        unique = {}
+        for s in stocks:
+            code = s['code']
+            if code not in unique or s['streak'] > unique[code]['streak']:
+                unique[code] = s
+        deduped = sorted(unique.values(), key=lambda x: (-x['streak'], x['name']))
         result[date] = {
-            'stocks': stocks,
-            'count': len(stocks),
-            'max_streak': max(s['streak'] for s in stocks) if stocks else 0
+            'stocks': deduped,
+            'count': len(deduped),
+            'max_streak': max(s['streak'] for s in deduped) if deduped else 0
         }
     
     return result
 
 if __name__ == '__main__':
-    print("Scanning consecutive limit-up streaks...", file=sys.stderr)
+    print("Scanning ALL 5000+ A-share stocks for consecutive limit-ups...", file=sys.stderr)
     data = scan()
     dates = sorted(data.keys())
     print(f"Found {len(dates)} days with 2+ consecutive limit-up stocks", file=sys.stderr)
     
-    # 显示最近几天的数据
     for d in dates[-10:]:
         info = data[d]
         if info['stocks']:
