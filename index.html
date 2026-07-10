@@ -151,8 +151,13 @@ function getMarketState() {
 }
 
 function getRefreshInterval(state) {
-  if (state.isOpen) return 30; // 盘中30秒
-  return 3600; // 盘后1小时
+  if (state.isOpen) return 30;
+  // 盘后: 到下一个整点的秒数
+  const now = new Date();
+  const nextHour = new Date(now);
+  nextHour.setHours(now.getHours() + 1, 0, 0, 0);
+  const secs = Math.floor((nextHour - now) / 1000);
+  return Math.max(secs, 60);
 }
 
 // ========== 数据获取 ==========
@@ -377,7 +382,16 @@ function startCountdown(sec) {
   const el = document.getElementById('countdown');
   timer = setInterval(() => {
     remaining--;
-    el.textContent = `刷新: ${remaining}s`;
+    const st = getMarketState();
+    if (st.isOpen) {
+      el.textContent = `刷新: ${remaining}s`;
+    } else {
+      const min = Math.floor(remaining / 60);
+      const secs = remaining % 60;
+      const nextH = new Date();
+      nextH.setSeconds(nextH.getSeconds() + remaining);
+      el.textContent = `${nextH.getHours().toString().padStart(2,'0')}:00 整点更新 (${min}分${secs}秒)`;
+    }
     if (remaining <= 0) {
       clearInterval(timer);
       refreshNow();
