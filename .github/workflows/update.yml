@@ -5,6 +5,7 @@ on:
     - cron: '*/30 0-1,7-23 * * 1-5'
     - cron: '*/30 * * * 0,6'
   workflow_dispatch:
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -13,12 +14,30 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Generate
-        run: python generate.py > index.html
-      - name: Commit
+
+      - name: 扫描连板
+        run: python lianban_scanner.py > lianban_data.json 2>&1
+
+      - name: 更新连板数据到index.html
+        run: |
+          python3 << 'PYEOF'
+          import json, re
+          with open('lianban_data.json') as f:
+              lb = json.load(f)
+          with open('index.html') as f:
+              html = f.read()
+          new_data = json.dumps(lb, ensure_ascii=False, indent=2)
+          new_section = f'const LIANBAN_DATA = {new_data};'
+          html = re.sub(r'const LIANBAN_DATA = \{.*?\};', new_section, html, flags=re.DOTALL)
+          with open('index.html', 'w') as f:
+              f.write(html)
+          print(f'Updated: {lb["total"]} stocks')
+          PYEOF
+
+      - name: 提交更新
         run: |
           git config user.name "Dashboard Bot"
           git config user.email "bot@timmmmmo.github.io"
-          git add index.html
-          git diff --staged --quiet || git commit -m "auto: update $(date '+%Y-%m-%d %H:%M')"
+          git add index.html lianban_data.json
+          git diff --staged --quiet || git commit -m "auto: update dashboard $(date '+%Y-%m-%d %H:%M')"
           git push
