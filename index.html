@@ -3,295 +3,332 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>📊 持仓产业链 Dashboard</title>
+<title>📊 持仓实时Dashboard</title>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #0f172a; color: #e2e8f0; padding: 20px; }
-h1 { font-size: 24px; margin-bottom: 8px; }
-.subtitle { color: #94a3b8; font-size: 14px; margin-bottom: 24px; }
-.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin-bottom: 24px; }
-.card { background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; }
-.card h2 { font-size: 16px; color: #38bdf8; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-.card .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.card .price { font-size: 28px; font-weight: 700; }
-.card .chg { font-size: 16px; font-weight: 600; padding: 4px 10px; border-radius: 6px; }
-.chg-up { background: #064e3b; color: #34d399; }
-.chg-down { background: #450a0a; color: #f87171; }
-.chg-flat { background: #1e293b; color: #94a3b8; }
-.metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.metric { background: #0f172a; border-radius: 8px; padding: 10px; }
-.metric .label { font-size: 11px; color: #64748b; }
-.metric .value { font-size: 14px; font-weight: 600; margin-top: 2px; }
-.chain { margin-top: 12px; padding: 10px; background: #0f172a; border-radius: 8px; font-size: 13px; line-height: 1.6; }
-.chain .arrow { color: #38bdf8; }
-.chain .highlight { color: #fbbf24; font-weight: 600; }
-.bar-container { background: #0f172a; border-radius: 8px; padding: 8px; margin-top: 10px; }
-.bar { height: 20px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #fff; font-weight: 600; }
-.legend { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0; font-size: 12px; }
-.legend-item { display: flex; align-items: center; gap: 4px; }
-.legend-dot { width: 10px; height: 10px; border-radius: 50%; }
-.market-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #1e293b; font-size: 14px; }
-.market-row:last-child { border: none; }
-.market-name { color: #94a3b8; }
-.section-title { font-size: 18px; color: #38bdf8; margin: 20px 0 12px; display: flex; align-items: center; gap: 8px; }
-.footer { text-align: center; color: #475569; font-size: 12px; margin-top: 32px; padding: 16px; border-top: 1px solid #1e293b; }
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:#0f172a;color:#e2e8f0;padding:16px}
+h1{font-size:22px;display:flex;align-items:center;gap:8px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.status-bar{display:flex;gap:16px;font-size:12px;color:#94a3b8;align-items:center}
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.status-dot.green{background:#34d399;animation:pulse 2s infinite}
+.status-dot.red{background:#f87171}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:16px}
+.card{background:#1e293b;border-radius:10px;padding:14px;border:1px solid #334155}
+.card h3{font-size:13px;color:#38bdf8;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.price-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.price-val{font-size:24px;font-weight:700}
+.chg{padding:2px 8px;border-radius:4px;font-size:14px;font-weight:600}
+.chg-up{background:#064e3b;color:#34d399}
+.chg-down{background:#450a0a;color:#f87171}
+.chg-flat{background:#1e293b;color:#94a3b8}
+.meta{font-size:11px;color:#64748b;margin:4px 0}
+.meta span{margin-right:12px}
+.chain{font-size:11px;color:#64748b;padding:6px 8px;background:#0f172a;border-radius:6px;margin-top:6px;line-height:1.5}
+.chain .hl{color:#fbbf24}
+.msg{background:#0f172a;border-radius:6px;padding:6px 8px;margin-top:6px;font-size:11px;line-height:1.5;border-left:2px solid #38bdf8}
+.msg.warn{border-left-color:#f87171}
+.msg.ok{border-left-color:#34d399}
+.msg.info{border-left-color:#38bdf8}
+.index-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:12px}
+.index-item{background:#0f172a;border-radius:8px;padding:8px;text-align:center}
+.index-item .name{font-size:11px;color:#64748b}
+.index-item .val{font-size:16px;font-weight:700;margin:2px 0}
+.index-item .pct{font-size:12px}
+.news-section{background:#1e293b;border-radius:10px;padding:14px;border:1px solid #334155;margin-bottom:16px}
+.news-item{padding:6px 0;border-bottom:1px solid #0f172a;font-size:12px;display:flex;gap:8px;align-items:flex-start}
+.news-item:last-child{border:none}
+.news-tag{background:#0f172a;padding:1px 6px;border-radius:3px;font-size:10px;white-space:nowrap;color:#38bdf8;margin-top:1px}
+.news-text{color:#cbd5e1}
+.news-time{color:#475569;font-size:10px;white-space:nowrap}
+.analysis-section{background:#1e293b;border-radius:10px;padding:14px;border:1px solid #334155;margin-bottom:16px}
+.analysis-item{padding:4px 0;font-size:12px;display:flex;gap:8px;align-items:flex-start}
+.analysis-tag{background:#0f172a;padding:1px 6px;border-radius:3px;font-size:10px;white-space:nowrap}
+.analysis-tag.buy{color:#34d399}
+.analysis-tag.hold{color:#fbbf24}
+.analysis-tag.watch{color:#f87171}
+.analysis-tag.sell{color:#ef4444}
+.footer{text-align:center;color:#475569;font-size:11px;padding:12px;border-top:1px solid #1e293b;margin-top:16px}
+.refresh-btn{background:#1e293b;border:1px solid #334155;color:#94a3b8;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:12px}
+.refresh-btn:hover{background:#334155}
+.countdown{font-size:11px;color:#475569}
 </style>
 </head>
 <body>
 
-<h1>📊 持仓产业链 Dashboard</h1>
-<div class="subtitle">更新时间: <span id="updateTime">加载中...</span> | 数据源: 腾讯财经API + 新浪财经</div>
-
-<!-- 大盘概览 -->
-<div class="card" style="margin-bottom: 16px;">
-  <h2>📈 大盘指数</h2>
-  <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
-    <div class="metric"><div class="label">上证指数</div><div class="value" id="sh">--</div></div>
-    <div class="metric"><div class="label">深证成指</div><div class="value" id="sz">--</div></div>
-    <div class="metric"><div class="label">创业板指</div><div class="value" id="cy">--</div></div>
-    <div class="metric"><div class="label" style="color:#38bdf8">科创50 🚀</div><div class="value" id="kc">--</div></div>
+<div class="header">
+  <h1>📊 持仓实时Dashboard</h1>
+  <div class="status-bar">
+    <span id="statusDot"><span class="status-dot green"></span> 实时</span>
+    <span id="clock">--:--:--</span>
+    <span id="countdown" class="countdown">下次刷新: 120s</span>
+    <button class="refresh-btn" onclick="forceRefresh()">⟳ 刷新</button>
   </div>
 </div>
 
-<!-- 五大持仓产业链卡片 -->
-<div class="grid" id="cards">
-  <!-- 卡片由JS动态生成 -->
-</div>
-
-<!-- 产业链总览图 -->
-<div class="card">
-  <h2>🔗 产业链全景图</h2>
-  <div class="legend">
-    <div class="legend-item"><div class="legend-dot" style="background:#f97316"></div> 上游原材料</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#38bdf8"></div> 中游制造/设备</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#34d399"></div> 下游应用</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div> 你的持仓</div>
-  </div>
-  <div style="overflow-x: auto; font-size: 13px; line-height: 2;">
-    <pre style="color:#94a3b8; font-family: monospace;">
-                      ┌─────────────────────────────────────────────────────┐
-                      │                    🏭 产业链全景                      │
-                      └─────────────────────────────────────────────────────┘
-
-  ┌──────────────────────────────────────────────────────────────────────────┐
-  │  🧪 半导体链 (特气+光刻胶+封测+制造)                                       │
-  └──────────────────────────────────────────────────────────────────────────┘
-
-  🟣 金宏气体 ───→ 🟡 氦气/特气 ───→ 🟢 EUV光刻机 ───→ 🟢 晶圆制造 ───→ 🟢 AI芯片
-      (年产氦~200吨)   (中国年需2000吨)   (每台400升/时)   (中芯月产50万片)    (HBM/GPU)
-      营收5-8亿         90%靠进口          单台年耗0.53吨
-
-  🟣 彤程新材 ───→ 🟡 光刻胶 ─────────→ 🟢 晶圆制造 ───→ 🟢 AI芯片
-      (ArF/KrF光刻胶)   (中国自给率<20%)   (每片需~50ml)      (中芯/华虹)
-      年产能~5000吨     进口替代空间大
-
-  🟣 深科技 ─────→ 🟡 存储封测 ───────→ 🟢 长鑫/长存 ──→ 🟢 HBM/SSD
-      (合肥沛顿)         (年封测5.76亿颗)   (委外比例最高)      (AI服务器)
-      营收28亿(扩产)    扩产投资14.7亿
-
-  ┌──────────────────────────────────────────────────────────────────────────┐
-  │  🧬 生命科学+AI 链                                                       │
-  └──────────────────────────────────────────────────────────────────────────┘
-
-  🟣 华大智造 ───→ 🟡 基因测序仪 ───→ 🟢 医院/药企 ───→ 🟢 精准医疗
-      (DNBSEQ平台)      (全球市占~15%)    (年装机~1000台)     (癌症早筛/产检)
-      营收~30亿         国产替代唯一标的
-
-  🟣 索辰科技 ───→ 🟡 CAE仿真软件 ───→ 🟢 军工/车企/航空 ───→ 🟢 研发效提升
-      (电磁/结构/CFD)    (国产替代龙头)     (年许可证~5000个)     (替代Ansys)
-      营收~3亿          毛利率~70%
-    </pre>
+<!-- 大盘指数 -->
+<div class="card" style="margin-bottom:12px;">
+  <div class="index-grid" id="indexGrid">
+    <div class="index-item"><div class="name">上证指数</div><div class="val" id="idx_sh">--</div><div class="pct" id="idx_sh_chg">--</div></div>
+    <div class="index-item"><div class="name">深证成指</div><div class="val" id="idx_sz">--</div><div class="pct" id="idx_sz_chg">--</div></div>
+    <div class="index-item"><div class="name">创业板指</div><div class="val" id="idx_cy">--</div><div class="pct" id="idx_cy_chg">--</div></div>
+    <div class="index-item" style="border:1px solid #334155"><div class="name" style="color:#38bdf8">科创50 🚀</div><div class="val" id="idx_kc">--</div><div class="pct" id="idx_kc_chg">--</div></div>
+    <div class="index-item"><div class="name">恒生期货</div><div class="val" id="idx_hsi">--</div><div class="pct" id="idx_hsi_chg">--</div></div>
+    <div class="index-item"><div class="name">纳指期货</div><div class="val" id="idx_nq">--</div><div class="pct" id="idx_nq_chg">--</div></div>
   </div>
 </div>
 
-<!-- 用量对比图 -->
-<div class="card" style="margin-top: 16px;">
-  <h2>📊 下游产业用量对比</h2>
-  <div style="font-size: 13px; color: #94a3b8; margin-bottom: 12px;">每单位产品的下游消耗量（可视化对比）</div>
-  <div id="volumeChart"></div>
+<!-- 持仓网格 -->
+<div class="grid" id="stockGrid"></div>
+
+<!-- 新闻 -->
+<div class="news-section">
+  <h3 style="font-size:13px;color:#38bdf8;margin-bottom:8px;">📰 相关新闻</h3>
+  <div id="newsContainer">
+    <div class="news-item"><span class="news-tag">加载中</span><span class="news-text">正在获取最新消息...</span></div>
+  </div>
+</div>
+
+<!-- 分析 -->
+<div class="analysis-section">
+  <h3 style="font-size:13px;color:#38bdf8;margin-bottom:8px;">🧠 底层逻辑判断</h3>
+  <div id="analysisContainer">
+    <div class="analysis-item"><span class="analysis-tag hold">⏳</span>等待数据更新...</div>
+  </div>
+</div>
+
+<div class="footer">
+  📊 每2分钟自动刷新（交易时段）| 每小时刷新（非交易时段）| 数据来源: 腾讯财经API
 </div>
 
 <script>
-// ========== 数据 ==========
-const stocks = {
-  '金宏气体': { code: 'sh688106', color: '#f97316', label: '特种气体', 
-    chain: '氦气/特气 → 半导体制造',
-    volume: [
-      { name: '每片晶圆耗氦', value: 1436, unit: '升', max: 2000, color: '#f97316' },
-      { name: '每台EUV年耗氦', value: 0.53, unit: '吨', max: 1, color: '#f97316' },
-      { name: '中国年需氦总量', value: 2000, unit: '吨', max: 2500, color: '#fb923c' },
-      { name: '金宏年氦营收', value: 6.5, unit: '亿元', max: 15, color: '#fbbf24' },
-    ],
-    industry: {
-      downstream: '半导体制造(中芯/长鑫/华虹)',
-      demand_driver: '每片晶圆需氦~1,436升，年需2000吨+，90%进口',
-      market_size: '中国氦气市场~5.4亿元，年增18%',
-      position: '国内特气龙头，长鑫大宗气体供应商',
-      bottleneck: '氦气物理不可替代，EUV必须用氦冷却'
-    }
-  },
-  '深科技': { code: 'sz000021', color: '#38bdf8', label: '存储封测',
-    chain: '存储封测 → 长鑫/长存 → AI服务器',
-    volume: [
-      { name: '年封测DRAM颗粒', value: 5.76, unit: '亿颗', max: 8, color: '#38bdf8' },
-      { name: '年产内存模组', value: 3000, unit: '万条', max: 4000, color: '#38bdf8' },
-      { name: '年封测NAND', value: 3840, unit: '万颗', max: 5000, color: '#38bdf8' },
-      { name: '封测线营收(达产)', value: 28, unit: '亿元', max: 50, color: '#60a5fa' },
-    ],
-    industry: {
-      downstream: '长鑫存储/长存/存储模组厂',
-      demand_driver: 'HBM挤压通用DRAM产能→DRAM涨价→封测需求增',
-      market_size: '全球存储封测市场~200亿美元，中国~30亿美元',
-      position: '长鑫存储委外封测比例最高的供应商',
-      bottleneck: '扩产投资14.7亿，2027年产能释放'
-    }
-  },
-  '华大智造': { code: 'sh688114', color: '#34d399', label: '基因测序',
-    chain: '基因测序仪 → 医院/药企 → 精准医疗',
-    volume: [
-      { name: '全球装机量', value: 3600, unit: '台', max: 5000, color: '#34d399' },
-      { name: '年测序试剂消耗', value: 150, unit: '万份', max: 300, color: '#34d399' },
-      { name: '单台年测序通量', value: 50, unit: 'TB', max: 100, color: '#34d399' },
-      { name: '年营收(基因测序)', value: 15, unit: '亿元', max: 30, color: '#6ee7b7' },
-    ],
-    industry: {
-      downstream: '医院/精准医学中心/药企CRO',
-      demand_driver: '癌症早筛+产检+传染病监测，年增20%+',
-      market_size: '全球基因测序市场~200亿美元，中国~50亿美元',
-      position: '国产测序仪唯一龙头，全球第三(Illumina/华大/其他)',
-      bottleneck: '测序试剂高毛利(70%+)，扩产周期12-18个月'
-    }
-  },
-  '索辰科技': { code: 'sh688507', color: '#a78bfa', label: 'CAE仿真',
-    chain: 'CAE软件 → 军工/车企/航空 → 研发效率提升',
-    volume: [
-      { name: '年许可证授权', value: 5000, unit: '个', max: 8000, color: '#a78bfa' },
-      { name: '年仿真计算量', value: 800, unit: '万核时', max: 1500, color: '#a78bfa' },
-      { name: '单客户年均支出', value: 60, unit: '万元', max: 100, color: '#a78bfa' },
-      { name: '年营收', value: 3, unit: '亿元', max: 6, color: '#c4b5fd' },
-    ],
-    industry: {
-      downstream: '军工/航空航天/车企/电子',
-      demand_driver: '国产替代Ansys+AI加速仿真，年增30%+',
-      market_size: '全球CAE市场~150亿美元，中国~20亿美元',
-      position: '国产CAE龙头，军工领域市占率第一',
-      bottleneck: '客户粘性高(替代成本大)，但渠道拓展慢'
-    }
-  },
-  '彤程新材': { code: 'sh603650', color: '#f472b6', label: '光刻胶/材料',
-    chain: '光刻胶 → 晶圆制造 → 芯片',
-    volume: [
-      { name: '年光刻胶产能', value: 5000, unit: '吨', max: 8000, color: '#f472b6' },
-      { name: '每片晶圆光刻胶', value: 50, unit: 'ml', max: 100, color: '#f472b6' },
-      { name: '中国光刻胶市场', value: 150, unit: '亿元', max: 200, color: '#f472b6' },
-      { name: '彤程光刻胶营收', value: 8, unit: '亿元', max: 15, color: '#f9a8d4' },
-    ],
-    industry: {
-      downstream: '中芯/华虹/长鑫等晶圆厂',
-      demand_driver: '晶圆扩产→光刻胶需求增，国产替代空间大',
-      market_size: '全球光刻胶市场~100亿美元，中国~150亿人民币',
-      position: 'ArF/KrF光刻胶国产龙头，与中芯绑定深',
-      bottleneck: '高端光刻胶(ArF/EUV)仍在验证，国产自给率<20%'
-    }
-  }
+// ========== 持仓配置 ==========
+const HOLDINGS = [
+  { id:'sh688981', name:'中芯国际', code:'688981', desc:'AI芯片制造龙头', chain:'半导体制造→AI芯片→HBM/GPU', logic:'中国最先进制程，AI芯片刚需', risk:'地缘政治限制设备进口' },
+  { id:'sz000021', name:'深科技', code:'000021', desc:'存储封测铲子', chain:'存储封测→长鑫/长存→AI服务器', logic:'HBM挤压通用DRAM→封测需求增，14.7亿扩产', risk:'HBM仍在研发' },
+  { id:'sh603650', name:'彤程新材', code:'603650', desc:'光刻胶国产替代', chain:'光刻胶→晶圆制造→芯片', logic:'ArF/KrF光刻胶国产龙头，中芯绑定深', risk:'高端光刻胶仍在验证' },
+  { id:'sh688106', name:'金宏气体', code:'688106', desc:'特气/氦气龙头', chain:'氦气/特气→半导体制造', logic:'氦气物理不可替代，90%进口，国产替代', risk:'PE 219偏高' },
+  { id:'sh688114', name:'华大智造', code:'688114', desc:'基因测序国产龙头', chain:'基因测序仪→医院/药企→精准医疗', logic:'国产测序唯一标的，全球第三', risk:'集采政策风险' },
+  { id:'sh688507', name:'索辰科技', code:'688507', desc:'CAE仿真软件', chain:'CAE软件→军工/车企→研发效率', logic:'国产CAE龙头，军工市占率第一', risk:'客户拓展慢' },
+  { id:'sz002594', name:'比亚迪', code:'002594', desc:'新能源车龙头', chain:'新能源车→电池→出海', logic:'销量全球第一，出海加速', risk:'价格战激烈' },
+  { id:'sz000762', name:'西藏矿业', code:'000762', desc:'锂矿', chain:'锂矿→碳酸锂→电池', logic:'罗洄说还没到底，等信号', risk:'锂价低迷，产能过剩' },
+  { id:'sz300174', name:'元力股份', code:'300174', desc:'超级电容/活性炭', chain:'超级电容→储能→新能源', logic:'从底部企稳中', risk:'市场规模有限' }
+];
+
+// 指数代码映射
+const INDICES = {
+  sh:'sh000001', sz:'sz399001', cy:'sz399006', kc:'sh000688'
 };
 
-// ========== 渲染 ==========
-function render() {
-  // 大盘
-  document.getElementById('sh').innerHTML = '4031 (-0.13%)';
-  document.getElementById('sz').innerHTML = '15466 (+0.44%)';
-  document.getElementById('cy').innerHTML = '4007 (-0.28%)';
-  document.getElementById('kc').innerHTML = '2176 (-0.45%)';
-  document.getElementById('updateTime').textContent = new Date().toLocaleString('zh-CN');
+// ========== 数据获取 ==========
+function fetchPrices() {
+  const codes = HOLDINGS.map(h => h.id).join(',');
+  const idxCodes = Object.values(INDICES).join(',');
   
-  // 卡片
-  const container = document.getElementById('cards');
-  container.innerHTML = '';
+  // 加载指数数据
+  loadScript(`https://qt.gtimg.cn/q=${idxCodes},${codes}&t=${Date.now()}`);
   
-  const order = ['金宏气体', '深科技', '华大智造', '索辰科技', '彤程新材'];
-  order.forEach(name => {
-    const s = stocks[name];
-    if (!s) return;
+  // 加载期货数据
+  loadScript(`https://hq.sinajs.cn/list=hf_NQ,hf_HSI&t=${Date.now()}`);
+}
+
+function loadScript(url) {
+  const s = document.createElement('script');
+  s.src = url;
+  s.onload = () => setTimeout(() => s.remove(), 100);
+  s.onerror = () => console.warn('Fetch failed:', url);
+  document.head.appendChild(s);
+}
+
+// ========== 解析数据 ==========
+// qt.gtimg.cn 返回 v_code="..." 格式，作为全局变量
+function parseData() {
+  const now = new Date();
+  const h = now.getHours(), m = now.getMinutes();
+  const isMarketOpen = (h >= 9 && h < 15) || (h === 9 && m >= 30);
+  
+  // 更新时钟
+  document.getElementById('clock').textContent = now.toLocaleTimeString('zh-CN');
+  
+  // 解析指数
+  const idxMap = { sh:'idx_sh', sz:'idx_sz', cy:'idx_cy', kc:'idx_kc' };
+  Object.entries(INDICES).forEach(([key, val]) => {
+    const raw = window[`v_${val}`];
+    if (raw) {
+      const parts = raw.split('~');
+      const price = parseFloat(parts[3]) || 0;
+      const close = parseFloat(parts[4]) || price;
+      const chg = close ? ((price - close) / close * 100).toFixed(2) : '0.00';
+      document.getElementById(idxMap[key]).textContent = price.toFixed(2);
+      const el = document.getElementById(`${idxMap[key]}_chg`);
+      el.textContent = `${chg > 0 ? '+' : ''}${chg}%`;
+      el.style.color = chg > 0 ? '#34d399' : chg < 0 ? '#f87171' : '#94a3b8';
+    }
+  });
+  
+  // 解析期货
+  // hf_NQ, hf_HSI 的格式是逗号分隔
+  const hsiRaw = window.v_hf_HSI;
+  if (hsiRaw) {
+    const vals = hsiRaw.split(',');
+    const price = parseFloat(vals[1]) || 0;
+    const prev = parseFloat(vals[8]) || price;
+    const chg = prev ? ((price - prev) / prev * 100).toFixed(2) : '0.00';
+    document.getElementById('idx_hsi').textContent = price.toFixed(1);
+    const el = document.getElementById('idx_hsi_chg');
+    el.textContent = `${chg > 0 ? '+' : ''}${chg}%`;
+    el.style.color = chg > 0 ? '#34d399' : '#94a3b8';
+  }
+  const nqRaw = window.v_hf_NQ;
+  if (nqRaw) {
+    const vals = nqRaw.split(',');
+    const price = parseFloat(vals[1]) || 0;
+    const prev = parseFloat(vals[8]) || price;
+    const chg = prev ? ((price - prev) / prev * 100).toFixed(2) : '0.00';
+    document.getElementById('idx_nq').textContent = price.toFixed(1);
+    const el = document.getElementById('idx_nq_chg');
+    el.textContent = `${chg > 0 ? '+' : ''}${chg}%`;
+    el.style.color = chg > 0 ? '#34d399' : '#94a3b8';
+  }
+  
+  // 解析持仓
+  let gridHtml = '';
+  HOLDINGS.forEach(h => {
+    const raw = window[`v_${h.id}`];
+    let price = '--', chg = 0, chgStr = '--', chgClass = 'chg-flat';
     
-    // 模拟价格数据（从API获取）
-    const prices = {
-      '金宏气体': { price: 36.40, chg: -4.34 },
-      '深科技': { price: 60.70, chg: 7.93 },
-      '华大智造': { price: 58.47, chg: 4.63 },
-      '索辰科技': { price: 214.06, chg: 1.60 },
-      '彤程新材': { price: 87.31, chg: -2.51 }
-    };
-    const p = prices[name];
-    const chgClass = p.chg > 0 ? 'chg-up' : p.chg < 0 ? 'chg-down' : 'chg-flat';
-    const chgSign = p.chg > 0 ? '+' : '';
+    if (raw) {
+      const parts = raw.split('~');
+      const p = parseFloat(parts[3]) || 0;
+      const c = parseFloat(parts[4]) || p;
+      chg = c ? ((p - c) / c * 100) : 0;
+      price = p.toFixed(2);
+      chgStr = `${chg > 0 ? '+' : ''}${chg.toFixed(2)}%`;
+      chgClass = chg > 0.5 ? 'chg-up' : chg < -0.5 ? 'chg-down' : 'chg-flat';
+    }
     
-    let card = `<div class="card">
-      <h2><span style="color:${s.color}">●</span> ${name} <span style="font-size:12px;color:#94a3b8;font-weight:400;">${s.label}</span></h2>
+    // 逻辑判断
+    let signal = 'hold', signalText = '持有';
+    if (chg > 5) { signal = 'buy'; signalText = '🔥强势'; }
+    else if (chg > 2) { signal = 'buy'; signalText = '📈上涨'; }
+    else if (chg < -3) { signal = 'watch'; signalText = '⚠️关注'; }
+    else if (chg < -5) { signal = 'sell'; signalText = '💀警惕'; }
+    
+    gridHtml += `<div class="card">
+      <h3>${h.desc}</h3>
       <div class="price-row">
-        <div class="price">${p.price}</div>
-        <div class="chg ${chgClass}">${chgSign}${p.chg}%</div>
+        <div class="price-val">${price}</div>
+        <div class="chg ${chgClass}">${chgStr}</div>
       </div>
-      <div class="chain">⬇️ 下游 → <span class="highlight">${s.industry.downstream}</span></div>
-      <div class="bar-container">
-        <div style="display:flex;justify-content:space-between;font-size:11px;color:#64748b;margin-bottom:4px;">
-          <span>核心驱动</span>
-          <span>${s.industry.demand_driver.substring(0,25)}...</span>
-        </div>
-      </div>
-      <div class="metrics">
-        <div class="metric"><div class="label">市场规模</div><div class="value">${s.industry.market_size}</div></div>
-        <div class="metric"><div class="label">产业链位置</div><div class="value">${s.industry.position}</div></div>
-        <div class="metric" style="grid-column: 1/-1;"><div class="label">⚠️ 瓶颈/风险</div><div class="value">${s.industry.bottleneck}</div></div>
+      <div class="chain">🔗 ${h.chain}</div>
+      <div class="msg info">✅ ${h.logic}</div>
+      <div class="msg warn">⚠️ ${h.risk}</div>
+      <div style="margin-top:4px;text-align:right;font-size:11px;">
+        <span class="analysis-tag ${signal}">${signalText}</span>
       </div>
     </div>`;
-    
-    container.innerHTML += card;
   });
   
-  // 用量对比图
-  renderVolumeChart();
+  document.getElementById('stockGrid').innerHTML = gridHtml;
+  
+  // 更新新闻
+  updateNews();
+  
+  // 更新分析
+  updateAnalysis();
+  
+  // 设置下次刷新
+  const nextRefresh = isMarketOpen ? 120 : 3600;
+  startCountdown(nextRefresh);
 }
 
-function renderVolumeChart() {
-  const chart = document.getElementById('volumeChart');
+// ========== 新闻 ==========
+function updateNews() {
+  const news = [
+    { time: '今日', tag: '科创50', text: '7连涨后今日小幅回调，+0.83%开盘后回落至-0.45%', type: 'info' },
+    { time: '今日', tag: '深科技', text: '开盘+8.82%后维持+7.93%，两天从51→61，+19.7%', type: 'ok' },
+    { time: '今日', tag: '华大智造', text: '加速上涨+4.63%，基因测序赛道回暖', type: 'ok' },
+    { time: '今日', tag: '金宏气体', text: '回调-4.34%至36.4，关注36支撑位', type: 'warn' },
+    { time: '昨夜', tag: '美股', text: '纳指+1.30%，纳指100+1.62%，科技股继续强势', type: 'ok' },
+    { time: '昨夜', tag: 'SK海力士', text: 'ADR上市计划筹集40万亿韩元，此前为43万亿', type: 'info' },
+    { time: '7/9', tag: '罗洄头', text: '沉默第3天，他的"价值1亿的图"赞数从298→316', type: 'info' },
+    { time: '7/9', tag: '科创50', text: '昨日+8.41%创纪录！中芯涨停+13.74%，深科技+9.99%', type: 'ok' }
+  ];
+  
   let html = '';
-  
-  const order = ['金宏气体', '深科技', '华大智造', '索辰科技', '彤程新材'];
-  order.forEach(name => {
-    const s = stocks[name];
-    html += `<div style="margin-bottom:14px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-        <span style="font-weight:600;font-size:14px;color:${s.color}">${name}</span>
-        <span style="font-size:12px;color:#64748b;">${s.chain}</span>
-      </div>`;
-    
-    s.volume.forEach(v => {
-      const pct = Math.min((v.value / v.max) * 100, 100);
-      html += `<div style="display:flex;align-items:center;gap:8px;margin:3px 0;">
-        <span style="width:120px;font-size:11px;color:#94a3b8;text-align:right;">${v.name}</span>
-        <div style="flex:1;height:16px;background:#0f172a;border-radius:4px;overflow:hidden;">
-          <div style="height:100%;width:${pct}%;background:${v.color};border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:4px;font-size:10px;color:white;font-weight:600;min-width:fit-content;">
-            ${v.value}${v.unit}
-          </div>
-        </div>
-        <span style="width:60px;font-size:11px;color:#475569;">${v.max}${v.unit}</span>
-      </div>`;
-    });
-    
-    html += '</div>';
+  news.forEach(n => {
+    const tagColor = n.type === 'ok' ? '#34d399' : n.type === 'warn' ? '#f87171' : '#38bdf8';
+    html += `<div class="news-item">
+      <span class="news-time">${n.time}</span>
+      <span class="news-tag" style="color:${tagColor}">${n.tag}</span>
+      <span class="news-text">${n.text}</span>
+    </div>`;
   });
-  
-  chart.innerHTML = html;
+  document.getElementById('newsContainer').innerHTML = html;
 }
 
-render();
+// ========== 分析 ==========
+function updateAnalysis() {
+  const analysis = [
+    { tag: '🧠', text: '科创50今日回调-0.45%属于大涨后的正常技术性调整，7连涨后休息一下很正常', type: 'hold' },
+    { tag: '🔥', text: '深科技两天+19.7%验证了"存储封测铲子"逻辑，HBM挤压通用DRAM→封测需求增', type: 'buy' },
+    { tag: '💡', text: '华大+4.63%加速上涨，基因测序是AI在医疗领域最直接的应用场景', type: 'buy' },
+    { tag: '⚠️', text: '金宏-4.34%跌至36.4，但氦气逻辑没有破(物理不可替代)，36是重要支撑', type: 'watch' },
+    { tag: '📊', text: '中芯从173回落到169.7(-1.90%)，昨天涨停后正常回调，AI芯片龙头逻辑不变', type: 'hold' },
+    { tag: '🌍', text: '纳指+1.30%+日经+1.71%→全球科技共振仍在，A股半导体不会独跌', type: 'hold' }
+  ];
+  
+  let html = '';
+  analysis.forEach(a => {
+    html += `<div class="analysis-item">
+      <span class="analysis-tag ${a.type}">${a.tag}</span>
+      <span class="news-text">${a.text}</span>
+    </div>`;
+  });
+  document.getElementById('analysisContainer').innerHTML = html;
+}
+
+// ========== 自动刷新 ==========
+let countdownInterval;
+
+function startCountdown(seconds) {
+  if (countdownInterval) clearInterval(countdownInterval);
+  let remaining = seconds;
+  const el = document.getElementById('countdown');
+  
+  countdownInterval = setInterval(() => {
+    remaining--;
+    const min = Math.floor(remaining / 60);
+    const sec = remaining % 60;
+    el.textContent = `下次刷新: ${min > 0 ? `${min}分` : ''}${sec}秒`;
+    if (remaining <= 0) {
+      clearInterval(countdownInterval);
+      forceRefresh();
+    }
+  }, 1000);
+}
+
+function forceRefresh() {
+  document.getElementById('statusDot').innerHTML = '<span class="status-dot green" style="animation:none"></span> 刷新中...';
+  fetchPrices();
+  setTimeout(() => {
+    document.getElementById('statusDot').innerHTML = '<span class="status-dot green"></span> 实时';
+  }, 3000);
+}
+
+// ========== 初始化 ==========
+// 定时轮询
+setInterval(() => {
+  const now = new Date();
+  const h = now.getHours(), m = now.getMinutes();
+  const isMarketOpen = (h >= 9 && h < 15) || (h === 9 && m >= 30);
+  // 每2分钟刷新一次（无论是否开市，由用户自行决定刷新频率）
+  // 倒计时已由 startCountdown 控制
+}, 2000);
+
+// 启动
+fetchPrices();
 </script>
-
-<div class="footer">
-  📊 持仓产业链 Dashboard | 数据实时更新 | 仅供参考，不构成投资建议<br>
-  数据来源: 腾讯财经API(qt.gtimg.cn) + 新浪财经(hq.sinajs.cn) | 量价数据为行业估算值
-</div>
-
 </body>
 </html>

@@ -1,0 +1,32 @@
+name: 更新Dashboard
+on:
+  schedule:
+    # 交易时段(09:30-15:00)每2分钟
+    - cron: '*/2 1-7 * * 1-5'  # 09:30-15:00 BJT = 01:30-07:00 UTC
+    # 非交易时段每30分钟
+    - cron: '*/30 0-1,7-23 * * 1-5'
+    - cron: '*/30 * * * 0,6'  # 周末每30分钟
+  workflow_dispatch:  # 手动触发
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: 设置Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: 生成Dashboard
+        run: |
+          python generate.py > index.html
+      
+      - name: 提交更新
+        run: |
+          git config user.name "Dashboard Bot"
+          git config user.email "bot@timmmmmo.github.io"
+          git add index.html
+          git diff --staged --quiet || git commit -m "auto: update dashboard $(date '+%Y-%m-%d %H:%M')"
+          git push
