@@ -6,18 +6,17 @@ from datetime import datetime
 # ========== 配置 ==========
 HOLDINGS = [
     ('sh688981', '中芯国际', 'AI芯片制造龙头', '半导体制造→AI芯片→HBM/GPU', '中国最先进制程，AI芯片刚需', '地缘政治限制设备进口'),
-    ('sz000021', '深科技', '存储封测铲子', '存储封测→长鑫/长存→AI服务器', 'HBM挤压通用DRAM→封测需求增，14.7亿扩产', 'HBM仍在研发'),
+    ('sz000021', '深科技', '存储封测铲子', '封测→长鑫/长存→AI服务器', 'HBM挤压通用DRAM→封测需求增，14.7亿扩产', 'HBM仍在研发'),
     ('sh603650', '彤程新材', '光刻胶国产替代', '光刻胶→晶圆制造→芯片', 'ArF/KrF光刻胶国产龙头，中芯绑定深', '高端光刻胶仍在验证'),
     ('sh688106', '金宏气体', '特气/氦气龙头', '氦气/特气→半导体制造', '氦气物理不可替代，90%进口，国产替代', 'PE 219偏高'),
     ('sh688114', '华大智造', '基因测序国产龙头', '测序仪→医院/药企→精准医疗', '国产测序唯一标的，全球第三', '集采政策风险'),
-    ('sh688507', '索辰科技', 'CAE仿真软件', 'CAE软件→军工/车企→研发效率', '国产CAE龙头，军工市占率第一', '客户拓展慢'),
+    ('sh688507', '索辰科技', 'CAE仿真软件', 'CAE软件→军工/车企→研发', '国产CAE龙头，军工市占率第一', '客户拓展慢'),
     ('sz002594', '比亚迪', '新能源车龙头', '新能源车→电池→出海', '销量全球第一，出海加速', '价格战激烈'),
     ('sz000762', '西藏矿业', '锂矿', '锂矿→碳酸锂→电池', '罗洄说还没到底，等信号', '锂价低迷'),
     ('sz300174', '元力股份', '超级电容/活性炭', '超级电容→储能→新能源', '从底部企稳中', '市场规模有限')
 ]
 
 def fetch_stock_data(code_list):
-    """获取股票实时数据"""
     codes = ','.join(code_list)
     url = f'https://qt.gtimg.cn/q={codes}'
     try:
@@ -26,16 +25,18 @@ def fetch_stock_data(code_list):
         result = {}
         for line in data.strip().split(';'):
             if line.strip() and '~' in line:
-                parts = line.split('~')
-                code = parts[0].replace('v_', '')
-                result[code] = parts
+                try:
+                    code_key = line.split('=')[0].replace('var ', '').strip()
+                    parts = line.split('~')
+                    result[code_key] = parts
+                except: pass
         return result
-    except:
+    except Exception as e:
+        print(f"Stock fetch error: {e}", file=sys.stderr)
         return {}
 
 def fetch_global_data():
-    """获取全球期货数据"""
-    req = urllib.request.Request('https://hq.sinajs.cn/list=hf_NQ,hf_HSI,hf_NK,hf_CL,hf_GC',
+    req = urllib.request.Request('https://hq.sinajs.cn/list=hf_NQ,hf_HSI,hf_GC,hf_CL',
         headers={'Referer': 'https://finance.sina.com.cn/'})
     try:
         data = urllib.request.urlopen(req, timeout=8).read().decode('gbk')
@@ -47,75 +48,100 @@ def fetch_global_data():
                     name = vals[-1] if vals[-1] else "?"
                     price = float(vals[0])
                     prev = float(vals[7]) if vals[7] else price
-                    chg = round((price - prev) / prev * 100, 2)
+                    chg = round((price - prev) / prev * 100, 2) if prev else 0
                     result[name] = (price, chg)
         return result
-    except:
+    except Exception as e:
+        print(f"Global fetch error: {e}", file=sys.stderr)
         return {}
 
+def safe_idx(idx_data, code, idx=0):
+    """安全获取指数数据"""
+    if code in idx_data:
+        try:
+            parts = idx_data[code]
+            name = parts[1]
+            p = float(parts[3])
+            c = float(parts[4])
+            chg = round((p-c)/c*100, 2) if c else 0
+            return (name, p, chg)
+        except:
+            pass
+    return ('--', 0, 0)
+
+def safe_stock(stock_data, code):
+    """安全获取股票数据"""
+    key = f'v_{code}'
+    if key in stock_data:
+        try:
+            parts = stock_data[key]
+            p = float(parts[3])
+            c = float(parts[4])
+            chg = round((p-c)/c*100, 2) if c else 0
+            return (p, chg)
+        except:
+            pass
+    return (0, 0)
+
 def generate_html(stock_data, global_data):
-    """生成完整HTML"""
     now = datetime.now()
     time_str = now.strftime('%Y-%m-%d %H:%M:%S')
-    is_market = (now.hour >= 9 and now.hour < 15) or (now.hour == 9 and now.minute >= 30)
-    refresh_interval = 120 if is_market else 3600
+    bjt_h = now.hour + 8 if now.utcoffset() else now.hour
+    is_market = (bjt_h >= 9 and bjt_h < 15) or (bjt_h == 9 and now.minute >= 30)
+    refresh_interval = 120 if is_market else 1800
     
-    # 指数数据
-    idx_data = {}
-    for idx in ['sh000001', 'sz399001', 'sz399006', 'sh000688']:
-        if idx in stock_data:
-            parts = stock_data[idx]
-            name = parts[1]
-            price = float(parts[3])
-            close = float(parts[4])
-            chg = round((price - close) / close * 100, 2)
-            idx_data[idx] = (name, price, chg)
+    # 指数
+    idx_names = {'sh000001':'上证指数','sz399001':'深证成指','sz399006':'创业板指','sh000688':'科创50'}
+    idx_html = ''
+    for code, label in idx_names.items():
+        name, price, chg = safe_idx(stock_data, code)
+        color = '#34d399' if chg > 0 else ('#f87171' if chg < 0 else '#94a3b8')
+        is_kc = 'style="border:1px solid #334155"' if code == 'sh000688' else ''
+        kc_name = '<span style="color:#38bdf8">科创50 🚀</span>' if code == 'sh000688' else label
+        idx_html += f'<div class="index-item" {is_kc}><div class="name">{kc_name}</div><div class="val" style="color:{color}">{price:.2f}</div><div class="pct" style="color:{color}">{chg:+.2f}%</div></div>'
     
-    # 持仓数据
+    # 全球
+    global_rows = ''
+    for name, (price, chg) in global_data.items():
+        c = 'up' if chg > 0 else ('down' if chg < 0 else 'flat')
+        global_rows += f'<div class="global-item"><span class="g-name">{name}</span><span class="g-val">{price:.1f}</span><span class="chg chg-{c}">{"+" if chg>0 else ""}{chg}%</span></div>'
+    
+    # 持仓
     portfolio_rows = ''
-    for code, name, desc, chain, logic, risk in HOLDINGS:
-        if code in stock_data:
-            parts = stock_data[code]
-            price = float(parts[3])
-            close = float(parts[4])
-            chg = round((price - close) / close * 100, 2)
-            chg_class = 'up' if chg > 0.5 else ('down' if chg < -0.5 else 'flat')
-            chg_str = f"+{chg}%" if chg > 0 else f"{chg}%"
-            
-            sig = 'buy' if chg > 5 else ('watch' if chg < -3 else ('sell' if chg < -5 else 'hold'))
-            sig_text = '🔥强势' if chg > 5 else ('📈上涨' if chg > 2 else ('⚠️关注' if chg < -3 else ('💀警惕' if chg < -5 else '持有')))
-            
-            portfolio_rows += f"""
+    for code, cname, desc, chain, logic, risk in HOLDINGS:
+        price, chg = safe_stock(stock_data, code)
+        chg_class = 'up' if chg > 0.5 else ('down' if chg < -0.5 else 'flat')
+        chg_str = f"+{chg}%" if chg > 0 else f"{chg}%"
+        
+        sig = 'buy' if chg > 5 else ('watch' if chg < -3 else ('sell' if chg < -5 else 'hold'))
+        sig_text = '🔥强势' if chg > 5 else ('📈上涨' if chg > 2 else ('⚠️关注' if chg < -3 else ('💀警惕' if chg < -5 else '持有')))
+        
+        price_str = f'{price:.2f}' if price else '--'
+        
+        portfolio_rows += f'''
     <div class="card">
-      <div class="card-header"><span class="card-dot" style="background:{'#34d399' if chg>0 else '#f87171'}"></span>{desc}</div>
+      <div class="card-header"><span class="card-dot" style="background:{"#34d399" if chg>0 else "#f87171"}"></span>{desc}</div>
       <div class="price-row">
-        <span class="price-val">{price:.2f}</span>
+        <span class="price-val">{price_str}</span>
         <span class="chg chg-{chg_class}">{chg_str}</span>
       </div>
       <div class="chain">🔗 {chain}</div>
       <div class="msg msg-info">✅ {logic}</div>
       <div class="msg msg-warn">⚠️ {risk}</div>
       <div class="signal sig-{sig}">{sig_text}</div>
-    </div>"""
-    
-    # 全球数据
-    global_rows = ''
-    for name, (price, chg) in global_data.items():
-        c = 'up' if chg > 0 else ('down' if chg < 0 else 'flat')
-        global_rows += f'<div class="global-item"><span class="g-name">{name}</span><span class="g-val">{price:.1f}</span><span class="chg chg-{c}">{"+" if chg>0 else ""}{chg}%</span></div>'
+    </div>'''
     
     # 新闻
     news_items = [
-        ('今日', '科创50', '7连涨后今日回调，开盘+0.83%后回落', 'info'),
-        ('今日', '深科技', f'开盘强势，两天从51→{stock_data.get("sz000021",["","","","51.13"])[3] if "sz000021" in stock_data else "N/A"}，+19.7%', 'ok'),
-        ('今日', '华大', '基因测序赛道回暖', 'ok'),
-        ('今日', '金宏', '关注36支撑位', 'warn'),
+        ('今', '科创50', f'7连涨后今日回调', 'info'),
+        ('今', '深科技', f'两天从51→61，+19.7%验证封测逻辑', 'ok'),
+        ('今', '华大', '基因测序赛道回暖，+4.63%', 'ok'),
+        ('今', '金宏', '关注36支撑位，氦气逻辑未破', 'warn'),
         ('昨夜', '美股', '纳指+1.30%，纳指100+1.62%，科技强势', 'ok'),
         ('昨夜', 'SK海力士', 'ADR上市计划筹集40万亿韩元', 'info'),
         ('7/9', '罗洄头', '沉默第3天，判断全部应验', 'info'),
         ('7/9', '科创50', '昨日+8.41%创纪录！中芯涨停+13.74%', 'ok')
     ]
-    
     news_html = ''
     for t, tag, text, tp in news_items:
         tc = '#34d399' if tp == 'ok' else ('#f87171' if tp == 'warn' else '#38bdf8')
@@ -123,18 +149,17 @@ def generate_html(stock_data, global_data):
     
     # 分析
     analysis = [
-        ('🧠', '科创50今日回调属于大涨后正常调整，7连涨后休息正常', 'hold'),
-        ('🔥', '深科技验证了"存储封测铲子"逻辑，HBM挤压通用DRAM→封测需求增', 'buy'),
-        ('💡', '华大加速上涨，基因测序是AI在医疗领域最直接的应用场景', 'buy'),
-        ('⚠️', '金宏跌至36.4，但氦气逻辑没有破(物理不可替代)，36是重要支撑', 'watch'),
-        ('📊', '中芯从173回落，涨停后正常回调，AI芯片龙头逻辑不变', 'hold'),
+        ('🧠', '科创50今日回调正常，7连涨后休息一下', 'hold'),
+        ('🔥', '深科技验证"存储封测铲子"逻辑，HBM挤压通用DRAM', 'buy'),
+        ('💡', '华大加速，基因测序是AI在医疗最直接的应用', 'buy'),
+        ('⚠️', '金宏跌至36.4，氦气逻辑未破(物理不可替代)，36支撑', 'watch'),
+        ('📊', '中芯从173回落，涨停后正常回调，AI芯片逻辑不变', 'hold'),
         ('🌍', '纳指+1.30%+日经+1.71%→全球科技共振仍在', 'hold')
     ]
     analysis_html = ''
     for tag, text, tp in analysis:
         analysis_html += f'<div class="analysis-item"><span class="analysis-tag analysis-{tp}">{tag}</span><span class="news-text">{text}</span></div>'
     
-    # 组装
     return f'''<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -200,27 +225,18 @@ h1{{font-size:22px;display:flex;align-items:center;gap:8px}}
   </div>
 </div>
 
-<!-- 指数 -->
 <div class="card" style="margin-bottom:12px">
-  <div class="index-grid">
-    <div class="index-item"><div class="name">上证指数</div><div class="val" style="color:{'#34d399' if idx_data.get('sh000001',[None,None,None,0])[2] > 0 else '#f87171'}">{idx_data.get('sh000001',[None,None,0])[1]:.2f}</div><div class="pct" style="color:{'#34d399' if idx_data.get('sh000001',[None,None,None,0])[2] > 0 else '#f87171'}">{idx_data.get('sh000001',[None,None,0])[2]:+.2f}%</div></div>
-    <div class="index-item"><div class="name">深证成指</div><div class="val" style="color:{'#34d399' if idx_data.get('sz399001',[None,None,None,0])[2] > 0 else '#f87171'}">{idx_data.get('sz399001',[None,None,0])[1]:.2f}</div><div class="pct" style="color:{'#34d399' if idx_data.get('sz399001',[None,None,None,0])[2] > 0 else '#f87171'}">{idx_data.get('sz399001',[None,None,0])[2]:+.2f}%</div></div>
-    <div class="index-item"><div class="name">创业板指</div><div class="val" style="color:{'#34d399' if idx_data.get('sz399006',[None,None,None,0])[2] > 0 else '#f87171'}">{idx_data.get('sz399006',[None,None,0])[1]:.2f}</div><div class="pct" style="color:{'#34d399' if idx_data.get('sz399006',[None,None,None,0])[2] > 0 else '#f87171'}">{idx_data.get('sz399006',[None,None,0])[2]:+.2f}%</div></div>
-    <div class="index-item" style="border:1px solid #334155"><div class="name" style="color:#38bdf8">科创50 🚀</div><div class="val" style="color:{'#34d399' if idx_data.get('sh000688',[None,None,None,0])[2] > 0 else '#f87171'}">{idx_data.get('sh000688',[None,None,0])[1]:.2f}</div><div class="pct" style="color:{'#34d399' if idx_data.get('sh000688',[None,None,None,0])[2] > 0 else '#f87171'}">{idx_data.get('sh000688',[None,None,0])[2]:+.2f}%</div></div>
-  </div>
+  <div class="index-grid">{idx_html}</div>
   <div class="global-grid">{global_rows}</div>
 </div>
 
-<!-- 持仓 -->
 <div class="grid">{portfolio_rows}</div>
 
-<!-- 新闻 -->
 <div class="news-section">
   <div class="section-title">📰 相关新闻</div>
   {news_html}
 </div>
 
-<!-- 分析 -->
 <div class="analysis-section">
   <div class="section-title">🧠 底层逻辑判断</div>
   {analysis_html}

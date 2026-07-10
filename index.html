@@ -1,334 +1,191 @@
+Fetching stock data...
+Got 13 stocks
+Fetching global data...
+Got 2 global items
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="refresh" content="120">
 <title>📊 持仓实时Dashboard</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:#0f172a;color:#e2e8f0;padding:16px}
 h1{font-size:22px;display:flex;align-items:center;gap:8px}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px}
-.status-bar{display:flex;gap:16px;font-size:12px;color:#94a3b8;align-items:center}
-.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
-.status-dot.green{background:#34d399;animation:pulse 2s infinite}
-.status-dot.red{background:#f87171}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.stats{font-size:12px;color:#94a3b8;display:flex;gap:12px;align-items:center}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:16px}
 .card{background:#1e293b;border-radius:10px;padding:14px;border:1px solid #334155}
-.card h3{font-size:13px;color:#38bdf8;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.card-header{font-size:13px;color:#38bdf8;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.card-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
 .price-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .price-val{font-size:24px;font-weight:700}
 .chg{padding:2px 8px;border-radius:4px;font-size:14px;font-weight:600}
 .chg-up{background:#064e3b;color:#34d399}
 .chg-down{background:#450a0a;color:#f87171}
 .chg-flat{background:#1e293b;color:#94a3b8}
-.meta{font-size:11px;color:#64748b;margin:4px 0}
-.meta span{margin-right:12px}
 .chain{font-size:11px;color:#64748b;padding:6px 8px;background:#0f172a;border-radius:6px;margin-top:6px;line-height:1.5}
-.chain .hl{color:#fbbf24}
 .msg{background:#0f172a;border-radius:6px;padding:6px 8px;margin-top:6px;font-size:11px;line-height:1.5;border-left:2px solid #38bdf8}
-.msg.warn{border-left-color:#f87171}
-.msg.ok{border-left-color:#34d399}
-.msg.info{border-left-color:#38bdf8}
-.index-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:12px}
-.index-item{background:#0f172a;border-radius:8px;padding:8px;text-align:center}
+.msg-warn{border-left-color:#f87171}
+.msg-info{border-left-color:#38bdf8}
+.signal{text-align:right;font-size:11px;margin-top:4px;padding:2px 8px;border-radius:4px;display:inline-block;float:right}
+.sig-buy{background:#064e3b;color:#34d399}
+.sig-hold{background:#1e293b;color:#fbbf24}
+.sig-watch{background:#450a0a;color:#f87171}
+.sig-sell{background:#7f1d1d;color:#ef4444}
+.index-grid,.global-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:12px}
+.index-item,.global-item{background:#0f172a;border-radius:8px;padding:8px;text-align:center}
 .index-item .name{font-size:11px;color:#64748b}
 .index-item .val{font-size:16px;font-weight:700;margin:2px 0}
 .index-item .pct{font-size:12px}
-.news-section{background:#1e293b;border-radius:10px;padding:14px;border:1px solid #334155;margin-bottom:16px}
+.g-name{font-size:11px;color:#94a3b8;display:block}
+.g-val{font-size:14px;font-weight:700;display:block;margin:2px 0}
+.news-section,.analysis-section{background:#1e293b;border-radius:10px;padding:14px;border:1px solid #334155;margin-bottom:16px}
+.section-title{font-size:13px;color:#38bdf8;margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .news-item{padding:6px 0;border-bottom:1px solid #0f172a;font-size:12px;display:flex;gap:8px;align-items:flex-start}
 .news-item:last-child{border:none}
-.news-tag{background:#0f172a;padding:1px 6px;border-radius:3px;font-size:10px;white-space:nowrap;color:#38bdf8;margin-top:1px}
-.news-text{color:#cbd5e1}
+.news-tag{background:#0f172a;padding:1px 6px;border-radius:3px;font-size:10px;white-space:nowrap}
 .news-time{color:#475569;font-size:10px;white-space:nowrap}
-.analysis-section{background:#1e293b;border-radius:10px;padding:14px;border:1px solid #334155;margin-bottom:16px}
+.news-text{color:#cbd5e1}
 .analysis-item{padding:4px 0;font-size:12px;display:flex;gap:8px;align-items:flex-start}
 .analysis-tag{background:#0f172a;padding:1px 6px;border-radius:3px;font-size:10px;white-space:nowrap}
-.analysis-tag.buy{color:#34d399}
-.analysis-tag.hold{color:#fbbf24}
-.analysis-tag.watch{color:#f87171}
-.analysis-tag.sell{color:#ef4444}
+.analysis-buy{color:#34d399}
+.analysis-hold{color:#fbbf24}
+.analysis-watch{color:#f87171}
 .footer{text-align:center;color:#475569;font-size:11px;padding:12px;border-top:1px solid #1e293b;margin-top:16px}
-.refresh-btn{background:#1e293b;border:1px solid #334155;color:#94a3b8;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:12px}
-.refresh-btn:hover{background:#334155}
-.countdown{font-size:11px;color:#475569}
 </style>
 </head>
 <body>
 
 <div class="header">
   <h1>📊 持仓实时Dashboard</h1>
-  <div class="status-bar">
-    <span id="statusDot"><span class="status-dot green"></span> 实时</span>
-    <span id="clock">--:--:--</span>
-    <span id="countdown" class="countdown">下次刷新: 120s</span>
-    <button class="refresh-btn" onclick="forceRefresh()">⟳ 刷新</button>
+  <div class="stats">
+    <span>🟢 实时</span>
+    <span>2026-07-10 11:01:07</span>
+    <span>每120秒自动刷新</span>
   </div>
 </div>
 
-<!-- 大盘指数 -->
-<div class="card" style="margin-bottom:12px;">
-  <div class="index-grid" id="indexGrid">
-    <div class="index-item"><div class="name">上证指数</div><div class="val" id="idx_sh">--</div><div class="pct" id="idx_sh_chg">--</div></div>
-    <div class="index-item"><div class="name">深证成指</div><div class="val" id="idx_sz">--</div><div class="pct" id="idx_sz_chg">--</div></div>
-    <div class="index-item"><div class="name">创业板指</div><div class="val" id="idx_cy">--</div><div class="pct" id="idx_cy_chg">--</div></div>
-    <div class="index-item" style="border:1px solid #334155"><div class="name" style="color:#38bdf8">科创50 🚀</div><div class="val" id="idx_kc">--</div><div class="pct" id="idx_kc_chg">--</div></div>
-    <div class="index-item"><div class="name">恒生期货</div><div class="val" id="idx_hsi">--</div><div class="pct" id="idx_hsi_chg">--</div></div>
-    <div class="index-item"><div class="name">纳指期货</div><div class="val" id="idx_nq">--</div><div class="pct" id="idx_nq_chg">--</div></div>
-  </div>
+<div class="card" style="margin-bottom:12px">
+  <div class="index-grid"><div class="index-item" ><div class="name">上证指数</div><div class="val" style="color:#94a3b8">0.00</div><div class="pct" style="color:#94a3b8">+0.00%</div></div><div class="index-item" ><div class="name">深证成指</div><div class="val" style="color:#94a3b8">0.00</div><div class="pct" style="color:#94a3b8">+0.00%</div></div><div class="index-item" ><div class="name">创业板指</div><div class="val" style="color:#94a3b8">0.00</div><div class="pct" style="color:#94a3b8">+0.00%</div></div><div class="index-item" style="border:1px solid #334155"><div class="name"><span style="color:#38bdf8">科创50 🚀</span></div><div class="val" style="color:#94a3b8">0.00</div><div class="pct" style="color:#94a3b8">+0.00%</div></div></div>
+  <div class="global-grid"><div class="global-item"><span class="g-name">0</span><span class="g-val">72.4</span><span class="chg chg-up">+0.4%</span></div><div class="global-item"><span class="g-name">66833</span><span class="g-val">24415.9</span><span class="chg chg-up">+1.83%</span></div></div>
 </div>
 
-<!-- 持仓网格 -->
-<div class="grid" id="stockGrid"></div>
+<div class="grid">
+    <div class="card">
+      <div class="card-header"><span class="card-dot" style="background:#f87171"></span>AI芯片制造龙头</div>
+      <div class="price-row">
+        <span class="price-val">170.83</span>
+        <span class="chg chg-down">-1.25%</span>
+      </div>
+      <div class="chain">🔗 半导体制造→AI芯片→HBM/GPU</div>
+      <div class="msg msg-info">✅ 中国最先进制程，AI芯片刚需</div>
+      <div class="msg msg-warn">⚠️ 地缘政治限制设备进口</div>
+      <div class="signal sig-hold">持有</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-dot" style="background:#34d399"></span>存储封测铲子</div>
+      <div class="price-row">
+        <span class="price-val">60.95</span>
+        <span class="chg chg-up">+8.37%</span>
+      </div>
+      <div class="chain">🔗 封测→长鑫/长存→AI服务器</div>
+      <div class="msg msg-info">✅ HBM挤压通用DRAM→封测需求增，14.7亿扩产</div>
+      <div class="msg msg-warn">⚠️ HBM仍在研发</div>
+      <div class="signal sig-buy">🔥强势</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-dot" style="background:#f87171"></span>光刻胶国产替代</div>
+      <div class="price-row">
+        <span class="price-val">86.18</span>
+        <span class="chg chg-down">-3.77%</span>
+      </div>
+      <div class="chain">🔗 光刻胶→晶圆制造→芯片</div>
+      <div class="msg msg-info">✅ ArF/KrF光刻胶国产龙头，中芯绑定深</div>
+      <div class="msg msg-warn">⚠️ 高端光刻胶仍在验证</div>
+      <div class="signal sig-watch">⚠️关注</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-dot" style="background:#f87171"></span>特气/氦气龙头</div>
+      <div class="price-row">
+        <span class="price-val">35.80</span>
+        <span class="chg chg-down">-5.91%</span>
+      </div>
+      <div class="chain">🔗 氦气/特气→半导体制造</div>
+      <div class="msg msg-info">✅ 氦气物理不可替代，90%进口，国产替代</div>
+      <div class="msg msg-warn">⚠️ PE 219偏高</div>
+      <div class="signal sig-watch">⚠️关注</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-dot" style="background:#34d399"></span>基因测序国产龙头</div>
+      <div class="price-row">
+        <span class="price-val">58.23</span>
+        <span class="chg chg-up">+4.21%</span>
+      </div>
+      <div class="chain">🔗 测序仪→医院/药企→精准医疗</div>
+      <div class="msg msg-info">✅ 国产测序唯一标的，全球第三</div>
+      <div class="msg msg-warn">⚠️ 集采政策风险</div>
+      <div class="signal sig-hold">📈上涨</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-dot" style="background:#34d399"></span>CAE仿真软件</div>
+      <div class="price-row">
+        <span class="price-val">215.96</span>
+        <span class="chg chg-up">+2.51%</span>
+      </div>
+      <div class="chain">🔗 CAE软件→军工/车企→研发</div>
+      <div class="msg msg-info">✅ 国产CAE龙头，军工市占率第一</div>
+      <div class="msg msg-warn">⚠️ 客户拓展慢</div>
+      <div class="signal sig-hold">📈上涨</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-dot" style="background:#34d399"></span>新能源车龙头</div>
+      <div class="price-row">
+        <span class="price-val">88.16</span>
+        <span class="chg chg-up">+1.48%</span>
+      </div>
+      <div class="chain">🔗 新能源车→电池→出海</div>
+      <div class="msg msg-info">✅ 销量全球第一，出海加速</div>
+      <div class="msg msg-warn">⚠️ 价格战激烈</div>
+      <div class="signal sig-hold">持有</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-dot" style="background:#34d399"></span>锂矿</div>
+      <div class="price-row">
+        <span class="price-val">23.64</span>
+        <span class="chg chg-up">+0.64%</span>
+      </div>
+      <div class="chain">🔗 锂矿→碳酸锂→电池</div>
+      <div class="msg msg-info">✅ 罗洄说还没到底，等信号</div>
+      <div class="msg msg-warn">⚠️ 锂价低迷</div>
+      <div class="signal sig-hold">持有</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-dot" style="background:#f87171"></span>超级电容/活性炭</div>
+      <div class="price-row">
+        <span class="price-val">24.08</span>
+        <span class="chg chg-down">-3.22%</span>
+      </div>
+      <div class="chain">🔗 超级电容→储能→新能源</div>
+      <div class="msg msg-info">✅ 从底部企稳中</div>
+      <div class="msg msg-warn">⚠️ 市场规模有限</div>
+      <div class="signal sig-watch">⚠️关注</div>
+    </div></div>
 
-<!-- 新闻 -->
 <div class="news-section">
-  <h3 style="font-size:13px;color:#38bdf8;margin-bottom:8px;">📰 相关新闻</h3>
-  <div id="newsContainer">
-    <div class="news-item"><span class="news-tag">加载中</span><span class="news-text">正在获取最新消息...</span></div>
-  </div>
+  <div class="section-title">📰 相关新闻</div>
+  <div class="news-item"><span class="news-time">今</span><span class="news-tag" style="color:#38bdf8">科创50</span><span class="news-text">7连涨后今日回调</span></div><div class="news-item"><span class="news-time">今</span><span class="news-tag" style="color:#34d399">深科技</span><span class="news-text">两天从51→61，+19.7%验证封测逻辑</span></div><div class="news-item"><span class="news-time">今</span><span class="news-tag" style="color:#34d399">华大</span><span class="news-text">基因测序赛道回暖，+4.63%</span></div><div class="news-item"><span class="news-time">今</span><span class="news-tag" style="color:#f87171">金宏</span><span class="news-text">关注36支撑位，氦气逻辑未破</span></div><div class="news-item"><span class="news-time">昨夜</span><span class="news-tag" style="color:#34d399">美股</span><span class="news-text">纳指+1.30%，纳指100+1.62%，科技强势</span></div><div class="news-item"><span class="news-time">昨夜</span><span class="news-tag" style="color:#38bdf8">SK海力士</span><span class="news-text">ADR上市计划筹集40万亿韩元</span></div><div class="news-item"><span class="news-time">7/9</span><span class="news-tag" style="color:#38bdf8">罗洄头</span><span class="news-text">沉默第3天，判断全部应验</span></div><div class="news-item"><span class="news-time">7/9</span><span class="news-tag" style="color:#34d399">科创50</span><span class="news-text">昨日+8.41%创纪录！中芯涨停+13.74%</span></div>
 </div>
 
-<!-- 分析 -->
 <div class="analysis-section">
-  <h3 style="font-size:13px;color:#38bdf8;margin-bottom:8px;">🧠 底层逻辑判断</h3>
-  <div id="analysisContainer">
-    <div class="analysis-item"><span class="analysis-tag hold">⏳</span>等待数据更新...</div>
-  </div>
+  <div class="section-title">🧠 底层逻辑判断</div>
+  <div class="analysis-item"><span class="analysis-tag analysis-hold">🧠</span><span class="news-text">科创50今日回调正常，7连涨后休息一下</span></div><div class="analysis-item"><span class="analysis-tag analysis-buy">🔥</span><span class="news-text">深科技验证"存储封测铲子"逻辑，HBM挤压通用DRAM</span></div><div class="analysis-item"><span class="analysis-tag analysis-buy">💡</span><span class="news-text">华大加速，基因测序是AI在医疗最直接的应用</span></div><div class="analysis-item"><span class="analysis-tag analysis-watch">⚠️</span><span class="news-text">金宏跌至36.4，氦气逻辑未破(物理不可替代)，36支撑</span></div><div class="analysis-item"><span class="analysis-tag analysis-hold">📊</span><span class="news-text">中芯从173回落，涨停后正常回调，AI芯片逻辑不变</span></div><div class="analysis-item"><span class="analysis-tag analysis-hold">🌍</span><span class="news-text">纳指+1.30%+日经+1.71%→全球科技共振仍在</span></div>
 </div>
 
 <div class="footer">
-  📊 每2分钟自动刷新（交易时段）| 每小时刷新（非交易时段）| 数据来源: 腾讯财经API
+  📊 每120秒自动刷新 | 数据来源: 腾讯财经API | Generated at 2026-07-10 11:01:07
 </div>
 
-<script>
-// ========== 持仓配置 ==========
-const HOLDINGS = [
-  { id:'sh688981', name:'中芯国际', code:'688981', desc:'AI芯片制造龙头', chain:'半导体制造→AI芯片→HBM/GPU', logic:'中国最先进制程，AI芯片刚需', risk:'地缘政治限制设备进口' },
-  { id:'sz000021', name:'深科技', code:'000021', desc:'存储封测铲子', chain:'存储封测→长鑫/长存→AI服务器', logic:'HBM挤压通用DRAM→封测需求增，14.7亿扩产', risk:'HBM仍在研发' },
-  { id:'sh603650', name:'彤程新材', code:'603650', desc:'光刻胶国产替代', chain:'光刻胶→晶圆制造→芯片', logic:'ArF/KrF光刻胶国产龙头，中芯绑定深', risk:'高端光刻胶仍在验证' },
-  { id:'sh688106', name:'金宏气体', code:'688106', desc:'特气/氦气龙头', chain:'氦气/特气→半导体制造', logic:'氦气物理不可替代，90%进口，国产替代', risk:'PE 219偏高' },
-  { id:'sh688114', name:'华大智造', code:'688114', desc:'基因测序国产龙头', chain:'基因测序仪→医院/药企→精准医疗', logic:'国产测序唯一标的，全球第三', risk:'集采政策风险' },
-  { id:'sh688507', name:'索辰科技', code:'688507', desc:'CAE仿真软件', chain:'CAE软件→军工/车企→研发效率', logic:'国产CAE龙头，军工市占率第一', risk:'客户拓展慢' },
-  { id:'sz002594', name:'比亚迪', code:'002594', desc:'新能源车龙头', chain:'新能源车→电池→出海', logic:'销量全球第一，出海加速', risk:'价格战激烈' },
-  { id:'sz000762', name:'西藏矿业', code:'000762', desc:'锂矿', chain:'锂矿→碳酸锂→电池', logic:'罗洄说还没到底，等信号', risk:'锂价低迷，产能过剩' },
-  { id:'sz300174', name:'元力股份', code:'300174', desc:'超级电容/活性炭', chain:'超级电容→储能→新能源', logic:'从底部企稳中', risk:'市场规模有限' }
-];
-
-// 指数代码映射
-const INDICES = {
-  sh:'sh000001', sz:'sz399001', cy:'sz399006', kc:'sh000688'
-};
-
-// ========== 数据获取 ==========
-function fetchPrices() {
-  const codes = HOLDINGS.map(h => h.id).join(',');
-  const idxCodes = Object.values(INDICES).join(',');
-  
-  // 加载指数数据
-  loadScript(`https://qt.gtimg.cn/q=${idxCodes},${codes}&t=${Date.now()}`);
-  
-  // 加载期货数据
-  loadScript(`https://hq.sinajs.cn/list=hf_NQ,hf_HSI&t=${Date.now()}`);
-}
-
-function loadScript(url) {
-  const s = document.createElement('script');
-  s.src = url;
-  s.onload = () => setTimeout(() => s.remove(), 100);
-  s.onerror = () => console.warn('Fetch failed:', url);
-  document.head.appendChild(s);
-}
-
-// ========== 解析数据 ==========
-// qt.gtimg.cn 返回 v_code="..." 格式，作为全局变量
-function parseData() {
-  const now = new Date();
-  const h = now.getHours(), m = now.getMinutes();
-  const isMarketOpen = (h >= 9 && h < 15) || (h === 9 && m >= 30);
-  
-  // 更新时钟
-  document.getElementById('clock').textContent = now.toLocaleTimeString('zh-CN');
-  
-  // 解析指数
-  const idxMap = { sh:'idx_sh', sz:'idx_sz', cy:'idx_cy', kc:'idx_kc' };
-  Object.entries(INDICES).forEach(([key, val]) => {
-    const raw = window[`v_${val}`];
-    if (raw) {
-      const parts = raw.split('~');
-      const price = parseFloat(parts[3]) || 0;
-      const close = parseFloat(parts[4]) || price;
-      const chg = close ? ((price - close) / close * 100).toFixed(2) : '0.00';
-      document.getElementById(idxMap[key]).textContent = price.toFixed(2);
-      const el = document.getElementById(`${idxMap[key]}_chg`);
-      el.textContent = `${chg > 0 ? '+' : ''}${chg}%`;
-      el.style.color = chg > 0 ? '#34d399' : chg < 0 ? '#f87171' : '#94a3b8';
-    }
-  });
-  
-  // 解析期货
-  // hf_NQ, hf_HSI 的格式是逗号分隔
-  const hsiRaw = window.v_hf_HSI;
-  if (hsiRaw) {
-    const vals = hsiRaw.split(',');
-    const price = parseFloat(vals[1]) || 0;
-    const prev = parseFloat(vals[8]) || price;
-    const chg = prev ? ((price - prev) / prev * 100).toFixed(2) : '0.00';
-    document.getElementById('idx_hsi').textContent = price.toFixed(1);
-    const el = document.getElementById('idx_hsi_chg');
-    el.textContent = `${chg > 0 ? '+' : ''}${chg}%`;
-    el.style.color = chg > 0 ? '#34d399' : '#94a3b8';
-  }
-  const nqRaw = window.v_hf_NQ;
-  if (nqRaw) {
-    const vals = nqRaw.split(',');
-    const price = parseFloat(vals[1]) || 0;
-    const prev = parseFloat(vals[8]) || price;
-    const chg = prev ? ((price - prev) / prev * 100).toFixed(2) : '0.00';
-    document.getElementById('idx_nq').textContent = price.toFixed(1);
-    const el = document.getElementById('idx_nq_chg');
-    el.textContent = `${chg > 0 ? '+' : ''}${chg}%`;
-    el.style.color = chg > 0 ? '#34d399' : '#94a3b8';
-  }
-  
-  // 解析持仓
-  let gridHtml = '';
-  HOLDINGS.forEach(h => {
-    const raw = window[`v_${h.id}`];
-    let price = '--', chg = 0, chgStr = '--', chgClass = 'chg-flat';
-    
-    if (raw) {
-      const parts = raw.split('~');
-      const p = parseFloat(parts[3]) || 0;
-      const c = parseFloat(parts[4]) || p;
-      chg = c ? ((p - c) / c * 100) : 0;
-      price = p.toFixed(2);
-      chgStr = `${chg > 0 ? '+' : ''}${chg.toFixed(2)}%`;
-      chgClass = chg > 0.5 ? 'chg-up' : chg < -0.5 ? 'chg-down' : 'chg-flat';
-    }
-    
-    // 逻辑判断
-    let signal = 'hold', signalText = '持有';
-    if (chg > 5) { signal = 'buy'; signalText = '🔥强势'; }
-    else if (chg > 2) { signal = 'buy'; signalText = '📈上涨'; }
-    else if (chg < -3) { signal = 'watch'; signalText = '⚠️关注'; }
-    else if (chg < -5) { signal = 'sell'; signalText = '💀警惕'; }
-    
-    gridHtml += `<div class="card">
-      <h3>${h.desc}</h3>
-      <div class="price-row">
-        <div class="price-val">${price}</div>
-        <div class="chg ${chgClass}">${chgStr}</div>
-      </div>
-      <div class="chain">🔗 ${h.chain}</div>
-      <div class="msg info">✅ ${h.logic}</div>
-      <div class="msg warn">⚠️ ${h.risk}</div>
-      <div style="margin-top:4px;text-align:right;font-size:11px;">
-        <span class="analysis-tag ${signal}">${signalText}</span>
-      </div>
-    </div>`;
-  });
-  
-  document.getElementById('stockGrid').innerHTML = gridHtml;
-  
-  // 更新新闻
-  updateNews();
-  
-  // 更新分析
-  updateAnalysis();
-  
-  // 设置下次刷新
-  const nextRefresh = isMarketOpen ? 120 : 3600;
-  startCountdown(nextRefresh);
-}
-
-// ========== 新闻 ==========
-function updateNews() {
-  const news = [
-    { time: '今日', tag: '科创50', text: '7连涨后今日小幅回调，+0.83%开盘后回落至-0.45%', type: 'info' },
-    { time: '今日', tag: '深科技', text: '开盘+8.82%后维持+7.93%，两天从51→61，+19.7%', type: 'ok' },
-    { time: '今日', tag: '华大智造', text: '加速上涨+4.63%，基因测序赛道回暖', type: 'ok' },
-    { time: '今日', tag: '金宏气体', text: '回调-4.34%至36.4，关注36支撑位', type: 'warn' },
-    { time: '昨夜', tag: '美股', text: '纳指+1.30%，纳指100+1.62%，科技股继续强势', type: 'ok' },
-    { time: '昨夜', tag: 'SK海力士', text: 'ADR上市计划筹集40万亿韩元，此前为43万亿', type: 'info' },
-    { time: '7/9', tag: '罗洄头', text: '沉默第3天，他的"价值1亿的图"赞数从298→316', type: 'info' },
-    { time: '7/9', tag: '科创50', text: '昨日+8.41%创纪录！中芯涨停+13.74%，深科技+9.99%', type: 'ok' }
-  ];
-  
-  let html = '';
-  news.forEach(n => {
-    const tagColor = n.type === 'ok' ? '#34d399' : n.type === 'warn' ? '#f87171' : '#38bdf8';
-    html += `<div class="news-item">
-      <span class="news-time">${n.time}</span>
-      <span class="news-tag" style="color:${tagColor}">${n.tag}</span>
-      <span class="news-text">${n.text}</span>
-    </div>`;
-  });
-  document.getElementById('newsContainer').innerHTML = html;
-}
-
-// ========== 分析 ==========
-function updateAnalysis() {
-  const analysis = [
-    { tag: '🧠', text: '科创50今日回调-0.45%属于大涨后的正常技术性调整，7连涨后休息一下很正常', type: 'hold' },
-    { tag: '🔥', text: '深科技两天+19.7%验证了"存储封测铲子"逻辑，HBM挤压通用DRAM→封测需求增', type: 'buy' },
-    { tag: '💡', text: '华大+4.63%加速上涨，基因测序是AI在医疗领域最直接的应用场景', type: 'buy' },
-    { tag: '⚠️', text: '金宏-4.34%跌至36.4，但氦气逻辑没有破(物理不可替代)，36是重要支撑', type: 'watch' },
-    { tag: '📊', text: '中芯从173回落到169.7(-1.90%)，昨天涨停后正常回调，AI芯片龙头逻辑不变', type: 'hold' },
-    { tag: '🌍', text: '纳指+1.30%+日经+1.71%→全球科技共振仍在，A股半导体不会独跌', type: 'hold' }
-  ];
-  
-  let html = '';
-  analysis.forEach(a => {
-    html += `<div class="analysis-item">
-      <span class="analysis-tag ${a.type}">${a.tag}</span>
-      <span class="news-text">${a.text}</span>
-    </div>`;
-  });
-  document.getElementById('analysisContainer').innerHTML = html;
-}
-
-// ========== 自动刷新 ==========
-let countdownInterval;
-
-function startCountdown(seconds) {
-  if (countdownInterval) clearInterval(countdownInterval);
-  let remaining = seconds;
-  const el = document.getElementById('countdown');
-  
-  countdownInterval = setInterval(() => {
-    remaining--;
-    const min = Math.floor(remaining / 60);
-    const sec = remaining % 60;
-    el.textContent = `下次刷新: ${min > 0 ? `${min}分` : ''}${sec}秒`;
-    if (remaining <= 0) {
-      clearInterval(countdownInterval);
-      forceRefresh();
-    }
-  }, 1000);
-}
-
-function forceRefresh() {
-  document.getElementById('statusDot').innerHTML = '<span class="status-dot green" style="animation:none"></span> 刷新中...';
-  fetchPrices();
-  setTimeout(() => {
-    document.getElementById('statusDot').innerHTML = '<span class="status-dot green"></span> 实时';
-  }, 3000);
-}
-
-// ========== 初始化 ==========
-// 定时轮询
-setInterval(() => {
-  const now = new Date();
-  const h = now.getHours(), m = now.getMinutes();
-  const isMarketOpen = (h >= 9 && h < 15) || (h === 9 && m >= 30);
-  // 每2分钟刷新一次（无论是否开市，由用户自行决定刷新频率）
-  // 倒计时已由 startCountdown 控制
-}, 2000);
-
-// 启动
-fetchPrices();
-</script>
 </body>
 </html>
