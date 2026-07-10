@@ -104,7 +104,7 @@ h1{font-size:22px;display:flex;align-items:center;gap:8px}
 <script>
 // ========== 配置 ==========
 const HOLDINGS = [
-  {id:'sh688981',name:'中芯国际',desc:'AI芯片制造龙头',chain:'半导体制造→AI芯片→HBM/GPU',logic:'中国最先进制程，AI芯片刚需',risk:'地缘政治限制设备进口'},
+  {id:'hk00981',name:'中芯国际',desc:'AI芯片制造龙头(H股)',chain:'半导体制造→AI芯片→HBM/GPU',logic:'中国最先进制程，AI芯片刚需',risk:'地缘政治限制设备进口',isHk:true},
   {id:'sz000021',name:'深科技',desc:'存储封测铲子',chain:'存储封测→长鑫/长存→AI服务器',logic:'HBM挤压通用DRAM→封测需求增，14.7亿扩产',risk:'HBM仍在研发'},
   {id:'sh603650',name:'彤程新材',desc:'光刻胶国产替代',chain:'光刻胶→晶圆制造→芯片',logic:'ArF/KrF光刻胶国产龙头，中芯绑定深',risk:'高端光刻胶仍在验证'},
   {id:'sh688106',name:'金宏气体',desc:'特气/氦气龙头',chain:'氦气/特气→半导体制造',logic:'氦气物理不可替代，90%进口，国产替代',risk:'PE 219偏高'},
@@ -182,12 +182,13 @@ function render(data) {
     let price = 0, chg = 0, priceStr = '--', chgStr = '--', cls = 'chg-flat';
     
     if (parts && parts.length > 4) {
-      const p = parseFloat(parts[3]) || 0;
-      const c = parseFloat(parts[4]) || p;
-      chg = c ? ((p-c)/c*100) : 0;
-      price = p;
-      priceStr = p.toFixed(2);
-      chgStr = (chg > 0 ? '+' : '') + chg.toFixed(2) + '%';
+          const p = parseFloat(parts[3]) || 0;
+          const c = parseFloat(parts[4]) || p;
+          chg = c ? ((p-c)/c*100) : 0;
+          price = p;
+          priceStr = p.toFixed(2);
+          if (h.isHk) priceStr += ' <span style="font-size:11px;color:#94a3b8;font-weight:400">HKD</span>';
+          chgStr = (chg > 0 ? '+' : '') + chg.toFixed(2) + '%';
       cls = chg > 0.5 ? 'chg-up' : chg < -0.5 ? 'chg-down' : 'chg-flat';
     }
     
