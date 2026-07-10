@@ -110,11 +110,15 @@ h1{font-size:20px;display:flex;align-items:center;gap:6px}
 </div>
 
 <div class="card" style="border-color:#f97316">
-  <div class="card-title" style="color:#f97316">📈 连板历史柱状图 · 60日</div>
-  <div class="ladder-box"><canvas id="lc" width="880" height="220" style="width:100%;height:200px"></canvas></div>
-  <div id="ls" style="display:flex;gap:10px;flex-wrap:wrap;font-size:11px;margin-bottom:4px"></div>
-  <div id="lt" style="font-size:11px;color:#94a3b8"></div>
-  <div class="ladder-note">每个柱子=当日涨停数 | 颜色越红=连板越高 | 每小时更新</div>
+  <div class="card-title" style="color:#f97316">📈 连板连线图 · 连续2天+涨停追踪</div>
+  <div class="ladder-box" style="overflow-x:auto">
+    <table id="ladderTable" style="width:100%;border-collapse:collapse;font-size:11px">
+      <thead id="ltHead"></thead>
+      <tbody id="ltBody"></tbody>
+    </table>
+  </div>
+  <div id="ls" style="display:flex;gap:10px;flex-wrap:wrap;font-size:11px;margin:6px 0"></div>
+  <div class="ladder-note">每行=一只连板股 | 每列=一个交易日 | 色块=该日涨停 | 数字=连板数 | GH Actions每小时扫描200+只股票</div>
 </div>
 
 <div class="card">
@@ -275,61 +279,108 @@ function renderWatch(){
     </div>`;
 }
 
-// ===== 连板柱状图 =====
+// ===== 连板连线图 =====
 function renderLadder(){
-  const d=LBD.data,ds=Object.keys(d).sort();
-  const c=document.getElementById('lc'),ctx=c.getContext('2d'),W=c.width,H=c.height;
-  ctx.clearRect(0,0,W,H);
-  if(!ds.length){return}
+  const d=LBD.data,ds=Object.keys(d).sort(); // sorted dates
+  const tb=document.getElementById('ltBody'),th=document.getElementById('ltHead');
   
-  const vals=ds.map(x=>d[x].total_limit||0),maxV=Math.max(...vals,5);
-  const ml=35,mr=8,mt=18,mb=30,cw=W-ml-mr,ch=H-mt-mb,bw=Math.max(3,Math.min(10,cw/ds.length-1));
-  
-  // Grid
-  ctx.strokeStyle='#1e293b';ctx.lineWidth=0.5;
-  for(let i=0;i<=4;i++){const y=mt+ch-(ch*i/4);ctx.beginPath();ctx.moveTo(ml,y);ctx.lineTo(W-mr,y);ctx.stroke();
-    ctx.fillStyle='#475569';ctx.font='8px sans-serif';ctx.textAlign='right';ctx.fillText(Math.round(maxV*i/4),ml-4,y+3)}
-  
-  // X labels
-  ctx.fillStyle='#334155';ctx.font='7px sans-serif';ctx.textAlign='center';
-  const st=Math.max(1,Math.floor(ds.length/10));
-  for(let i=0;i<ds.length;i+=st){ctx.fillText(ds[i].substring(5),ml+cw*i/(ds.length-1),H-8)}
-  
-  // Bars
-  let maxTop=0;
-  for(let i=0;i<ds.length;i++){
-    const x=ds[i],dd=d[x],tl=dd.total_limit||0,top=dd.top||0;
-    if(top>maxTop)maxTop=top;
-    const bx=ml+cw*i/(ds.length-1)-bw/2,bh=(tl/maxV)*ch,by=mt+ch-bh;
-    let col='#475569';
-    if(top>=5)col='#dc2626';else if(top>=3)col='#f97316';else if(top>=2)col='#eab308';
-    if(tl>=3&&top>=2)col='#ef4444';
-    ctx.fillStyle=col;ctx.fillRect(bx,by,bw,bh);
-    if(tl>=maxV*0.6){ctx.fillStyle='#e2e8f0';ctx.font='7px sans-serif';ctx.textAlign='center';ctx.fillText(tl,bx+bw/2,by-2)}
+  // Collect all unique stock codes that ever had 2+ streak
+  const stockMap={}; // code -> {name, sector, days:{date:streak}}
+  for(const date of ds){
+    const dayData=d[date];
+    if(!dayData||!dayData.stocks)continue;
+    for(const s of dayData.stocks){
+      if(!stockMap[s.code]){
+        stockMap[s.code]={name:s.name,sector:s.sector,lastName:s.name,days:{}};
+      }
+      stockMap[s.code].days[date]=s.streak;
+      stockMap[s.code].lastName=s.name;
+    }
   }
   
-  // Title
-  ctx.fillStyle='#64748b';ctx.font='9px sans-serif';ctx.textAlign='left';
-  ctx.fillText(`60日涨停分布 | 最近:${ds[ds.length-1]} | 最高${maxTop}板`,ml,13);
+  const codes=Object.keys(stockMap);
   
-  // Legend
-  const lg=[
-    {c:'#dc2626',l:'≥5板'},{c:'#f97316',l:'3-4板'},{c:'#eab308',l:'2板'},{c:'#475569',l:'1板'}
-  ];
-  let lx=W-8-120;
-  for(const l of lg){ctx.fillStyle=l.c;ctx.fillRect(lx,6,8,8);ctx.fillStyle='#475569';ctx.font='7px sans-serif';ctx.textAlign='left';ctx.fillText(l.l,lx+10,13);lx+=30+l.l.length*4}
+  if(!codes.length){
+    th.innerHTML='<tr><td style="color:#64748b;padding:12px;text-align:center" colspan="5">暂无连续2天以上涨停的股票</td></tr>';
+    tb.innerHTML='';
+    document.getElementById('ls').innerHTML='<span style="color:#64748b">最近60个交易日无连板数据（市场短线情绪弱）</span>';
+    return;
+  }
+  
+  // Show last 20 trading days max (for readability)
+  const showDates=ds.slice(-20);
+  
+  // Table header
+  let hhtml='<tr><th style="color:#64748b;text-align:left;padding:4px 6px;font-weight:400">股票</th>';
+  for(const date of showDates){
+    hhtml+=`<th style="color:#334155;text-align:center;padding:4px 2px;font-weight:400;font-size:9px">${date.substring(5)}</th>`;
+  }
+  hhtml+='</tr>';
+  th.innerHTML=hhtml;
+  
+  // Sort codes: by latest streak desc, then by name
+  codes.sort((a,b)=>{
+    const la=stockMap[a],lb=stockMap[b];
+    const lastDateA=showDates.filter(d=>la.days[d]).pop();
+    const lastDateB=showDates.filter(d=>lb.days[d]).pop();
+    const strA=lastDateA?stockMap[a].days[lastDateA]:0;
+    const strB=lastDateB?stockMap[b].days[lastDateB]:0;
+    if(strB!==strA)return strB-strA;
+    return la.name.localeCompare(lb.name);
+  });
+  
+  let bhtml='';
+  for(const code of codes){
+    const s=stockMap[code];
+    const sectorTag=s.sector==='科创板'?'<span style="color:#38bdf8;font-size:9px">科创</span>':
+                     s.sector==='创业板'?'<span style="color:#34d399;font-size:9px">创业</span>':'';
+    bhtml+=`<tr><td style="padding:4px 6px;white-space:nowrap"><span style="font-weight:600">${s.lastName}</span> ${sectorTag}</td>`;
+    
+    for(let i=0;i<showDates.length;i++){
+      const date=showDates[i];
+      const streak=s.days[date];
+      
+      if(streak){
+        // Color intensity based on streak length
+        let bg='#f97316',fg='#fff';
+        if(streak>=7){bg='#dc2626';fg='#fff'}
+        else if(streak>=5){bg='#ef4444';fg='#fff'}
+        else if(streak>=4){bg='#f97316';fg='#fff'}
+        else if(streak>=3){bg='#eab308';fg='#0f172a'}
+        else{bg='#475569';fg='#e2e8f0'}
+        
+        // Draw connection line: show a dot if there's streak on consecutive days
+        const prevDate=i>0?showDates[i-1]:null;
+        const prevStreak=prevDate?s.days[prevDate]:0;
+        const nextDate=i<showDates.length-1?showDates[i+1]:null;
+        const nextStreak=nextDate?s.days[nextDate]:0;
+        
+        let connector='';
+        if(prevStreak&&streak)connector+='─';
+        if(nextStreak&&streak)connector+='─';
+        
+        bhtml+=`<td style="text-align:center;padding:2px;position:relative">
+          <div style="display:inline-flex;align-items:center;gap:0">
+            ${prevStreak&&streak?'<span style="color:#475569;font-size:8px">─</span>':''}
+            <span style="display:inline-block;background:${bg};color:${fg};border-radius:3px;padding:1px 5px;font-size:10px;font-weight:700">${streak}</span>
+            ${nextStreak&&streak?'<span style="color:#475569;font-size:8px">─</span>':''}
+          </div>
+        </td>`;
+      } else {
+        bhtml+='<td style="text-align:center;padding:2px"><span style="color:#1e293b">·</span></td>';
+      }
+    }
+    bhtml+='</tr>';
+  }
+  tb.innerHTML=bhtml;
   
   // Stats
-  const tot=vals.reduce((a,b)=>a+b,0),avg=(tot/ds.length).toFixed(1);
-  const d2=ds.filter(x=>(d[x].at_least?.[2]||0)>0).length;
+  const totalUnique=codes.length;
+  const maxStreak=Math.max(...codes.map(c=>Math.max(...Object.values(stockMap[c].days))),0);
   document.getElementById('ls').innerHTML=
-    `<span style="color:#ef4444">📊 日均涨停: ${avg}只</span>`+
-    `<span style="color:#f97316">📈 60日涨停总数: ${tot}次</span>`+
-    `<span style="color:#eab308">🔶 2连板天数: ${d2}天</span>`+
-    `<span style="color:#64748b">🕐 ${LBD.update_time}</span>`;
-  
-  const td=ds[ds.length-1],tdd=d[td];
-  document.getElementById('lt').innerHTML=tdd?`今日涨停 ${tdd.total_limit||0} 只，最高 ${tdd.top||0} 连板`:'暂无数据';
+    `<span style="color:#ef4444">📊 连板股票数: ${totalUnique}只</span>`+
+    `<span style="color:#f97316">📈 最高连板: ${maxStreak}板</span>`+
+    `<span style="color:#64748b">🕐 更新: ${LBD.update_time}</span>`;
 }
 
 // ===== 自动刷新 =====
