@@ -93,7 +93,19 @@ def scan():
         current_streak = 0
         
         for date, chg in data:
-            is_limit = chg >= 9.90
+            # 根据板块判断涨停阈值
+            # 主板(60xxxx/00xxxx/002xxx): 10%
+            # 创业板(30xxxx): 20%
+            # 科创板(688xxx/689xxx): 20%
+            # 北交所(8xxxxx): 30%
+            if code.startswith('sh688') or code.startswith('sh689') or code.startswith('sz3'):
+                limit_chg = 19.90  # 科创/创业板 20%涨停
+            elif code.startswith('sz8') or code.startswith('sh8'):
+                limit_chg = 29.90  # 北交所 30%涨停
+            else:
+                limit_chg = 9.90   # 主板 10%涨停
+            
+            is_limit = chg >= limit_chg
             if is_limit:
                 current_streak += 1
             else:
