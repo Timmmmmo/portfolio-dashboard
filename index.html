@@ -1,409 +1,466 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>📊 持仓智能Dashboard</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:#0f172a;color:#e2e8f0;padding:16px;min-height:100vh}
-h1{font-size:20px;display:flex;align-items:center;gap:6px}
-
-/* ===== Header ===== */
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px}
-.status{font-size:12px;color:#94a3b8;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.status .dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:#ef4444;animation:pulse 2s infinite}
-.status .dot.off{background:#64748b;animation:none}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600}
-.badge-open{background:#450a0a;color:#ef4444}
-.badge-close{background:#1e293b;color:#94a3b8}
-.btn{background:#1e293b;border:1px solid #334155;color:#94a3b8;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:12px}
-.btn:hover{background:#334155;color:#e2e8f0}
-
-/* ===== Cards ===== */
-.card{background:#1e293b;border-radius:10px;padding:14px;border:1px solid #334155;margin-bottom:12px}
-.card-title{font-size:13px;color:#38bdf8;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-
-/* ===== Index Grid ===== */
-.idx-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:8px}
-.idx-item{background:#0f172a;border-radius:8px;padding:8px;text-align:center}
-.idx-item .name{font-size:11px;color:#64748b}
-.idx-item .val{font-size:15px;font-weight:700;margin:2px 0}
-.idx-item .pct{font-size:11px}
-
-/* ===== Stock Grid ===== */
-.stock-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;margin-bottom:12px}
-.stock-card{background:#1e293b;border-radius:10px;padding:12px;border:1px solid #334155}
-.stock-card .label{font-size:11px;color:#38bdf8;margin-bottom:6px;display:flex;align-items:center;gap:4px}
-.stock-card .price{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.stock-card .price .num{font-size:22px;font-weight:700}
-.stock-card .price .chg{padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600}
-.up{background:#450a0a;color:#ef4444}
-.down{background:#064e3b;color:#34d399}
-.flat{background:#1e293b;color:#94a3b8}
-.stock-card .info{font-size:11px;color:#64748b;padding:4px 6px;background:#0f172a;border-radius:4px;margin-top:4px;line-height:1.4}
-.stock-card .tag{font-size:10px;padding:2px 8px;border-radius:4px;display:inline-block;float:right;margin-top:4px}
-.tag-buy{background:#450a0a;color:#ef4444}
-.tag-hold{background:#1e293b;color:#fbbf24}
-.tag-watch{background:#064e3b;color:#34d399}
-
-/* ===== News ===== */
-.news-item{padding:5px 0;border-bottom:1px solid #0f172a;font-size:12px;display:flex;gap:8px;align-items:flex-start}
-.news-item:last-child{border:none}
-.news-tag{padding:1px 6px;border-radius:3px;font-size:10px;white-space:nowrap;background:#0f172a}
-.news-time{color:#475569;font-size:10px;white-space:nowrap}
-.news-text{color:#cbd5e1}
-
-/* ===== Analysis ===== */
-.analysis-item{padding:4px 0;font-size:12px;display:flex;gap:8px;align-items:flex-start}
-.analysis-tag{padding:1px 6px;border-radius:3px;font-size:10px;white-space:nowrap;background:#0f172a}
-.a-buy{color:#ef4444}
-.a-hold{color:#fbbf24}
-.a-watch{color:#34d399}
-
-/* ===== Watchlist ===== */
-.watch-card{background:linear-gradient(135deg,#1e293b,#1a1a3e);border-radius:8px;padding:12px;border:1px solid #334155;margin-bottom:8px}
-.watch-card .title{font-size:13px;color:#fbbf24;margin-bottom:4px;display:flex;align-items:center;gap:6px}
-.watch-card .reason{font-size:11px;color:#94a3b8;line-height:1.5}
-.wt{display:inline-block;padding:1px 8px;border-radius:10px;font-size:10px;margin-right:4px}
-.wt-hot{background:#450a0a;color:#ef4444}
-.wt-new{background:#450a0a;color:#ef4444}
-.wt-trend{background:#1e1b4b;color:#818cf8}
-
-/* ===== Ladder ===== */
-.ladder-box{background:#0f172a;border-radius:8px;padding:8px;margin-bottom:8px;overflow:hidden}
-.ladder-note{font-size:10px;color:#475569;text-align:center;margin-top:6px}
-
-/* ===== Footer ===== */
-.footer{text-align:center;color:#475569;font-size:11px;padding:12px;border-top:1px solid #1e293b;margin-top:16px}
-
-/* ===== Loading ===== */
-.loading{text-align:center;padding:30px;color:#64748b;font-size:14px}
-.spinner{display:inline-block;width:14px;height:14px;border:2px solid #334155;border-top-color:#38bdf8;border-radius:50%;animation:spin .8s linear infinite;margin-right:6px;vertical-align:middle}
-@keyframes spin{to{transform:rotate(360deg)}}
-</style>
-</head>
-<body>
-
-<div class="header">
-  <h1>📊 持仓智能Dashboard</h1>
-  <div class="status">
-    <span class="dot" id="sd"></span>
-    <span id="st">实时</span>
-    <span id="mb"></span>
-    <span id="tm">--:--</span>
-    <span id="cd" style="color:#475569">--</span>
-    <button class="btn" onclick="refresh()">⟳ 刷新</button>
-  </div>
-</div>
-
-<div class="card">
-  <div class="idx-grid" id="idxG"></div>
-</div>
-
-<div class="stock-grid" id="sg"></div>
-
-<div class="card" style="border-color:#fbbf24">
-  <div class="card-title" style="color:#fbbf24">🔭 新关注方向</div>
-  <div id="wc"></div>
-</div>
-
-<div class="card" style="border-color:#f97316">
-  <div class="card-title" style="color:#f97316">📈 连板连线图 · 连续2天+涨停追踪</div>
-  <div class="ladder-box" style="overflow-x:auto">
-    <table id="ladderTable" style="width:100%;border-collapse:collapse;font-size:11px">
-      <thead id="ltHead"></thead>
-      <tbody id="ltBody"></tbody>
-    </table>
-  </div>
-  <div id="ls" style="display:flex;gap:10px;flex-wrap:wrap;font-size:11px;margin:6px 0"></div>
-  <div class="ladder-note">涨停阈值: 主板≥9.90% | 科创/创业板≥19.90% | 北交所≥29.90% | 全市场5000+只股票 | GH Actions每小时更新</div>
-</div>
-
-<div class="card">
-  <div class="card-title">📰 相关新闻</div>
-  <div id="nc"></div>
-</div>
-
-<div class="card">
-  <div class="card-title">🧠 底层逻辑判断</div>
-  <div id="ac"></div>
-</div>
-
-<div class="footer">盘中30秒·盘后整点更新 | 数据: 腾讯财经API | 涨🔴跌🟢</div>
-
-<script>
-// ===== 持仓配置 =====
-const H = [
-  {c:'hk00981',n:'中芯国际(H)',d:'AI芯片龙头',l:'中国最先进制程，AI芯片刚需',r:'地缘政治限制',hk:1},
-  {c:'sz000021',n:'深科技',d:'存储封测铲子',l:'HBM挤压DRAM→封测需求增，14.7亿扩产',r:'HBM仍在研发'},
-  {c:'sh603650',n:'彤程新材',d:'光刻胶国产替代',l:'ArF/KrF国产龙头，中芯绑定深',r:'高端光刻胶仍在验证'},
-  {c:'sh688106',n:'金宏气体',d:'特气/氦气龙头',l:'氦气物理不可替代，90%进口，今日商务部出口禁令',r:'PE 219偏高'},
-  {c:'sh688114',n:'华大智造',d:'基因测序龙头',l:'国产测序唯一标的，全球第三',r:'集采风险'},
-  {c:'sh688507',n:'索辰科技',d:'CAE仿真软件',l:'国产CAE龙头，军工市占率第一',r:'客户拓展慢'},
-  {c:'sz002594',n:'比亚迪',d:'新能源车龙头',l:'销量全球第一，出海加速',r:'价格战激烈'},
-  {c:'sz000762',n:'西藏矿业',d:'锂矿',l:'罗洄说还没到底，等信号',r:'锂价低迷'},
-  {c:'sz300174',n:'元力股份',d:'超级电容/活性炭',l:'从底部企稳中',r:'市场规模有限'}
-];
-const IX = {sh000001:'sh',sz399001:'sz',sz399006:'cy',sh000688:'kc'};
-const IXN = {sh000001:'上证指数',sz399001:'深证成指',sz399006:'创业板指',sh000688:'科创50'};
-
-// ===== 连板数据 =====
-const LBD = {"update_time":"2026-07-10 17:31","days":40,"data":{}};
-
-// ===== 市场状态 =====
-function mkt(){const d=new Date(),h=d.getHours(),m=d.getMinutes();return{open:(h*60+m)>=570&&(h*60+m)<=900}}
-
-// ===== 获取数据 =====
-async function fetchD(){
-  const codes=Object.keys(IX).concat(H.map(h=>h.c)).join(',');
-  try{
-    const r=await fetch(`https://qt.gtimg.cn/q=${codes}&_=${Date.now()}`,{cache:'no-store'});
-    const t=await r.text(),d={};
-    for(const l of t.split(';')){
-      if(!l.includes('~'))continue;
-      const eq=l.indexOf('=');
-      if(eq<0)continue;
-      d[l.substring(0,eq).replace('var ','').trim()]=l.substring(eq+2,l.lastIndexOf('"')).split('~');
-    }
-    return d;
-  }catch{return null}
-}
-
-// ===== 渲染 =====
-function render(d){
-  const s=mkt();
-  document.getElementById('tm').textContent=new Date().toLocaleTimeString('zh-CN');
-  const mb=document.getElementById('mb');
-  mb.innerHTML=s.open?'<span class="badge badge-open">🟢 交易中</span>':'<span class="badge badge-close">🔴 已收盘</span>';
-  document.getElementById('sd').className='dot'+(s.open?'':' off');
-
-  if(!d){document.getElementById('sg').innerHTML='<div class="loading">⚠️ 数据获取失败</div>';return}
-
-  // 指数
-  let ixh='';
-  for(const [code,id] of Object.entries(IX)){
-    const p=d['v_'+code];let v='--',c='--',cl='#94a3b8';
-    if(p&&p.length>4){
-      const pr=parseFloat(p[3])||0,cls=parseFloat(p[4])||pr,chg=cls?((pr-cls)/cls*100):0;
-      v=pr.toFixed(2);c=(chg>0?'+':'')+chg.toFixed(2)+'%';cl=chg>0?'#ef4444':chg<0?'#34d399':'#94a3b8';
-    }
-    const kc=code==='sh000688'?'style="border:1px solid #334155"':'';
-    const kn=code==='sh000688'?'<span style="color:#38bdf8">科创50 🚀</span>':IXN[code];
-    ixh+=`<div class="idx-item" ${kc}><div class="name">${kn}</div><div class="val" style="color:${cl}">${v}</div><div class="pct" style="color:${cl}">${c}</div></div>`;
-  }
-  document.getElementById('idxG').innerHTML=ixh;
-
-  // 持仓
-  let sh='';
-  for(const h of H){
-    const p=d['v_'+h.c];let pr=0,chg=0,ps='--',cs='--',cls='flat';
-    if(p&&p.length>4){
-      const pv=parseFloat(p[3])||0,cv=parseFloat(p[4])||pv;
-      chg=cv?((pv-cv)/cv*100):0;pr=pv;ps=pv.toFixed(2)+(h.hk?' <span style="font-size:10px;color:#64748b">HKD</span>':'');
-      cs=(chg>0?'+':'')+chg.toFixed(2)+'%';cls=chg>0.5?'up':chg<-0.5?'down':'flat';
-    }
-    let tg='hold',tt='持有';
-    if(chg>5){tg='buy';tt='🔥强势'}else if(chg>2){tg='buy';tt='📈上涨'}else if(chg<-3){tg='watch';tt='⚠️关注'}
-    if(pr===0){tt='⏳等待'}
-    const bc=chg>0?'#ef4444':chg<0?'#34d399':'#64748b';
-    const lt=pr===0?'加载中...':(chg>0?'✅ ':'💧 ')+h.l;
-    sh+=`<div class="stock-card">
-      <div class="label"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${bc}"></span> ${h.d}</div>
-      <div class="price"><span class="num">${ps}</span><span class="chg ${cls}">${cs}</span></div>
-      <div class="info">${lt}</div>
-      <div class="info">⚠️ ${h.r}</div>
-      <div class="tag tag-${tg}">${tt}</div>
-    </div>`;
-  }
-  document.getElementById('sg').innerHTML=sh;
-
-  renderNews();
-  renderAnalysis();
-  renderWatch();
-  renderLadder();
-}
-
-// ===== 新闻 =====
-function renderNews(){
-  const n=[
-    {t:'7/10',tag:'🚨氦气出口禁令',text:'商务部+海关总署：对氦气实施临时禁止出口管理→战略地位提升，利好金宏气体',c:'#ef4444'},
-    {t:'今',tag:'深科技',text:'两天+19.7%，验证存储封测铲子逻辑',c:'#ef4444'},
-    {t:'今',tag:'金宏',text:'氦气出口禁令→战略地位提升，36支撑位',c:'#ef4444'},
-    {t:'今',tag:'华大',text:'基因测序回暖，+4.63%',c:'#ef4444'},
-    {t:'昨夜',tag:'美股',text:'纳指+1.30%，科技强势',c:'#ef4444'},
-    {t:'昨夜',tag:'美股存储',text:'美光-2.8%，闪迪-3.9%盘前走低',c:'#34d399'},
-    {t:'7/9',tag:'科创50',text:'+8.41%创纪录！中芯涨停+13.74%',c:'#ef4444'},
-    {t:'7/9',tag:'罗洄头',text:'沉默第3天，判断全部应验',c:'#38bdf8'}
-  ];
-  document.getElementById('nc').innerHTML=n.map(x=>
-    `<div class="news-item"><span class="news-time">${x.t}</span><span class="news-tag" style="color:${x.c}">${x.tag}</span><span class="news-text">${x.text}</span></div>`
-  ).join('');
-}
-
-// ===== 分析 =====
-function renderAnalysis(){
-  const a=[
-    {tag:'🚨',text:'商务部+海关总署禁氦气出口：中国90%靠进口，禁止出口=战略地位提升，金宏气体直接受益',tp:'buy'},
-    {tag:'🔥',text:'深科技验证"存储封测铲子"逻辑，HBM挤压DRAM→封测需求增，中线看好',tp:'buy'},
-    {tag:'💡',text:'华大加速，基因测序是AI在医疗最直接的应用场景',tp:'buy'},
-    {tag:'📊',text:'中芯(H股)85.6 HKD，大涨后整理，AI芯片龙头逻辑不变',tp:'hold'},
-    {tag:'🌍',text:'纳指+1.30%+日经+1.77%→全球科技共振仍在，下周A股科技有望延续',tp:'hold'},
-    {tag:'⚠️',text:'金宏36是重要支撑位，氦气出口禁令可能催化反弹',tp:'watch'}
-  ];
-  const m={buy:'a-buy',hold:'a-hold',watch:'a-watch'};
-  document.getElementById('ac').innerHTML=a.map(x=>
-    `<div class="analysis-item"><span class="analysis-tag ${m[x.tp]}">${x.tag}</span><span class="news-text">${x.text}</span></div>`
-  ).join('');
-}
-
-// ===== 关注方向 =====
-function renderWatch(){
-  document.getElementById('wc').innerHTML=`
-    <div class="watch-card">
-      <div class="title">🔬 半导体设备 <span class="wt wt-hot">hot</span><span class="wt wt-new">新方向</span></div>
-      <div class="reason">封测/特气已布局，设备是国产替代最薄弱环节。扩产催化。参考：北方华创/中微公司/拓荆科技</div>
-    </div>
-    <div class="watch-card">
-      <div class="title">📦 AI应用 <span class="wt wt-trend">趋势</span></div>
-      <div class="reason">AI硬件涨完→软件端接力。参考：金山办公/用友网络/科大讯飞</div>
-    </div>
-    <div class="watch-card">
-      <div class="title">🧪 CXO/创新药 <span class="wt wt-trend">趋势</span><span class="wt wt-new">新方向</span></div>
-      <div class="reason">罗洄头关注AI医疗，CXO估值历史低位(PE 18-30x)。参考：药明康德/康龙化成/泰格医药</div>
-    </div>
-    <div class="watch-card">
-      <div class="title">⚡ 固态电池 <span class="wt wt-hot">hot</span></div>
-      <div class="reason">罗洄"等我做完锑矿和固态"→他进场就是风口。参考：宁德时代/当升科技/容百科技</div>
-    </div>`;
-}
-
-// ===== 连板连线图 =====
-function renderLadder(){
-  const d=LBD.data,ds=Object.keys(d).sort(); // sorted dates
-  const tb=document.getElementById('ltBody'),th=document.getElementById('ltHead');
-  
-  // Collect all unique stock codes that ever had 2+ streak
-  const stockMap={}; // code -> {name, sector, days:{date:streak}}
-  for(const date of ds){
-    const dayData=d[date];
-    if(!dayData||!dayData.stocks)continue;
-    for(const s of dayData.stocks){
-      if(!stockMap[s.code]){
-        stockMap[s.code]={name:s.name,sector:s.sector,lastName:s.name,days:{}};
-      }
-      stockMap[s.code].days[date]=s.streak;
-      stockMap[s.code].lastName=s.name;
+1|<!DOCTYPE html>
+2|<html lang="zh-CN">
+3|<head>
+4|<meta charset="UTF-8">
+5|<meta name="viewport" content="width=device-width, initial-scale=1.0">
+6|<title>📊 持仓智能Dashboard</title>
+7|<style>
+8|*{margin:0;padding:0;box-sizing:border-box}
+9|body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:#0f172a;color:#e2e8f0;padding:16px;min-height:100vh}
+10|h1{font-size:20px;display:flex;align-items:center;gap:6px}
+11|
+12|/* ===== Header ===== */
+13|.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+14|.status{font-size:12px;color:#94a3b8;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+15|.status .dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:#ef4444;animation:pulse 2s infinite}
+16|.status .dot.off{background:#64748b;animation:none}
+17|@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+18|.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600}
+19|.badge-open{background:#450a0a;color:#ef4444}
+20|.badge-close{background:#1e293b;color:#94a3b8}
+21|.btn{background:#1e293b;border:1px solid #334155;color:#94a3b8;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:12px}
+22|.btn:hover{background:#334155;color:#e2e8f0}
+23|
+24|/* ===== Cards ===== */
+25|.card{background:#1e293b;border-radius:10px;padding:14px;border:1px solid #334155;margin-bottom:12px}
+26|.card-title{font-size:13px;color:#38bdf8;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+27|
+28|/* ===== Index Grid ===== */
+29|.idx-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:8px}
+30|.idx-item{background:#0f172a;border-radius:8px;padding:8px;text-align:center}
+31|.idx-item .name{font-size:11px;color:#64748b}
+32|.idx-item .val{font-size:15px;font-weight:700;margin:2px 0}
+33|.idx-item .pct{font-size:11px}
+34|
+35|/* ===== Stock Grid ===== */
+36|.stock-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;margin-bottom:12px}
+37|.stock-card{background:#1e293b;border-radius:10px;padding:12px;border:1px solid #334155}
+38|.stock-card .label{font-size:11px;color:#38bdf8;margin-bottom:6px;display:flex;align-items:center;gap:4px}
+39|.stock-card .price{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+40|.stock-card .price .num{font-size:22px;font-weight:700}
+41|.stock-card .price .chg{padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600}
+42|.up{background:#450a0a;color:#ef4444}
+43|.down{background:#064e3b;color:#34d399}
+44|.flat{background:#1e293b;color:#94a3b8}
+45|.stock-card .info{font-size:11px;color:#64748b;padding:4px 6px;background:#0f172a;border-radius:4px;margin-top:4px;line-height:1.4}
+46|.stock-card .tag{font-size:10px;padding:2px 8px;border-radius:4px;display:inline-block;float:right;margin-top:4px}
+47|.tag-buy{background:#450a0a;color:#ef4444}
+48|.tag-hold{background:#1e293b;color:#fbbf24}
+49|.tag-watch{background:#064e3b;color:#34d399}
+50|
+51|/* ===== News ===== */
+52|.news-item{padding:5px 0;border-bottom:1px solid #0f172a;font-size:12px;display:flex;gap:8px;align-items:flex-start}
+53|.news-item:last-child{border:none}
+54|.news-tag{padding:1px 6px;border-radius:3px;font-size:10px;white-space:nowrap;background:#0f172a}
+55|.news-time{color:#475569;font-size:10px;white-space:nowrap}
+56|.news-text{color:#cbd5e1}
+57|
+58|/* ===== Analysis ===== */
+59|.analysis-item{padding:4px 0;font-size:12px;display:flex;gap:8px;align-items:flex-start}
+60|.analysis-tag{padding:1px 6px;border-radius:3px;font-size:10px;white-space:nowrap;background:#0f172a}
+61|.a-buy{color:#ef4444}
+62|.a-hold{color:#fbbf24}
+63|.a-watch{color:#34d399}
+64|
+65|/* ===== Watchlist ===== */
+66|.watch-card{background:linear-gradient(135deg,#1e293b,#1a1a3e);border-radius:8px;padding:12px;border:1px solid #334155;margin-bottom:8px}
+67|.watch-card .title{font-size:13px;color:#fbbf24;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+68|.watch-card .reason{font-size:11px;color:#94a3b8;line-height:1.5}
+69|.wt{display:inline-block;padding:1px 8px;border-radius:10px;font-size:10px;margin-right:4px}
+70|.wt-hot{background:#450a0a;color:#ef4444}
+71|.wt-new{background:#450a0a;color:#ef4444}
+72|.wt-trend{background:#1e1b4b;color:#818cf8}
+73|
+74|/* ===== Ladder ===== */
+75|.ladder-box{background:#0f172a;border-radius:8px;padding:8px;margin-bottom:8px;overflow:hidden}
+76|.ladder-note{font-size:10px;color:#475569;text-align:center;margin-top:6px}
+77|
+78|/* ===== Footer ===== */
+79|.footer{text-align:center;color:#475569;font-size:11px;padding:12px;border-top:1px solid #1e293b;margin-top:16px}
+80|
+81|/* ===== Loading ===== */
+82|.loading{text-align:center;padding:30px;color:#64748b;font-size:14px}
+83|.spinner{display:inline-block;width:14px;height:14px;border:2px solid #334155;border-top-color:#38bdf8;border-radius:50%;animation:spin .8s linear infinite;margin-right:6px;vertical-align:middle}
+84|@keyframes spin{to{transform:rotate(360deg)}}
+85|</style>
+86|</head>
+87|<body>
+88|
+89|<div class="header">
+90|  <h1>📊 持仓智能Dashboard</h1>
+91|  <div class="status">
+92|    <span class="dot" id="sd"></span>
+93|    <span id="st">实时</span>
+94|    <span id="mb"></span>
+95|    <span id="tm">--:--</span>
+96|    <span id="cd" style="color:#475569">--</span>
+97|    <button class="btn" onclick="refresh()">⟳ 刷新</button>
+98|  </div>
+99|</div>
+100|
+101|<div class="card">
+102|  <div class="idx-grid" id="idxG"></div>
+103|</div>
+104|
+105|<div class="stock-grid" id="sg"></div>
+106|
+107|<div class="card" style="border-color:#fbbf24">
+108|  <div class="card-title" style="color:#fbbf24">🔭 新关注方向</div>
+109|  <div id="wc"></div>
+110|</div>
+111|
+112|<div class="card" style="border-color:#f97316">
+113|  <div class="card-title" style="color:#f97316">📈 连板连线图 · 连续2天+涨停追踪</div>
+114|  <div class="ladder-box" style="overflow-x:auto">
+115|    <table id="ladderTable" style="width:100%;border-collapse:collapse;font-size:11px">
+116|      <thead id="ltHead"></thead>
+117|      <tbody id="ltBody"></tbody>
+118|    </table>
+119|  </div>
+120|  <div id="ls" style="display:flex;gap:10px;flex-wrap:wrap;font-size:11px;margin:6px 0"></div>
+121|  <div class="ladder-note">涨停阈值: 主板≥9.90% | 科创/创业板≥19.90% | 北交所≥29.90% | 全市场5000+只股票 | GH Actions每小时更新</div>
+122|</div>
+123|
+124|<div class="card">
+125|  <div class="card-title">📰 相关新闻</div>
+126|  <div id="nc"></div>
+127|</div>
+128|
+129|<div class="card">
+130|  <div class="card-title">🧠 底层逻辑判断</div>
+131|  <div id="ac"></div>
+132|</div>
+133|
+134|<div class="footer">盘中30秒·盘后整点更新 | 数据: 腾讯财经API | 涨🔴跌🟢</div>
+135|
+136|<script>
+137|// ===== 持仓配置 =====
+138|const H = [
+139|  {c:'hk00981',n:'中芯国际(H)',d:'AI芯片龙头',l:'中国最先进制程，AI芯片刚需',r:'地缘政治限制',hk:1},
+140|  {c:'sz000021',n:'深科技',d:'存储封测铲子',l:'HBM挤压DRAM→封测需求增，14.7亿扩产',r:'HBM仍在研发'},
+141|  {c:'sh603650',n:'彤程新材',d:'光刻胶国产替代',l:'ArF/KrF国产龙头，中芯绑定深',r:'高端光刻胶仍在验证'},
+142|  {c:'sh688106',n:'金宏气体',d:'特气/氦气龙头',l:'氦气物理不可替代，90%进口，今日商务部出口禁令',r:'PE 219偏高'},
+143|  {c:'sh688114',n:'华大智造',d:'基因测序龙头',l:'国产测序唯一标的，全球第三',r:'集采风险'},
+144|  {c:'sh688507',n:'索辰科技',d:'CAE仿真软件',l:'国产CAE龙头，军工市占率第一',r:'客户拓展慢'},
+145|  {c:'sz002594',n:'比亚迪',d:'新能源车龙头',l:'销量全球第一，出海加速',r:'价格战激烈'},
+146|  {c:'sz000762',n:'西藏矿业',d:'锂矿',l:'罗洄说还没到底，等信号',r:'锂价低迷'},
+147|  {c:'sz300174',n:'元力股份',d:'超级电容/活性炭',l:'从底部企稳中',r:'市场规模有限'}
+148|];
+149|const IX = {sh000001:'sh',sz399001:'sz',sz399006:'cy',sh000688:'kc'};
+150|const IXN = {sh000001:'上证指数',sz399001:'深证成指',sz399006:'创业板指',sh000688:'科创50'};
+151|
+152|// ===== 连板数据 =====
+153|const LBD = {
+  "update_time": "2026-07-10 20:37",
+  "days": 4,
+  "data": {
+    "2026-04-16": {
+      "stocks": [
+        {
+          "code": "sh605388",
+          "name": "均瑶健康",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 9.96
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-05-27": {
+      "stocks": [
+        {
+          "code": "sz002251",
+          "name": "步步高",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 12.01
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-06-30": {
+      "stocks": [
+        {
+          "code": "sz000004",
+          "name": "国华退",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 13.33
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-07-03": {
+      "stocks": [
+        {
+          "code": "sz000004",
+          "name": "国华退",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 12.5
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
     }
   }
-  
-  const codes=Object.keys(stockMap);
-  
-  if(!codes.length){
-    th.innerHTML='<tr><td style="color:#64748b;padding:12px;text-align:center" colspan="5">暂无连续2天以上涨停的股票</td></tr>';
-    tb.innerHTML='';
-    document.getElementById('ls').innerHTML='<span style="color:#64748b">最近60个交易日无连板数据（市场短线情绪弱）</span>';
-    return;
-  }
-  
-  // Show last 20 trading days max (for readability)
-  const showDates=ds.slice(-20);
-  
-  // Table header
-  let hhtml='<tr><th style="color:#64748b;text-align:left;padding:4px 6px;font-weight:400">股票</th>';
-  for(const date of showDates){
-    hhtml+=`<th style="color:#334155;text-align:center;padding:4px 2px;font-weight:400;font-size:9px">${date.substring(5)}</th>`;
-  }
-  hhtml+='</tr>';
-  th.innerHTML=hhtml;
-  
-  // Sort codes: by latest streak desc, then by name
-  codes.sort((a,b)=>{
-    const la=stockMap[a],lb=stockMap[b];
-    const lastDateA=showDates.filter(d=>la.days[d]).pop();
-    const lastDateB=showDates.filter(d=>lb.days[d]).pop();
-    const strA=lastDateA?stockMap[a].days[lastDateA]:0;
-    const strB=lastDateB?stockMap[b].days[lastDateB]:0;
-    if(strB!==strA)return strB-strA;
-    return la.name.localeCompare(lb.name);
-  });
-  
-  let bhtml='';
-  for(const code of codes){
-    const s=stockMap[code];
-    const sectorTag=s.sector==='科创板'?'<span style="color:#38bdf8;font-size:9px">科创</span>':
-                     s.sector==='创业板'?'<span style="color:#34d399;font-size:9px">创业</span>':'';
-    bhtml+=`<tr><td style="padding:4px 6px;white-space:nowrap"><span style="font-weight:600">${s.lastName}</span> ${sectorTag}</td>`;
-    
-    for(let i=0;i<showDates.length;i++){
-      const date=showDates[i];
-      const streak=s.days[date];
-      
-      if(streak){
-        // Color intensity based on streak length
-        let bg='#f97316',fg='#fff';
-        if(streak>=7){bg='#dc2626';fg='#fff'}
-        else if(streak>=5){bg='#ef4444';fg='#fff'}
-        else if(streak>=4){bg='#f97316';fg='#fff'}
-        else if(streak>=3){bg='#eab308';fg='#0f172a'}
-        else{bg='#475569';fg='#e2e8f0'}
-        
-        // Draw connection line: show a dot if there's streak on consecutive days
-        const prevDate=i>0?showDates[i-1]:null;
-        const prevStreak=prevDate?s.days[prevDate]:0;
-        const nextDate=i<showDates.length-1?showDates[i+1]:null;
-        const nextStreak=nextDate?s.days[nextDate]:0;
-        
-        let connector='';
-        if(prevStreak&&streak)connector+='─';
-        if(nextStreak&&streak)connector+='─';
-        
-        bhtml+=`<td style="text-align:center;padding:2px;position:relative">
-          <div style="display:inline-flex;align-items:center;gap:0">
-            ${prevStreak&&streak?'<span style="color:#475569;font-size:8px">─</span>':''}
-            <span style="display:inline-block;background:${bg};color:${fg};border-radius:3px;padding:1px 5px;font-size:10px;font-weight:700">${streak}</span>
-            ${nextStreak&&streak?'<span style="color:#475569;font-size:8px">─</span>':''}
-          </div>
-        </td>`;
-      } else {
-        bhtml+='<td style="text-align:center;padding:2px"><span style="color:#1e293b">·</span></td>';
-      }
-    }
-    bhtml+='</tr>';
-  }
-  tb.innerHTML=bhtml;
-  
-  // Stats
-  const totalUnique=codes.length;
-  const maxStreak=Math.max(...codes.map(c=>Math.max(...Object.values(stockMap[c].days))),0);
-  document.getElementById('ls').innerHTML=
-    `<span style="color:#ef4444">📊 连板股票数: ${totalUnique}只</span>`+
-    `<span style="color:#f97316">📈 最高连板: ${maxStreak}板</span>`+
-    `<span style="color:#64748b">🕐 更新: ${LBD.update_time}</span>`;
-}
-
-// ===== 自动刷新 =====
-let ti;
-function refresh(){
-  const s=mkt();
-  document.getElementById('st').textContent='刷新中...';
-  document.getElementById('sg').innerHTML='<div class="loading"><div class="spinner"></div>获取数据...</div>';
-  fetchD().then(d=>{render(d);document.getElementById('st').textContent=s.open?'实时':'盘后';startCD(s.open?30:nextHour())});
-}
-
-function nextHour(){
-  const n=new Date();
-  return Math.max(60,Math.floor((new Date(n.getFullYear(),n.getMonth(),n.getDate(),n.getHours()+1,0,0,0)-n)/1000));
-}
-
-function startCD(s){if(ti)clearInterval(ti);let r=s;const el=document.getElementById('cd');
-  ti=setInterval(()=>{r--;const st=mkt();
-    el.textContent=st.open?`刷新: ${r}s`:`${new Date(Date.now()+r*1000).getHours().toString().padStart(2,'0')}:00 整点 (${Math.floor(r/60)}分)`;
-    if(r<=0){clearInterval(ti);refresh()}},1000)}
-
-// ===== 启动 =====
-refresh();
-</script>
-</body>
-</html>
+};
+154|
+155|// ===== 市场状态 =====
+156|function mkt(){const d=new Date(),h=d.getHours(),m=d.getMinutes();return{open:(h*60+m)>=570&&(h*60+m)<=900}}
+157|
+158|// ===== 获取数据 =====
+159|async function fetchD(){
+160|  const codes=Object.keys(IX).concat(H.map(h=>h.c)).join(',');
+161|  try{
+162|    const r=await fetch(`https://qt.gtimg.cn/q=${codes}&_=${Date.now()}`,{cache:'no-store'});
+163|    const t=await r.text(),d={};
+164|    for(const l of t.split(';')){
+165|      if(!l.includes('~'))continue;
+166|      const eq=l.indexOf('=');
+167|      if(eq<0)continue;
+168|      d[l.substring(0,eq).replace('var ','').trim()]=l.substring(eq+2,l.lastIndexOf('"')).split('~');
+169|    }
+170|    return d;
+171|  }catch{return null}
+172|}
+173|
+174|// ===== 渲染 =====
+175|function render(d){
+176|  const s=mkt();
+177|  document.getElementById('tm').textContent=new Date().toLocaleTimeString('zh-CN');
+178|  const mb=document.getElementById('mb');
+179|  mb.innerHTML=s.open?'<span class="badge badge-open">🟢 交易中</span>':'<span class="badge badge-close">🔴 已收盘</span>';
+180|  document.getElementById('sd').className='dot'+(s.open?'':' off');
+181|
+182|  if(!d){document.getElementById('sg').innerHTML='<div class="loading">⚠️ 数据获取失败</div>';return}
+183|
+184|  // 指数
+185|  let ixh='';
+186|  for(const [code,id] of Object.entries(IX)){
+187|    const p=d['v_'+code];let v='--',c='--',cl='#94a3b8';
+188|    if(p&&p.length>4){
+189|      const pr=parseFloat(p[3])||0,cls=parseFloat(p[4])||pr,chg=cls?((pr-cls)/cls*100):0;
+190|      v=pr.toFixed(2);c=(chg>0?'+':'')+chg.toFixed(2)+'%';cl=chg>0?'#ef4444':chg<0?'#34d399':'#94a3b8';
+191|    }
+192|    const kc=code==='sh000688'?'style="border:1px solid #334155"':'';
+193|    const kn=code==='sh000688'?'<span style="color:#38bdf8">科创50 🚀</span>':IXN[code];
+194|    ixh+=`<div class="idx-item" ${kc}><div class="name">${kn}</div><div class="val" style="color:${cl}">${v}</div><div class="pct" style="color:${cl}">${c}</div></div>`;
+195|  }
+196|  document.getElementById('idxG').innerHTML=ixh;
+197|
+198|  // 持仓
+199|  let sh='';
+200|  for(const h of H){
+201|    const p=d['v_'+h.c];let pr=0,chg=0,ps='--',cs='--',cls='flat';
+202|    if(p&&p.length>4){
+203|      const pv=parseFloat(p[3])||0,cv=parseFloat(p[4])||pv;
+204|      chg=cv?((pv-cv)/cv*100):0;pr=pv;ps=pv.toFixed(2)+(h.hk?' <span style="font-size:10px;color:#64748b">HKD</span>':'');
+205|      cs=(chg>0?'+':'')+chg.toFixed(2)+'%';cls=chg>0.5?'up':chg<-0.5?'down':'flat';
+206|    }
+207|    let tg='hold',tt='持有';
+208|    if(chg>5){tg='buy';tt='🔥强势'}else if(chg>2){tg='buy';tt='📈上涨'}else if(chg<-3){tg='watch';tt='⚠️关注'}
+209|    if(pr===0){tt='⏳等待'}
+210|    const bc=chg>0?'#ef4444':chg<0?'#34d399':'#64748b';
+211|    const lt=pr===0?'加载中...':(chg>0?'✅ ':'💧 ')+h.l;
+212|    sh+=`<div class="stock-card">
+213|      <div class="label"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${bc}"></span> ${h.d}</div>
+214|      <div class="price"><span class="num">${ps}</span><span class="chg ${cls}">${cs}</span></div>
+215|      <div class="info">${lt}</div>
+216|      <div class="info">⚠️ ${h.r}</div>
+217|      <div class="tag tag-${tg}">${tt}</div>
+218|    </div>`;
+219|  }
+220|  document.getElementById('sg').innerHTML=sh;
+221|
+222|  renderNews();
+223|  renderAnalysis();
+224|  renderWatch();
+225|  renderLadder();
+226|}
+227|
+228|// ===== 新闻 =====
+229|function renderNews(){
+230|  const n=[
+231|    {t:'7/10',tag:'🚨氦气出口禁令',text:'商务部+海关总署：对氦气实施临时禁止出口管理→战略地位提升，利好金宏气体',c:'#ef4444'},
+232|    {t:'今',tag:'深科技',text:'两天+19.7%，验证存储封测铲子逻辑',c:'#ef4444'},
+233|    {t:'今',tag:'金宏',text:'氦气出口禁令→战略地位提升，36支撑位',c:'#ef4444'},
+234|    {t:'今',tag:'华大',text:'基因测序回暖，+4.63%',c:'#ef4444'},
+235|    {t:'昨夜',tag:'美股',text:'纳指+1.30%，科技强势',c:'#ef4444'},
+236|    {t:'昨夜',tag:'美股存储',text:'美光-2.8%，闪迪-3.9%盘前走低',c:'#34d399'},
+237|    {t:'7/9',tag:'科创50',text:'+8.41%创纪录！中芯涨停+13.74%',c:'#ef4444'},
+238|    {t:'7/9',tag:'罗洄头',text:'沉默第3天，判断全部应验',c:'#38bdf8'}
+239|  ];
+240|  document.getElementById('nc').innerHTML=n.map(x=>
+241|    `<div class="news-item"><span class="news-time">${x.t}</span><span class="news-tag" style="color:${x.c}">${x.tag}</span><span class="news-text">${x.text}</span></div>`
+242|  ).join('');
+243|}
+244|
+245|// ===== 分析 =====
+246|function renderAnalysis(){
+247|  const a=[
+248|    {tag:'🚨',text:'商务部+海关总署禁氦气出口：中国90%靠进口，禁止出口=战略地位提升，金宏气体直接受益',tp:'buy'},
+249|    {tag:'🔥',text:'深科技验证"存储封测铲子"逻辑，HBM挤压DRAM→封测需求增，中线看好',tp:'buy'},
+250|    {tag:'💡',text:'华大加速，基因测序是AI在医疗最直接的应用场景',tp:'buy'},
+251|    {tag:'📊',text:'中芯(H股)85.6 HKD，大涨后整理，AI芯片龙头逻辑不变',tp:'hold'},
+252|    {tag:'🌍',text:'纳指+1.30%+日经+1.77%→全球科技共振仍在，下周A股科技有望延续',tp:'hold'},
+253|    {tag:'⚠️',text:'金宏36是重要支撑位，氦气出口禁令可能催化反弹',tp:'watch'}
+254|  ];
+255|  const m={buy:'a-buy',hold:'a-hold',watch:'a-watch'};
+256|  document.getElementById('ac').innerHTML=a.map(x=>
+257|    `<div class="analysis-item"><span class="analysis-tag ${m[x.tp]}">${x.tag}</span><span class="news-text">${x.text}</span></div>`
+258|  ).join('');
+259|}
+260|
+261|// ===== 关注方向 =====
+262|function renderWatch(){
+263|  document.getElementById('wc').innerHTML=`
+264|    <div class="watch-card">
+265|      <div class="title">🔬 半导体设备 <span class="wt wt-hot">hot</span><span class="wt wt-new">新方向</span></div>
+266|      <div class="reason">封测/特气已布局，设备是国产替代最薄弱环节。扩产催化。参考：北方华创/中微公司/拓荆科技</div>
+267|    </div>
+268|    <div class="watch-card">
+269|      <div class="title">📦 AI应用 <span class="wt wt-trend">趋势</span></div>
+270|      <div class="reason">AI硬件涨完→软件端接力。参考：金山办公/用友网络/科大讯飞</div>
+271|    </div>
+272|    <div class="watch-card">
+273|      <div class="title">🧪 CXO/创新药 <span class="wt wt-trend">趋势</span><span class="wt wt-new">新方向</span></div>
+274|      <div class="reason">罗洄头关注AI医疗，CXO估值历史低位(PE 18-30x)。参考：药明康德/康龙化成/泰格医药</div>
+275|    </div>
+276|    <div class="watch-card">
+277|      <div class="title">⚡ 固态电池 <span class="wt wt-hot">hot</span></div>
+278|      <div class="reason">罗洄"等我做完锑矿和固态"→他进场就是风口。参考：宁德时代/当升科技/容百科技</div>
+279|    </div>`;
+280|}
+281|
+282|// ===== 连板连线图 =====
+283|function renderLadder(){
+284|  const d=LBD.data,ds=Object.keys(d).sort(); // sorted dates
+285|  const tb=document.getElementById('ltBody'),th=document.getElementById('ltHead');
+286|  
+287|  // Collect all unique stock codes that ever had 2+ streak
+288|  const stockMap={}; // code -> {name, sector, days:{date:streak}}
+289|  for(const date of ds){
+290|    const dayData=d[date];
+291|    if(!dayData||!dayData.stocks)continue;
+292|    for(const s of dayData.stocks){
+293|      if(!stockMap[s.code]){
+294|        stockMap[s.code]={name:s.name,sector:s.sector,lastName:s.name,days:{}};
+295|      }
+296|      stockMap[s.code].days[date]=s.streak;
+297|      stockMap[s.code].lastName=s.name;
+298|    }
+299|  }
+300|  
+301|  const codes=Object.keys(stockMap);
+302|  
+303|  if(!codes.length){
+304|    th.innerHTML='<tr><td style="color:#64748b;padding:12px;text-align:center" colspan="5">暂无连续2天以上涨停的股票</td></tr>';
+305|    tb.innerHTML='';
+306|    document.getElementById('ls').innerHTML='<span style="color:#64748b">最近60个交易日无连板数据（市场短线情绪弱）</span>';
+307|    return;
+308|  }
+309|  
+310|  // Show last 20 trading days max (for readability)
+311|  const showDates=ds.slice(-20);
+312|  
+313|  // Table header
+314|  let hhtml='<tr><th style="color:#64748b;text-align:left;padding:4px 6px;font-weight:400">股票</th>';
+315|  for(const date of showDates){
+316|    hhtml+=`<th style="color:#334155;text-align:center;padding:4px 2px;font-weight:400;font-size:9px">${date.substring(5)}</th>`;
+317|  }
+318|  hhtml+='</tr>';
+319|  th.innerHTML=hhtml;
+320|  
+321|  // Sort codes: by latest streak desc, then by name
+322|  codes.sort((a,b)=>{
+323|    const la=stockMap[a],lb=stockMap[b];
+324|    const lastDateA=showDates.filter(d=>la.days[d]).pop();
+325|    const lastDateB=showDates.filter(d=>lb.days[d]).pop();
+326|    const strA=lastDateA?stockMap[a].days[lastDateA]:0;
+327|    const strB=lastDateB?stockMap[b].days[lastDateB]:0;
+328|    if(strB!==strA)return strB-strA;
+329|    return la.name.localeCompare(lb.name);
+330|  });
+331|  
+332|  let bhtml='';
+333|  for(const code of codes){
+334|    const s=stockMap[code];
+335|    const sectorTag=s.sector==='科创板'?'<span style="color:#38bdf8;font-size:9px">科创</span>':
+336|                     s.sector==='创业板'?'<span style="color:#34d399;font-size:9px">创业</span>':'';
+337|    bhtml+=`<tr><td style="padding:4px 6px;white-space:nowrap"><span style="font-weight:600">${s.lastName}</span> ${sectorTag}</td>`;
+338|    
+339|    for(let i=0;i<showDates.length;i++){
+340|      const date=showDates[i];
+341|      const streak=s.days[date];
+342|      
+343|      if(streak){
+344|        // Color intensity based on streak length
+345|        let bg='#f97316',fg='#fff';
+346|        if(streak>=7){bg='#dc2626';fg='#fff'}
+347|        else if(streak>=5){bg='#ef4444';fg='#fff'}
+348|        else if(streak>=4){bg='#f97316';fg='#fff'}
+349|        else if(streak>=3){bg='#eab308';fg='#0f172a'}
+350|        else{bg='#475569';fg='#e2e8f0'}
+351|        
+352|        // Draw connection line: show a dot if there's streak on consecutive days
+353|        const prevDate=i>0?showDates[i-1]:null;
+354|        const prevStreak=prevDate?s.days[prevDate]:0;
+355|        const nextDate=i<showDates.length-1?showDates[i+1]:null;
+356|        const nextStreak=nextDate?s.days[nextDate]:0;
+357|        
+358|        let connector='';
+359|        if(prevStreak&&streak)connector+='─';
+360|        if(nextStreak&&streak)connector+='─';
+361|        
+362|        bhtml+=`<td style="text-align:center;padding:2px;position:relative">
+363|          <div style="display:inline-flex;align-items:center;gap:0">
+364|            ${prevStreak&&streak?'<span style="color:#475569;font-size:8px">─</span>':''}
+365|            <span style="display:inline-block;background:${bg};color:${fg};border-radius:3px;padding:1px 5px;font-size:10px;font-weight:700">${streak}</span>
+366|            ${nextStreak&&streak?'<span style="color:#475569;font-size:8px">─</span>':''}
+367|          </div>
+368|        </td>`;
+369|      } else {
+370|        bhtml+='<td style="text-align:center;padding:2px"><span style="color:#1e293b">·</span></td>';
+371|      }
+372|    }
+373|    bhtml+='</tr>';
+374|  }
+375|  tb.innerHTML=bhtml;
+376|  
+377|  // Stats
+378|  const totalUnique=codes.length;
+379|  const maxStreak=Math.max(...codes.map(c=>Math.max(...Object.values(stockMap[c].days))),0);
+380|  document.getElementById('ls').innerHTML=
+381|    `<span style="color:#ef4444">📊 连板股票数: ${totalUnique}只</span>`+
+382|    `<span style="color:#f97316">📈 最高连板: ${maxStreak}板</span>`+
+383|    `<span style="color:#64748b">🕐 更新: ${LBD.update_time}</span>`;
+384|}
+385|
+386|// ===== 自动刷新 =====
+387|let ti;
+388|function refresh(){
+389|  const s=mkt();
+390|  document.getElementById('st').textContent='刷新中...';
+391|  document.getElementById('sg').innerHTML='<div class="loading"><div class="spinner"></div>获取数据...</div>';
+392|  fetchD().then(d=>{render(d);document.getElementById('st').textContent=s.open?'实时':'盘后';startCD(s.open?30:nextHour())});
+393|}
+394|
+395|function nextHour(){
+396|  const n=new Date();
+397|  return Math.max(60,Math.floor((new Date(n.getFullYear(),n.getMonth(),n.getDate(),n.getHours()+1,0,0,0)-n)/1000));
+398|}
+399|
+400|function startCD(s){if(ti)clearInterval(ti);let r=s;const el=document.getElementById('cd');
+401|  ti=setInterval(()=>{r--;const st=mkt();
+402|    el.textContent=st.open?`刷新: ${r}s`:`${new Date(Date.now()+r*1000).getHours().toString().padStart(2,'0')}:00 整点 (${Math.floor(r/60)}分)`;
+403|    if(r<=0){clearInterval(ti);refresh()}},1000)}
+404|
+405|// ===== 启动 =====
+406|refresh();
+407|</script>
+408|</body>
+409|</html>
