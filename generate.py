@@ -57,9 +57,10 @@ def fetch_global_data():
 
 def safe_idx(idx_data, code, idx=0):
     """安全获取指数数据"""
-    if code in idx_data:
+    key = f'v_{code}'
+    if key in idx_data:
         try:
-            parts = idx_data[code]
+            parts = idx_data[key]
             name = parts[1]
             p = float(parts[3])
             c = float(parts[4])
