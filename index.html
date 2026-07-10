@@ -167,6 +167,7 @@ function rd(d){
   
   // 分析
   document.getElementById('ac').innerHTML=[
+    {t:'💊',x:'泰格医药 +8.79%放量！CXO卖水人逻辑，全球投融资回暖+降息催化，高盛目标价77元',p:'ab'},
     {t:'🚨',x:'商务部禁氦气出口：中国90%靠进口→战略地位提升，金宏直接受益',p:'ab'},
     {t:'🔥',x:'深科技验证封测铲子逻辑，HBM挤压DRAM→封测需求增',p:'ab'},
     {t:'💡',x:'华大加速，基因测序是AI医疗最直接应用',p:'ab'},
@@ -176,7 +177,7 @@ function rd(d){
   ].map(x=>`<div class="ai"><span class="at ${x.p}">${x.t}</span><span class="ntx">${x.x}</span></div>`).join('');
   
   // 关注方向
-  document.getElementById('wc').innerHTML=`<div class="wc"><div class="wt">🔬 半导体设备 <span class="wk wh">hot</span><span class="wk wn">新方向</span></div><div class="wr">设备是国产替代最薄弱环节。参考：北方华创/中微公司/拓荆科技</div></div><div class="wc"><div class="wt">📦 AI应用 <span class="wk wd">趋势</span></div><div class="wr">AI硬件涨完→软件接力。参考：金山办公/用友/科大讯飞</div></div><div class="wc"><div class="wt">🧪 CXO/创新药 <span class="wk wd">趋势</span><span class="wk wn">新方向</span></div><div class="wr">CXO估值历史低位PE18-30x。参考：药明康德/康龙化成/泰格医药</div></div><div class="wc"><div class="wt">⚡ 固态电池 <span class="wk wh">hot</span></div><div class="wr">罗洄"等我做完"→风口。参考：宁德时代/当升科技/容百科技</div></div>`;
+  document.getElementById('wc').innerHTML=`<div class="wc"><div class="wt">🔬 半导体设备 <span class="wk wh">hot</span><span class="wk wn">新方向</span></div><div class="wr">设备是国产替代最薄弱环节。参考：北方华创/中微公司/拓荆科技</div></div><div class="wc"><div class="wt">💊 **泰格医药(CXO)** <span class="wk wh">hot</span><span class="wk wn">新方向</span></div><div class="wr">CXO是医药"卖水人"逻辑。全球投融资Q2回暖+降息催化+PE历史低位。确定性最高的医药反转标的。今日+8.79%放量突破。</div></div><div class="wc"><div class="wt">📦 AI应用 <span class="wk wd">趋势</span></div><div class="wr">AI硬件涨完→软件接力。参考：金山办公/用友/科大讯飞</div></div><div class="wc"><div class="wt">⚡ 固态电池 <span class="wk wh">hot</span></div><div class="wr">罗洄"等我做完"→风口。参考：宁德时代/当升科技/容百科技</div></div>`;
   
   // 连板
   rl();
