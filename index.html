@@ -106,7 +106,7 @@ const H=[
   {c:'sh688114',n:'华大智造',d:'基因测序龙头',l:'国产唯一，全球第三',r:'集采风险'},
   {c:'sh688507',n:'索辰科技',d:'CAE仿真软件',l:'国产CAE龙头',r:'客户拓展慢'},
   {c:'sz002594',n:'比亚迪',d:'新能源车龙头',l:'销量全球第一',r:'价格战激烈'},
-  {c:'sz000762',n:'西藏矿业',d:'锂矿',l:'等罗洄信号',r:'锂价低迷'},
+  {c:'sz000762',n:'西藏矿业',d:'锂矿',l:'锂矿周期底部，等待信号',r:'锂价低迷'},
   {c:'sz300174',n:'元力股份',d:'超级电容',l:'从底部企稳',r:'市场规模有限'}
 ];
 const IX={sh000001:'sh',sz399001:'sz',sz399006:'cy',sh000688:'kc'};
@@ -159,10 +159,9 @@ function rd(d){
     {t:'今',g:'深科技',x:'两天+19.7%，验证封测铲子逻辑',c:'#ef4444'},
     {t:'今',g:'金宏',x:'氦气出口禁令→战略地位提升，36支撑',c:'#ef4444'},
     {t:'今',g:'华大',x:'基因测序回暖+4.63%',c:'#ef4444'},
+    {t:'今',g:'泰格医药',x:'CXO放量+8.79%，高盛目标价77元',c:'#ef4444'},
     {t:'昨夜',g:'美股',x:'纳指+1.30%，科技强势',c:'#ef4444'},
-    {t:'昨夜',g:'美股存储',x:'美光-2.8%，闪迪-3.9%',c:'#34d399'},
     {t:'7/9',g:'科创50',x:'+8.41%创纪录！中芯+13.74%',c:'#ef4444'},
-    {t:'7/9',g:'罗洄头',x:'沉默第3天，判断全部应验',c:'#38bdf8'}
   ].map(x=>`<div class="ni"><span class="nx">${x.t}</span><span class="nt" style="color:${x.c}">${x.g}</span><span class="ntx">${x.x}</span></div>`).join('');
   
   // 分析
@@ -177,7 +176,7 @@ function rd(d){
   ].map(x=>`<div class="ai"><span class="at ${x.p}">${x.t}</span><span class="ntx">${x.x}</span></div>`).join('');
   
   // 关注方向
-  document.getElementById('wc').innerHTML=`<div class="wc"><div class="wt">🔬 半导体设备 <span class="wk wh">hot</span><span class="wk wn">新方向</span></div><div class="wr">设备是国产替代最薄弱环节。参考：北方华创/中微公司/拓荆科技</div></div><div class="wc"><div class="wt">💊 **泰格医药(CXO)** <span class="wk wh">hot</span><span class="wk wn">新方向</span></div><div class="wr">CXO是医药"卖水人"逻辑。全球投融资Q2回暖+降息催化+PE历史低位。确定性最高的医药反转标的。今日+8.79%放量突破。</div></div><div class="wc"><div class="wt">📦 AI应用 <span class="wk wd">趋势</span></div><div class="wr">AI硬件涨完→软件接力。参考：金山办公/用友/科大讯飞</div></div><div class="wc"><div class="wt">⚡ 固态电池 <span class="wk wh">hot</span></div><div class="wr">罗洄"等我做完"→风口。参考：宁德时代/当升科技/容百科技</div></div>`;
+  document.getElementById('wc').innerHTML=`<div class="wc"><div class="wt">🔬 半导体设备 <span class="wk wh">hot</span><span class="wk wn">新方向</span></div><div class="wr">设备是国产替代最薄弱环节。参考：北方华创/中微公司/拓荆科技</div></div><div class="wc"><div class="wt">💊 **泰格医药(CXO)** <span class="wk wh">hot</span><span class="wk wn">新方向</span></div><div class="wr">CXO是医药"卖水人"逻辑。全球投融资Q2回暖+降息催化+PE历史低位。确定性最高的医药反转标的。今日+8.79%放量突破。</div></div><div class="wc"><div class="wt">📦 AI应用 <span class="wk wd">趋势</span></div><div class="wr">AI硬件涨完→软件接力。参考：金山办公/用友/科大讯飞</div></div><div class="wc"><div class="wt">⚡ 固态电池 <span class="wk wh">hot</span></div><div class="wr">下一代电池技术，产业化加速期。参考：宁德时代/当升科技/容百科技</div></div>`;
   
   // 连板
   rl();
