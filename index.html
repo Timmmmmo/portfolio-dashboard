@@ -113,7 +113,13 @@ const IX={sh000001:'sh',sz399001:'sz',sz399006:'cy',sh000688:'kc'};
 const IXN={sh000001:'上证指数',sz399001:'深证成指',sz399006:'创业板指',sh000688:'科创50'};
 const LBD={"update_time":"2026-07-10 20:37","days":4,"data":{"2026-04-16":{"stocks":[{"code":"sh605388","name":"均瑶健康","streak":2,"sector":"主板","chg":9.96}],"count":1,"max_streak":2},"2026-05-27":{"stocks":[{"code":"sz002251","name":"步步高","streak":2,"sector":"主板","chg":12.01}],"count":1,"max_streak":2},"2026-06-30":{"stocks":[{"code":"sz000004","name":"国华退","streak":2,"sector":"主板","chg":13.33}],"count":1,"max_streak":2},"2026-07-03":{"stocks":[{"code":"sz000004","name":"国华退","streak":2,"sector":"主板","chg":12.5}],"count":1,"max_streak":2}}};
 
-function mk(){const d=new Date(),h=d.getHours(),m=d.getMinutes();return{open:(h*60+m)>=570&&(h*60+m)<=900}}
+function mk(){const d=new Date(),h=d.getHours(),m=d.getMinutes(),w=d.getDay();
+  // 2026年中国 A股/港股节假日列表
+  const holidays=['2026-01-01','2026-02-16','2026-02-17','2026-02-18','2026-02-19','2026-02-20',
+    '2026-04-06','2026-05-01','2026-06-22','2026-09-28','2026-10-01','2026-10-02','2026-10-05','2026-10-06','2026-10-07'];
+  const today=d.toISOString().slice(0,10);
+  const isHoliday=holidays.includes(today);
+  return{open:(w>0&&w<6&&!isHoliday)&&(h*60+m)>=570&&(h*60+m)<=900}}
 
 async function fd(){
   const cs=Object.keys(IX).concat(H.map(h=>h.c)).join(',');
