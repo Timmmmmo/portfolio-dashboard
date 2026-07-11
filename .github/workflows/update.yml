@@ -1,9 +1,7 @@
 name: 更新Dashboard
 on:
   schedule:
-    - cron: '*/2 1-7 * * 1-5'
-    - cron: '*/30 0-1,7-23 * * 1-5'
-    - cron: '*/30 * * * 0,6'
+    - cron: '0 * * * *'  # 每整点
   workflow_dispatch:
 
 jobs:
@@ -18,26 +16,42 @@ jobs:
       - name: 全市场连板扫描
         run: python lianban_scanner.py > lianban_data.json 2>&1
 
+      - name: 财联社新闻抓取
+        run: python news_fetcher.py > news_data.json 2>&1
+
       - name: 更新到index.html
         run: |
           python3 << 'PYEOF'
           import json, re
+          
+          # Read generated data
           with open('lianban_data.json') as f:
               lb = json.load(f)
+          with open('news_data.json') as f:
+              news = json.load(f)
+          
+          # Read HTML
           with open('index.html') as f:
               html = f.read()
-          new_data = json.dumps(lb, ensure_ascii=False, indent=2)
-          new_section = f'const LBD = {new_data};'
-          html = re.sub(r'const LBD = \{.*?\};', new_section, html, flags=re.DOTALL)
+          
+          # Update LBD
+          lb_str = json.dumps(lb, ensure_ascii=False, indent=2)
+          html = re.sub(r'const LBD = \{.*?\};', f'const LBD = {lb_str};', html, flags=re.DOTALL)
+          
+          # Update NEWS_DATA
+          news_str = json.dumps(news, ensure_ascii=False, indent=2)
+          html = re.sub(r'const NEWS_DATA = \{.*?\};', f'const NEWS_DATA = {news_str};', html, flags=re.DOTALL)
+          
           with open('index.html', 'w') as f:
               f.write(html)
-          print(f'Updated: {lb["days"]} days of data')
+          
+          print(f'LBD: {lb["days"]} days, News: {news["total"]} items')
           PYEOF
 
       - name: 提交更新
         run: |
           git config user.name "Dashboard Bot"
           git config user.email "bot@timmmmmo.github.io"
-          git add index.html lianban_data.json
-          git diff --staged --quiet || git commit -m "auto: update dashboard $(date '+%Y-%m-%d %H:%M')"
+          git add index.html lianban_data.json news_data.json
+          git diff --staged --quiet || git commit -m "auto: update $(date '+%Y-%m-%d %H:%M')"
           git push
