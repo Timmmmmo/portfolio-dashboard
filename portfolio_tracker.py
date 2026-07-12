@@ -13,6 +13,7 @@ HOLDINGS = {
     'sz002594': {'name': '比亚迪', 'sector': '新能源车', 'desc': '全球销量冠军'},
     'sz000762': {'name': '西藏矿业', 'sector': '锂矿', 'desc': '锂矿周期底部'},
     'sz300174': {'name': '元力股份', 'sector': '超级电容', 'desc': '底部企稳中'},
+    'sh603127': {'name': '昭衍新药', 'sector': '实验猴/CXO', 'desc': '中国最大实验猴群，CXO上游卖水人'},
 }
 
 def fetch_prices():
