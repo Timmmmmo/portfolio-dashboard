@@ -19,39 +19,43 @@ jobs:
       - name: 财联社新闻抓取
         run: python news_fetcher.py > news_data.json 2>&1
 
+      - name: 持仓跟踪分析
+        run: python portfolio_tracker.py > portfolio_data.json 2>&1
+
       - name: 更新到index.html
         run: |
           python3 << 'PYEOF'
           import json, re
           
           # Read generated data
-          with open('lianban_data.json') as f:
-              lb = json.load(f)
-          with open('news_data.json') as f:
-              news = json.load(f)
+          with open('lianban_data.json') as f: lb = json.load(f)
+          with open('news_data.json') as f: news = json.load(f)
+          with open('portfolio_data.json') as f: pf = json.load(f)
           
           # Read HTML
-          with open('index.html') as f:
-              html = f.read()
+          with open('index.html') as f: html = f.read()
           
           # Update LBD
-          lb_str = json.dumps(lb, ensure_ascii=False, indent=2)
+          lb_str = json.dumps(lb, ensure_ascii=False)
           html = re.sub(r'const LBD = \{.*?\};', f'const LBD = {lb_str};', html, flags=re.DOTALL)
           
           # Update NEWS_DATA
-          news_str = json.dumps(news, ensure_ascii=False, indent=2)
+          news_str = json.dumps(news, ensure_ascii=False)
           html = re.sub(r'const NEWS_DATA = \{.*?\};', f'const NEWS_DATA = {news_str};', html, flags=re.DOTALL)
           
-          with open('index.html', 'w') as f:
-              f.write(html)
+          # Update PF (portfolio data)
+          pf_str = json.dumps(pf, ensure_ascii=False)
+          html = re.sub(r'const PF = \{.*?\};', f'const PF = {pf_str};', html, flags=re.DOTALL)
           
-          print(f'LBD: {lb["days"]} days, News: {news["total"]} items')
+          with open('index.html', 'w') as f: f.write(html)
+          
+          print(f'LBD: {lb["days"]}d, News: {news["total"]}, PF: {pf["total"]}')
           PYEOF
 
       - name: 提交更新
         run: |
           git config user.name "Dashboard Bot"
           git config user.email "bot@timmmmmo.github.io"
-          git add index.html lianban_data.json news_data.json
+          git add index.html lianban_data.json news_data.json portfolio_data.json
           git diff --staged --quiet || git commit -m "auto: update $(date '+%Y-%m-%d %H:%M')"
           git push
