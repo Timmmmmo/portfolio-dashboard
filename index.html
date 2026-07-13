@@ -5,50 +5,51 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>📊 持仓智能Dashboard</title>
 <style>
+:root{--bg:#0f172a;--fg:#e2e8f0;--cd:#1e293b;--bd:#334155;--sm:#64748b;--sb:#475569;--s2:#94a3b8;--s3:#cbd5e1;--s4:#38bdf8;--s5:#1a1a3e;--s6:#450a0a;--s7:#064e3b;--s8:#1e1b4b;--s9:#fbbf24;--s0:#0f172a;--sx:#1e293b}
+[data-theme=light]{--bg:#f1f5f9;--fg:#1e293b;--cd:#ffffff;--bd:#cbd5e1;--sm:#64748b;--sb:#94a3b8;--s2:#64748b;--s3:#475569;--s4:#0284c7;--s5:#e2e8f0;--s6:#fef2f2;--s7:#f0fdf4;--s8:#eef2ff;--s9:#f59e0b;--s0:#ffffff;--sx:#f8fafc}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#0f172a;color:#e2e8f0;padding:16px;font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif}
+body{background:var(--bg);color:var(--fg);padding:16px;font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;transition:background .3s,color .3s}
 h1{font-size:20px}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px}
-.st{font-size:12px;color:#94a3b8;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.st{font-size:12px;color:var(--s2);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:#ef4444;animation:pl 2s infinite}
-.dot.off{background:#64748b;animation:none}
+.dot.off{background:var(--sm);animation:none}
 @keyframes pl{0%,100%{opacity:1}50%{opacity:.4}}
 .bdg{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600}
-.bgo{background:#450a0a;color:#ef4444}.bgc{background:#1e293b;color:#94a3b8}
-.btn{background:#1e293b;border:1px solid #334155;color:#94a3b8;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:12px}
-.btn:hover{background:#334155;color:#e2e8f0}
-.cd{background:#1e293b;border-radius:10px;padding:14px;border:1px solid #334155;margin-bottom:12px}
+.bgo{background:var(--s6);color:#ef4444}.bgc{background:var(--cd);color:var(--s2)}
+.btn{background:var(--cd);border:1px solid var(--bd);color:var(--s2);padding:4px 12px;border-radius:6px;cursor:pointer;font-size:12px;transition:background .2s}
+.btn:hover{background:var(--bd);color:var(--fg)}
+.cd{background:var(--cd);border-radius:10px;padding:14px;border:1px solid var(--bd);margin-bottom:12px;transition:background .3s}
 .ct{font-size:13px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .ix{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:8px}
-.ii{background:#0f172a;border-radius:8px;padding:8px;text-align:center}
-.ii .n1{font-size:11px;color:#64748b}.ii .v1{font-size:15px;font-weight:700;margin:2px 0}.ii .p1{font-size:11px}
+.ii{background:var(--s0);border-radius:8px;padding:8px;text-align:center}
+.ii .n1{font-size:11px;color:var(--s2)}.ii .v1{font-size:15px;font-weight:700;margin:2px 0}.ii .p1{font-size:11px}
 .sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;margin-bottom:12px}
-.sc{background:#1e293b;border-radius:10px;padding:12px;border:1px solid #334155}
-.sc .l1{font-size:11px;color:#38bdf8;margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.sc{background:var(--cd);border-radius:10px;padding:12px;border:1px solid var(--bd)}
+.sc .l1{font-size:11px;color:var(--s4);margin-bottom:6px;display:flex;align-items:center;gap:4px}
 .sc .pr{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
 .sc .pr .nv{font-size:22px;font-weight:700}
 .sc .pr .ch{padding:2px 8px;border-radius:4px;font-size:13px;font-weight:600}
-.up{background:#450a0a;color:#ef4444}.dn{background:#064e3b;color:#34d399}.fl{background:#1e293b;color:#94a3b8}
-.sc .i1{font-size:11px;color:#64748b;padding:4px 6px;background:#0f172a;border-radius:4px;margin-top:4px;line-height:1.4}
+.up{background:var(--s6);color:#ef4444}.dn{background:var(--s7);color:#34d399}.fl{background:var(--cd);color:var(--s2)}
+.sc .i1{font-size:11px;color:var(--s2);padding:4px 6px;background:var(--s0);border-radius:4px;margin-top:4px;line-height:1.4}
 .sc .t1{padding:2px 8px;border-radius:4px;font-size:10px;float:right;margin-top:4px}
-.tb{background:#450a0a;color:#ef4444}.th{background:#1e293b;color:#fbbf24}.tw{background:#064e3b;color:#34d399}
-.ni{padding:5px 0;border-bottom:1px solid #0f172a;font-size:12px;display:flex;gap:8px;align-items:flex-start}
-.ni:last-child{border:none}.nt{padding:1px 6px;border-radius:3px;font-size:10px;white-space:nowrap;background:#0f172a}
-.nx{color:#475569;font-size:10px;white-space:nowrap}.ntx{color:#cbd5e1}
+.tb{background:var(--s6);color:#ef4444}.th{background:var(--cd);color:var(--s9)}.tw{background:var(--s7);color:#34d399}
+.ni{padding:5px 0;border-bottom:1px solid var(--s0);font-size:12px;display:flex;gap:8px;align-items:flex-start}
+.ni:last-child{border:none}.nt{padding:1px 6px;border-radius:3px;font-size:10px;white-space:nowrap;background:var(--s0)}
+.nx{color:var(--sb);font-size:10px;white-space:nowrap}.ntx{color:var(--s3)}
 .ai{padding:4px 0;font-size:12px;display:flex;gap:8px;align-items:flex-start}
-.at{padding:1px 6px;border-radius:3px;font-size:10px;white-space:nowrap;background:#0f172a}
-.ab{color:#ef4444}.ah{color:#fbbf24}.aw{color:#34d399}
-.wc{background:linear-gradient(135deg,#1e293b,#1a1a3e);border-radius:8px;padding:12px;border:1px solid #334155;margin-bottom:8px}
-.wc .wt1{font-size:13px;color:#fbbf24;margin-bottom:4px;display:flex;align-items:center;gap:6px}
-.wc .wr1{font-size:11px;color:#94a3b8;line-height:1.5}
+.at{padding:1px 6px;border-radius:3px;font-size:10px;white-space:nowrap;background:var(--s0)}
+.wc{background:linear-gradient(135deg,var(--cd),var(--s5));border-radius:8px;padding:12px;border:1px solid var(--bd);margin-bottom:8px}
+.wc .wt1{font-size:13px;color:var(--s9);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.wc .wr1{font-size:11px;color:var(--s2);line-height:1.5}
 .wk{display:inline-block;padding:1px 8px;border-radius:10px;font-size:10px;margin-right:4px}
-.wh{background:#450a0a;color:#ef4444}.wn{background:#450a0a;color:#ef4444}.wd{background:#1e1b4b;color:#818cf8}
-.lbx{background:#0f172a;border-radius:8px;padding:8px;margin-bottom:8px;overflow-x:auto}
-.ln{font-size:10px;color:#475569;text-align:center;margin-top:6px}
-.ld1{text-align:center;padding:20px;color:#64748b;font-size:13px}
-.sp{display:inline-block;width:14px;height:14px;border:2px solid #334155;border-top-color:#38bdf8;border-radius:50%;animation:s .8s linear infinite;margin-right:6px;vertical-align:middle}
+.wh{background:var(--s6);color:#ef4444}.wn{background:var(--s6);color:#ef4444}.wd{background:var(--s8);color:#818cf8}
+.lbx{background:var(--s0);border-radius:8px;padding:8px;margin-bottom:8px;overflow-x:auto}
+.ln{font-size:10px;color:var(--sb);text-align:center;margin-top:6px}
+.ld1{text-align:center;padding:20px;color:var(--sm);font-size:13px}
+.sp{display:inline-block;width:14px;height:14px;border:2px solid var(--bd);border-top-color:var(--s4);border-radius:50%;animation:s .8s linear infinite;margin-right:6px;vertical-align:middle}
 @keyframes s{to{transform:rotate(360deg)}}
-.ft{text-align:center;color:#475569;font-size:11px;padding:12px;border-top:1px solid #1e293b;margin-top:16px}
+.ft{text-align:center;color:var(--sb);font-size:11px;padding:12px;border-top:1px solid var(--cd);margin-top:16px}
 </style>
 </head>
 <body>
@@ -62,6 +63,7 @@ h1{font-size:20px}
     <span id="tm">--:--</span>
     <span id="cd" style="color:#475569">--</span>
     <button class="btn" onclick="rf()">⟳</button>
+    <button class="btn" id="themeBtn" onclick="toggleTheme()">☀️</button>
   </div>
 </div>
 
@@ -93,6 +95,26 @@ h1{font-size:20px}
 <div class="ft"><span id="ntm"></span>盘中30s | 盘后整点</div>
 
 <script>
+// ===== 主题切换 =====
+function toggleTheme(){
+  const h=document.documentElement;
+  if(h.getAttribute('data-theme')==='light'){
+    h.removeAttribute('data-theme');
+    localStorage.setItem('theme','dark');
+    document.getElementById('themeBtn').textContent='☀️';
+  }else{
+    h.setAttribute('data-theme','light');
+    localStorage.setItem('theme','light');
+    document.getElementById('themeBtn').textContent='🌙';
+  }
+}
+(function(){
+  if(localStorage.getItem('theme')==='light'){
+    document.documentElement.setAttribute('data-theme','light');
+    document.getElementById('themeBtn').textContent='🌙';
+  }
+})();
+
 const H=[
   {c:'hk00981',n:'中芯国际(H)',d:'AI芯片龙头',l:'最先进制程，AI芯片刚需',r:'地缘政治',k:1},
   {c:'sz000021',n:'深科技',d:'存储封测铲子',l:'HBM挤压DRAM→封测需求增',r:'HBM研发中'},
