@@ -93,8 +93,10 @@
 93|<div class="cd"><div class="ct">📰 新闻</div><div id="nc"></div></div>
 94|<div class="ft"><span id="ntm"></span>盘中30s | 盘后整点</div>
 95|
-96|<script>
-97|// ===== 主题切换 =====
+<script>
+// ===== 全局错误保护 =====
+window.onerror=function(){};
+// ===== 主题切换 =====
 98|function toggleTheme(){
 99|  const h=document.documentElement;
 100|  if(h.getAttribute('data-theme')==='light'){
@@ -107,12 +109,15 @@
 107|    document.getElementById('themeBtn').textContent='🌙';
 108|  }
 109|}
-110|(function(){
-111|  if(localStorage.getItem('theme')==='light'){
-112|    document.documentElement.setAttribute('data-theme','light');
-113|    document.getElementById('themeBtn').textContent='🌙';
-114|  }
-115|})();
+(function(){
+  try{
+    if(localStorage.getItem('theme')==='light'){
+      document.documentElement.setAttribute('data-theme','light');
+      const tb=document.getElementById('themeBtn');
+      if(tb)tb.textContent='🌙';
+    }
+  }catch(e){}
+})();
 116|
 117|const H=[
 118|  {c:'hk00981',n:'中芯国际(H)',d:'AI芯片龙头',l:'最先进制程，AI芯片刚需',r:'地缘政治',k:1},
@@ -196,7 +201,7 @@
 196|  }
 197|
 198|  // 关注方向
-199|  document.getElementById('wc').innerHTML=`<div class="wc"><div class="wt1">🐵昭衍新药(实验猴) <span class="wk wh">hot</span><span class="wk wn">新方向</span></div><div class="wr1">"CXO的卖水人"——新药安全评价必须用猴子。中国最大猴群(3万只)+供给受限(繁殖需5年)+CXO投融资回暖。物理不可替代，逻辑类似氦气。参考：603127</div></div><div class="wc"><div class="wt1">🔬半导体设备 <span class="wk wh">hot</span></div><div class="wr1">参考：北方华创/中微公司</div></div><div class="wc"><div class="wt1">💊泰格医药(CXO) <span class="wk wh">hot</span></span></div><div class="wr1">CXO卖水人逻辑，投融资回暖+降息催化</div></div><div class="wc"><div class="wt1">📦AI应用 <span class="wk wd">趋势</span></div><div class="wr1">参考：金山办公/科大讯飞</div></div><div class="wc"><div class="wt1">⚡固态电池 <span class="wk wh">hot</span></div><div class="wr1">参考：宁德时代/当升科技</div></div>`;
+199|  document.getElementById('wc').innerHTML=`<div class="wc"><div class="wt1">🐵昭衍新药(实验猴) <span class="wk wh">hot</span><span class="wk wn">新方向</span></div><div class="wr1">"CXO的卖水人"——新药安全评价必须用猴子。中国最大猴群(3万只)+供给受限(繁殖需5年)+CXO投融资回暖。物理不可替代，逻辑类似氦气。参考：603127</div></div><div class="wc"><div class="wt1">🔬半导体设备 <span class="wk wh">hot</span></div><div class="wr1">参考：北方华创/中微公司</div></div><div class="wc"><div class="wt1">💊泰格医药(CXO) <span class="wk wh">hot</span></div><div class="wr1">CXO卖水人逻辑，投融资回暖+降息催化</div></div><div class="wc"><div class="wt1">📦AI应用 <span class="wk wd">趋势</span></div><div class="wr1">参考：金山办公/科大讯飞</div></div><div class="wc"><div class="wt1">⚡固态电池 <span class="wk wh">hot</span></div><div class="wr1">参考：宁德时代/当升科技</div></div>`;
 200|
 201|  rl();
 202|  startMF();
