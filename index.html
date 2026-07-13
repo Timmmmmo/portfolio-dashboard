@@ -81,7 +81,7 @@ h1{font-size:20px}
 </div>
 
 <div class="cd"><div class="ct">📰 新闻</div><div id="nc"></div></div>
-<div class="cd"><div class="ct">🧠 逻辑判断</div><div id="ac"></div></div>
+<div class="cd"><div class="ct">📊 持仓跟踪</div><div id="ac"></div></div>
 <div class="ft"><span id="ntm"></span>盘中30s | 盘后整点</div>
 
 <script>
@@ -147,16 +147,26 @@ function rd(d){
   }
   document.getElementById('sg').innerHTML=sh;
 
-  // 新闻
+  // 新闻 + 逻辑判断
   const nd=NEWS_DATA;
   if(nd&&nd.news&&nd.news.length){
-    document.getElementById('nc').innerHTML=nd.news.slice(0,20).map(x=>`<div class="ni"><span class="nx">${x.time||''}</span><span class="nt" style="color:#38bdf8">财联社</span><a href="${x.url||'#'}" target="_blank" rel="noopener" style="color:#cbd5e1;text-decoration:none" title="${x.title||x.content||''}">${x.title||x.content||''}</a><span style="color:#475569;font-size:9px;margin-left:3px">🔗</span></div>`).join('');
+    let nh=nd.news.slice(0,20).map(x=>`<div class="ni"><span class="nx">${x.time||''}</span><span class="nt" style="color:#38bdf8">财联社</span><a href="${x.url||'#'}" target="_blank" rel="noopener" style="color:#cbd5e1;text-decoration:none" title="${x.title||x.content||''}">${x.title||x.content||''}</a><span style="color:#475569;font-size:9px;margin-left:3px">🔗</span></div>`).join('');
+    // 在新闻下方追加逻辑判断
+    if(nd.analysis&&nd.analysis.length){
+      nh+='<div style="border-top:1px solid #334155;margin-top:8px;padding-top:8px;font-size:11px;color:#94a3b8;display:flex;flex-wrap:wrap;gap:6px">';
+      nd.analysis.slice(0,10).forEach(a=>{
+        let cl='#fbbf24';if(a.topic.includes('地缘')||a.topic.includes('风险'))cl='#34d399';if(a.topic.includes('利好')||a.topic.includes('催化'))cl='#ef4444';
+        nh+=`<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:#0f172a;border-radius:4px"><span style="color:${cl};font-weight:600">${a.topic}</span><span style="color:#64748b">${a.comment}</span></span>`;
+      });
+      nh+='</div>';
+    }
+    document.getElementById('nc').innerHTML=nh;
     document.getElementById('ntm').textContent='🕐新闻:'+(nd.update_time||'--')+' | ';
   }else{
     document.getElementById('nc').innerHTML='<div class="ld1">暂无新闻，整点更新</div>';
   }
 
-  // 持仓跟踪+分析
+  // 持仓跟踪
   const pf=PF;
   if(pf&&pf.holdings&&pf.holdings.length){
     let ah='<div style="font-size:11px;color:#94a3b8;margin-bottom:6px">📊 '+pf.period+'持仓跟踪 · '+pf.date+'</div>';
@@ -165,19 +175,9 @@ function rd(d){
       const s=h.chg>0?'+':'';
       ah+=`<div style="font-size:11px;display:flex;justify-content:space-between;padding:3px 6px;border-bottom:1px solid #0f172a"><span style="font-weight:600">${h.name}</span><span style="color:${c}">${h.price.toFixed(2)} ${s}${h.chg.toFixed(2)}% ${h.status}</span></div>`;
     });
-    if(pf.news_summary&&pf.news_summary.length){
-      ah+='<div style="font-size:10px;color:#475569;margin-top:6px;padding:4px 6px;background:#0f172a;border-radius:4px">🧠 新闻:'+pf.news_summary.join(' | ')+'</div>';
-    }
     document.getElementById('ac').innerHTML=ah;
-  }
-  // 新闻分析
-  if(nd&&nd.analysis&&nd.analysis.length){
-    document.getElementById('ac').innerHTML=nd.analysis.slice(0,8).map(a=>{
-      let cl='ah';if(a.topic.includes('地缘')||a.topic.includes('风险'))cl='aw';if(a.topic.includes('利好')||a.topic.includes('催化'))cl='ab';
-      return `<div class="ai"><span class="at ${cl}">${a.topic}</span><span class="ntx">${a.comment}</span></div>`;
-    }).join('');
   }else{
-    document.getElementById('ac').innerHTML='<div class="ld1">暂无分析</div>';
+    document.getElementById('ac').innerHTML='<div class="ld1">暂无持仓数据</div>';
   }
 
   // 关注方向
