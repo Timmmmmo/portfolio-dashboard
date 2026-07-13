@@ -80,6 +80,14 @@ h1{font-size:20px}
   <div class="ln">主板≥9.90% | 科创/创业板≥19.90% | 北交所≥29.90% | 全市场5000+</div>
 </div>
 
+<div class="cd" style="border-color:#38bdf8">
+  <div class="ct" style="color:#38bdf8">💰 板块资金流向 (主力净流入TOP10)</div>
+  <div style="position:relative">
+    <canvas id="mfChart" width="880" height="280" style="width:100%;height:260px;border-radius:8px"></canvas>
+  </div>
+  <div id="mfInfo" style="display:flex;gap:8px;flex-wrap:wrap;font-size:10px;color:#475569;margin-top:6px"></div>
+</div>
+
 <div class="cd"><div class="ct">📰 新闻</div><div id="nc"></div></div>
 <div class="cd"><div class="ct">📊 持仓跟踪</div><div id="ac"></div></div>
 <div class="ft"><span id="ntm"></span>盘中30s | 盘后整点</div>
@@ -184,6 +192,7 @@ function rd(d){
   document.getElementById('wc').innerHTML=`<div class="wc"><div class="wt1">🐵昭衍新药(实验猴) <span class="wk wh">hot</span><span class="wk wn">新方向</span></div><div class="wr1">"CXO的卖水人"——新药安全评价必须用猴子。中国最大猴群(3万只)+供给受限(繁殖需5年)+CXO投融资回暖。物理不可替代，逻辑类似氦气。参考：603127</div></div><div class="wc"><div class="wt1">🔬半导体设备 <span class="wk wh">hot</span></div><div class="wr1">参考：北方华创/中微公司</div></div><div class="wc"><div class="wt1">💊泰格医药(CXO) <span class="wk wh">hot</span></span></div><div class="wr1">CXO卖水人逻辑，投融资回暖+降息催化</div></div><div class="wc"><div class="wt1">📦AI应用 <span class="wk wd">趋势</span></div><div class="wr1">参考：金山办公/科大讯飞</div></div><div class="wc"><div class="wt1">⚡固态电池 <span class="wk wh">hot</span></div><div class="wr1">参考：宁德时代/当升科技</div></div>`;
 
   rl();
+  startMF();
 }
 
 function rl(){
@@ -214,6 +223,92 @@ function rl(){
   w.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:11px;min-width:400px"><thead>'+th+'</thead><tbody>'+tb+'</tbody></table>';
   const mx=Math.max(...codes.map(c=>Math.max(...Object.values(sm[c].days))),0);
   document.getElementById('ls').innerHTML='<span style="color:#ef4444">📊'+codes.length+'只</span> <span style="color:#f97316">📈最高'+mx+'板</span> <span style="color:#64748b">🕐'+LBD.update_time+'</span>';
+}
+
+// ===== 板块资金流向 =====
+function renderMF(){
+  const c=document.getElementById('mfChart');
+  if(!c)return;
+  const ctx=c.getContext('2d'),W=c.width,H=c.height;
+  ctx.clearRect(0,0,W,H);
+  
+  // Try to fetch from East Money API
+  fetch('https://push2.eastmoney.com/api/qt/clist/get?cb=mf_cb&pn=1&pz=15&po=1&np=1&fields=f12,f14,f3,f62,f184,f66,f69&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb',{mode:'no-cors'}).then(r=>r.text()).then(t=>{
+    try{
+      // Parse JSONP response
+      const json=t.replace(/^mf_cb\(/,'').replace(/\);$/,'');
+      const d=JSON.parse(json);
+      renderMFChart(d.data.diff);
+    }catch{
+      renderMFFallback(ctx,W,H);
+    }
+  }).catch(()=>renderMFFallback(ctx,W,H));
+  
+  // Show update time
+  document.getElementById('mfInfo').innerHTML='<span>🔄 数据加载中...</span>';
+}
+
+function renderMFChart(data, ctx, W, H){
+  if(!data||!data.length)return renderMFFallback(ctx,W,H);
+  
+  // Sort by net inflow (f62) descending
+  data.sort((a,b)=>(b.f62||0)-(a.f62||0));
+  const top=data.slice(0,10);
+  const maxVal=Math.max(...top.map(d=>Math.abs(d.f62||0)),1);
+  
+  // Draw horizontal bar chart
+  ctx.clearRect(0,0,W,H);
+  const ml=100,mr=80,mt=20,mb=20,cw=W-ml-mr,ch=H-mt-mb,bh=Math.min(22,ch/top.length-4);
+  
+  // Title
+  ctx.fillStyle='#64748b';ctx.font='10px sans-serif';ctx.textAlign='left';
+  ctx.fillText('主力净流入(亿元)  TOP10板块',ml,mt-4);
+  
+  top.forEach((item,i)=>{
+    const val=(item.f62||0)/100000000; // Convert to 亿
+    const name=item.f14||'';
+    const chg=item.f3||0;
+    const y=mt+i*(bh+6);
+    const barW=Math.abs(val)/maxVal*cw*0.8;
+    
+    // Name
+    ctx.fillStyle='#e2e8f0';ctx.font='11px sans-serif';ctx.textAlign='right';
+    ctx.fillText(name,ml-6,y+bh/2+4);
+    
+    // Bar
+    const x=val>=0?ml:ml+cw-barW;
+    const color=val>=0?'#ef4444':'#34d399';
+    ctx.fillStyle=color;
+    ctx.fillRect(x,y,Math.max(barW,2),bh);
+    
+    // Value
+    ctx.fillStyle=color;ctx.font='10px sans-serif';ctx.textAlign='left';
+    ctx.fillText((val>0?'+':'')+val.toFixed(2)+'亿',x+barW+4,y+bh/2+4);
+    
+    // Change %
+    ctx.fillStyle=chg>0?'#ef4444':chg<0?'#34d399':'#64748b';ctx.font='9px sans-serif';ctx.textAlign='right';
+    ctx.fillText((chg>0?'+':'')+chg.toFixed(2)+'%',W-mr-4,y+bh/2+4);
+  });
+  
+  document.getElementById('mfInfo').innerHTML='<span>🔴 主力净流入 🟢 主力净流出 | 实时更新</span>';
+}
+
+function renderMFFallback(ctx,W,H){
+  ctx.fillStyle='#64748b';ctx.font='13px sans-serif';ctx.textAlign='center';
+  ctx.fillText('盘后数据或API暂不可用',W/2,H/2);
+  ctx.fillStyle='#475569';ctx.font='10px sans-serif';
+  ctx.fillText('盘中每60秒自动刷新',W/2,H/2+20);
+  document.getElementById('mfInfo').innerHTML='<span>⏳ 等待盘中数据</span>';
+}
+
+// Update money flow every 60s during trading
+let mfTimer;
+function startMF(){
+  if(mfTimer)clearInterval(mfTimer);
+  renderMF();
+  mfTimer=setInterval(()=>{
+    if(ms().open)renderMF();
+  },60000);
 }
 
 function rf(){
