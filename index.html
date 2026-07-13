@@ -94,8 +94,6 @@ h1{font-size:20px}
 <div class="ft"><span id="ntm"></span>盘中30s | 盘后整点</div>
 
 <script>
-// ===== 全局错误保护 =====
-window.onerror=function(){};
 // ===== 主题切换 =====
 function toggleTheme(){
   const h=document.documentElement;
@@ -132,6 +130,7 @@ const H=[
 ];
 const IX={sh000001:'sh',sz399001:'sz',sz399006:'cy',sh000688:'kc',hkHSI:'',usDJI:'',usIXIC:''};
 const IXN={sh000001:'上证',sz399001:'深证',sz399006:'创业板',sh000688:'科创50',hkHSI:'恒生指数',usDJI:'道琼斯',usIXIC:'纳斯达克'};
+const LBD={"update_time":"2026-07-10 20:37","days":4,"data":{"2026-04-16":{"stocks":[{"code":"sh605388","name":"均瑶健康","streak":2,"sector":"主板","chg":9.96}],"count":1,"max_streak":2},"2026-05-27":{"stocks":[{"code":"sz002251","name":"步步高","streak":2,"sector":"主板","chg":12.01}],"count":1,"max_streak":2},"2026-06-30":{"stocks":[{"code":"sz000004","name":"国华退","streak":2,"sector":"主板","chg":13.33}],"count":1,"max_streak":2},"2026-07-03":{"stocks":[{"code":"sz000004","name":"国华退","streak":2,"sector":"主板","chg":12.5}],"count":1,"max_streak":2}}};
 const NEWS_DATA={"update_time": "2026-07-11 18:58", "news": [], "analysis": [], "total": 0, "status": "ok"};
 
 function ms(){
