@@ -128,8 +128,8 @@ const H=[
   {c:'sz000762',n:'西藏矿业',d:'锂矿',l:'锂矿周期底部',r:'锂价低迷'},
   {c:'sz300174',n:'元力股份',d:'超级电容',l:'底部企稳',r:'市场有限'}
 ];
-const IX={sh000001:'sh',sz399001:'sz',sz399006:'cy',sh000688:'kc',hkHSI:'',usDJI:'',usIXIC:''};
-const IXN={sh000001:'上证',sz399001:'深证',sz399006:'创业板',sh000688:'科创50',hkHSI:'恒生指数',usDJI:'道琼斯',usIXIC:'纳斯达克'};
+const IX={sh000001:'sh',sz399001:'sz',sz399006:'cy',sh000688:'kc',hkHSI:'',usDJI:'',usIXIC:'',usINX:''};
+const IXN={sh000001:'上证',sz399001:'深证',sz399006:'创业板',sh000688:'科创50',hkHSI:'恒生指数',usDJI:'道琼斯',usIXIC:'纳斯达克',usINX:'标普500'};
 const LBD={"update_time":"2026-07-10 20:37","days":4,"data":{"2026-04-16":{"stocks":[{"code":"sh605388","name":"均瑶健康","streak":2,"sector":"主板","chg":9.96}],"count":1,"max_streak":2},"2026-05-27":{"stocks":[{"code":"sz002251","name":"步步高","streak":2,"sector":"主板","chg":12.01}],"count":1,"max_streak":2},"2026-06-30":{"stocks":[{"code":"sz000004","name":"国华退","streak":2,"sector":"主板","chg":13.33}],"count":1,"max_streak":2},"2026-07-03":{"stocks":[{"code":"sz000004","name":"国华退","streak":2,"sector":"主板","chg":12.5}],"count":1,"max_streak":2}}};
 const NEWS_DATA={"update_time": "2026-07-11 18:58", "news": [], "analysis": [], "total": 0, "status": "ok"};
 
@@ -137,7 +137,25 @@ function ms(){
   const d=new Date(),h=d.getHours(),m=d.getMinutes(),w=d.getDay();
   const hd=['2026-01-01','2026-02-16','2026-02-17','2026-02-18','2026-02-19','2026-02-20','2026-04-06','2026-05-01','2026-06-22','2026-09-28','2026-10-01','2026-10-02','2026-10-05','2026-10-06','2026-10-07'];
   const td=d.toISOString().slice(0,10);
-  return{open:(w>0&&w<6&&!hd.includes(td))&&(h*60+m)>=570&&(h*60+m)<=900}
+  const isHd=hd.includes(td);
+  // A股: 09:30-15:00 周一至周五
+  const aOpen=(w>0&&w<6&&!isHd)&&(h*60+m)>=570&&(h*60+m)<=900;
+  // 美股: 夏令时21:30-04:00(次日) 冬令时22:30-05:00(次日) 周一至周五
+  // 简单判断: 夏令时(3月-11月) 21:30-04:00
+  const isSummer=(d.getMonth()>=2&&d.getMonth()<=9); // 约等于夏令时
+  const usStart=isSummer?1290:1350; // 21:30=1290min, 22:30=1350min
+  const usEnd=isSummer?240:300; // 04:00=240min, 05:00=300min
+  let usOpen=false;
+  if(w>0&&w<6&&!isHd){
+    const now=h*60+m;
+    if(now>=usStart||now<usEnd)usOpen=true;
+  }
+  // 周六早盘收尾(夏令时04:00=周六凌晨)
+  if(w===6&&h<usEnd/60&&!isHd){
+    const now=h*60+m;
+    if(now<usEnd)usOpen=true;
+  }
+  return{open:aOpen,usOpen:usOpen,any:aOpen||usOpen}
 }
 
 async function fx(){
@@ -153,9 +171,9 @@ async function fx(){
 function rd(d){
   const s=ms();
   document.getElementById('tm').textContent=new Date().toLocaleTimeString('zh-CN');
-  document.getElementById('mb').innerHTML=s.open?'<span class="bdg bgo">🟢 交易中</span>':'<span class="bdg bgc">🔴 收盘</span>';
-  document.getElementById('sd').className='dot'+(s.open?'':' off');
-  document.getElementById('st').textContent=s.open?'实时':'盘后';
+  document.getElementById('mb').innerHTML=(s.open?'<span class="bdg bgo">🟢 A股交易中</span>':(s.usOpen?'<span class="bdg bgo" style="background:#1e1b4b">🌙 美股交易中</span>':'<span class="bdg bgc">🔴 收盘</span>'));
+  document.getElementById('sd').className='dot'+(s.any?'':' off');
+  document.getElementById('st').textContent=s.open?'实时':s.usOpen?'夜盘':'盘后';
   if(!d){document.getElementById('sg').innerHTML='<div class="ld1">⚠️ 获取失败</div>';return}
 
   let xh='';
@@ -325,12 +343,12 @@ function startMF(){
 function rf(){
   const s=ms();document.getElementById('st').textContent='刷新...';
   document.getElementById('sg').innerHTML='<div class="ld1"><span class="sp"></span>获取数据...</div>';
-  fx().then(d=>{rd(d);cd(s.open?30:nh())});
+  fx().then(d=>{rd(d);cd(s.any?30:nh())});
 }
 
 function nh(){const n=new Date();return Math.max(60,Math.floor((new Date(n.getFullYear(),n.getMonth(),n.getDate(),n.getHours()+1,0,0,0)-n)/1000))}
 function cd(s){if(window._t)clearInterval(window._t);let r=s;
-  window._t=setInterval(()=>{r--;const st=ms();document.getElementById('cd').textContent=st.open?r+'s':new Date(Date.now()+r*1000).getHours().toString().padStart(2,'0')+':00('+Math.floor(r/60)+'分)';if(r<=0){clearInterval(window._t);rf()}},1000)}
+  window._t=setInterval(()=>{r--;const st=ms();document.getElementById('cd').textContent=st.open?r+'s':st.usOpen?r+'s🌙':new Date(Date.now()+r*1000).getHours().toString().padStart(2,'0')+':00('+Math.floor(r/60)+'分)';if(r<=0){clearInterval(window._t);rf()}},1000)}
 
 rf();
 </script>
