@@ -85,9 +85,9 @@ h1{font-size:20px}
 <div class="cd" style="border-color:#38bdf8">
   <div class="ct" style="color:#38bdf8">💰 板块资金流向 (主力净流入TOP10)</div>
   <div style="position:relative">
-    <canvas id="mfChart" width="880" height="360" style="width:100%;height:340px;border-radius:8px"></canvas>
+    <canvas id="mfChart" width="880" height="320" style="width:100%;height:300px;border-radius:8px"></canvas>
   </div>
-  <div id="mfInfo" style="display:flex;gap:8px;flex-wrap:wrap;font-size:10px;color:#475569;margin-top:6px"></div>
+  <div id="mfInfo" style="display:flex;gap:8px;flex-wrap:wrap;font-size:11px;color:#475569;margin-top:8px;padding:4px 0"></div>
 </div>
 
 <div class="cd"><div class="ct">📰 新闻</div><div id="nc"></div></div>
@@ -252,14 +252,16 @@ function rl(){
   document.getElementById('ls').innerHTML='<span style="color:#ef4444">📊'+codes.length+'只</span> <span style="color:#f97316">📈最高'+mx+'板</span> <span style="color:#64748b">🕐'+LBD.update_time+'</span>';
 }
 
-// ===== 板块资金流向 (点线图) =====
+// ===== 板块资金流向 (棒棒糖图) =====
 function renderMF(){
   const c=document.getElementById('mfChart');
   if(!c)return;
   const ctx=c.getContext('2d'),W=c.width,H=c.height;
   ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#64748b';ctx.font='13px sans-serif';ctx.textAlign='center';
-  ctx.fillText('加载板块资金数据...',W/2,H/2);
+  ctx.fillStyle='#64748b';ctx.font='14px sans-serif';ctx.textAlign='center';
+  ctx.fillText('⏳ 加载资金数据...',W/2,H/2-6);
+  ctx.fillStyle='#475569';ctx.font='11px sans-serif';
+  ctx.fillText('每60秒自动更新',W/2,H/2+16);
   document.getElementById('mfInfo').innerHTML='<span>🔄 加载中...</span>';
   
   // JSONP
@@ -278,7 +280,7 @@ function renderMF(){
   },5000);
 }
 
-// JSONP callback - 点线图 (scatter: inflow vs change)
+// JSONP callback - 棒棒糖图 (lollipop)
 function mfCB(d){
   window._mfData=d;
   const c=document.getElementById('mfChart');
@@ -289,125 +291,84 @@ function mfCB(d){
   
   // Sort by net inflow descending
   data.sort((a,b)=>(b.f62||0)-(a.f62||0));
-  const top=data.slice(0,12);
-  
-  const pad={l:90,r:60,t:35,b:35};
-  const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
-  
-  // Find axis ranges
-  const maxInflow=Math.max(...top.map(x=>Math.abs(x.f62||0)),1);
-  const maxChg=Math.max(...top.map(x=>Math.abs(x.f3||0)),0.5);
-  const xMax=maxInflow/100000000*1.15; // 亿元
-  let yMax=Math.ceil(maxChg*1.2);
-  if(yMax<1)yMax=1;
+  const top=data.slice(0,10);
+  const maxVal=Math.max(...top.map(x=>Math.abs(x.f62||0)),1);
+  const xMax=maxVal/100000000*1.2;
   
   ctx.clearRect(0,0,W,H);
   
-  // === Draw grid ===
-  ctx.strokeStyle='#1e293b';ctx.lineWidth=0.5;
-  // Vertical zero line
-  ctx.beginPath();ctx.moveTo(pad.l+cw/2,pad.t);ctx.lineTo(pad.l+cw/2,pad.t+ch);ctx.stroke();
-  // Horizontal zero line
-  ctx.beginPath();ctx.moveTo(pad.l,pad.t+ch/2);ctx.lineTo(pad.l+cw,pad.t+ch/2);ctx.stroke();
+  // Layout
+  const ml=110,mr=100,mt=28,rowH=28,gap=4,chartH=top.length*(rowH+gap);
+  const cw=W-ml-mr;
+  
+  // Title
+  ctx.fillStyle='#94a3b8';ctx.font='11px sans-serif';ctx.textAlign='left';
+  ctx.fillText('主力净流入(亿元)  TOP10板块',ml,mt-8);
+  
+  // Center axis
+  const cx=ml+cw/2;
+  ctx.strokeStyle='#334155';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(cx,mt);ctx.lineTo(cx,mt+chartH);ctx.stroke();
   
   // Axis labels
   ctx.fillStyle='#475569';ctx.font='9px sans-serif';ctx.textAlign='center';
-  ctx.fillText('← 净流出',pad.l+cw/4,pad.t+ch+18);
-  ctx.fillText('净流入 →',pad.l+cw*3/4,pad.t+ch+18);
-  ctx.fillText('↑ 涨',pad.l-5,pad.t+ch/4);
-  ctx.fillText('↓ 跌',pad.l-5,pad.t+ch*3/4);
+  ctx.fillText('← 流出',cx-cw/4,mt+chartH+16);
+  ctx.fillText('流入 →',cx+cw/4,mt+chartH+16);
   
-  // Title
-  ctx.fillStyle='#64748b';ctx.font='10px sans-serif';ctx.textAlign='left';
-  ctx.fillText('板块资金流向·点线图 (净流入 vs 涨跌幅)',pad.l,pad.t-10);
-  
-  // === Draw connecting flow line (from most inflow to most outflow) ===
-  const points=top.map(item=>{
-    const inflow=(item.f62||0)/100000000;
+  // Draw each sector
+  top.forEach((item,i)=>{
+    const val=(item.f62||0)/100000000;
+    const name=item.f14||'';
     const chg=item.f3||0;
-    const x=pad.l+cw/2+(inflow/xMax)*(cw/2);
-    const y=pad.t+ch/2-(chg/yMax)*(ch/2);
-    return{x,y,inflow,chg,name:item.f14||'',amt:item.f62||0};
-  });
-  
-  // Draw flow line (gradient from inflow -> outflow)
-  ctx.beginPath();
-  points.forEach((p,i)=>{
-    if(i===0)ctx.moveTo(p.x,p.y);
-    else ctx.lineTo(p.x,p.y);
-  });
-  ctx.strokeStyle='#475569';ctx.lineWidth=1;ctx.setLineDash([4,3]);
-  ctx.stroke();ctx.setLineDash([]);
-  
-  // Draw arrow heads on flow line (every 3 points)
-  for(let i=2;i<points.length;i+=3){
-    const p=points[i-1],n=points[i];
-    const angle=Math.atan2(n.y-p.y,n.x-p.x);
-    const as=5;
-    ctx.beginPath();
-    ctx.moveTo(n.x,n.y);
-    ctx.lineTo(n.x-as*Math.cos(angle-0.4),n.y-as*Math.sin(angle-0.4));
-    ctx.moveTo(n.x,n.y);
-    ctx.lineTo(n.x-as*Math.cos(angle+0.4),n.y-as*Math.sin(angle+0.4));
-    ctx.strokeStyle='#64748b';ctx.lineWidth=1;ctx.stroke();
-  }
-  
-  // === Draw dots ===
-  points.forEach((p,i)=>{
-    const radius=Math.max(5,Math.min(12,Math.sqrt(Math.abs(p.amt)/10000000)));
-    const isIn=p.inflow>=0;
+    const y=mt+i*(rowH+gap);
+    const barW=(Math.abs(val)/xMax)*(cw/2-8);
+    const isIn=val>=0;
     const color=isIn?'#ef4444':'#34d399';
-    const alpha=1-i/top.length*0.4;
+    const dotR=5+Math.min(5,Math.abs(val));
     
-    // Glow
-    const grad=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,radius*3);
-    grad.addColorStop(0,color+'40');
-    grad.addColorStop(1,color+'00');
-    ctx.fillStyle=grad;
-    ctx.beginPath();ctx.arc(p.x,p.y,radius*3,0,Math.PI*2);ctx.fill();
+    // Sector name (left aligned)
+    ctx.fillStyle='#e2e8f0';ctx.font='12px sans-serif';ctx.textAlign='right';
+    ctx.fillText(name,ml-10,y+rowH/2+4);
     
-    // Dot
+    // Bar line (stick)
+    const barEnd=isIn?cx+barW:cx-barW;
+    const barStart=isIn?cx+4:cx-4;
+    ctx.strokeStyle=color;ctx.lineWidth=2.5;
+    ctx.beginPath();ctx.moveTo(barStart,y+rowH/2);ctx.lineTo(barEnd,y+rowH/2);ctx.stroke();
+    
+    // Dot (lollipop head)
     ctx.fillStyle=color;
-    ctx.globalAlpha=alpha;
-    ctx.beginPath();ctx.arc(p.x,p.y,radius,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(barEnd,y+rowH/2,dotR,0,Math.PI*2);ctx.fill();
     ctx.strokeStyle='#0f172a';ctx.lineWidth=1.5;
-    ctx.beginPath();ctx.arc(p.x,p.y,radius,0,Math.PI*2);ctx.stroke();
-    ctx.globalAlpha=1;
+    ctx.beginPath();ctx.arc(barEnd,y+rowH/2,dotR,0,Math.PI*2);ctx.stroke();
     
-    // Label
-    const lx=p.x>pad.l+cw/2?p.x+radius+4:p.x-radius-4;
-    ctx.fillStyle='#e2e8f0';ctx.font='10px sans-serif';
-    ctx.textAlign=p.x>pad.l+cw/2?'left':'right';
-    ctx.fillText(p.name,lx,p.y+3);
+    // Value label (next to dot)
+    const vx=isIn?barEnd+dotR+5:barEnd-dotR-5;
+    ctx.fillStyle=color;ctx.font='bold 11px sans-serif';
+    ctx.textAlign=isIn?'left':'right';
+    ctx.fillText((val>0?'+':'')+val.toFixed(2),vx,y+rowH/2+4);
     
-    // Value label
-    ctx.fillStyle=isIn?'#ef4444':'#34d399';ctx.font='8px sans-serif';
-    ctx.textAlign=p.x>pad.l+cw/2?'left':'right';
-    ctx.fillText((isIn?'+':'')+p.inflow.toFixed(2)+'亿',lx,p.y+14);
+    // Change % badge (far right)
+    const chgColor=chg>0?'#ef4444':chg<0?'#34d399':'#64748b';
+    ctx.fillStyle=chgColor;ctx.font='10px sans-serif';ctx.textAlign='right';
+    ctx.fillText((chg>0?'+':'')+chg.toFixed(2)+'%',W-mr+80,y+rowH/2+4);
   });
   
-  // Quadrant labels
-  const qs=[
-    {x:pad.l+cw*0.7,y:pad.t+ch*0.15,label:'⚡ 量价齐升',cl:'#ef4444'},
-    {x:pad.l+cw*0.3,y:pad.t+ch*0.15,label:'⚠️ 背离·出货',cl:'#f97316'},
-    {x:pad.l+cw*0.7,y:pad.t+ch*0.85,label:'🔽 背离·吸筹',cl:'#38bdf8'},
-    {x:pad.l+cw*0.3,y:pad.t+ch*0.85,label:'💧 量价齐跌',cl:'#34d399'},
-  ];
-  qs.forEach(q=>{
-    ctx.fillStyle=q.cl;ctx.font='8px sans-serif';ctx.textAlign='center';
-    ctx.globalAlpha=0.6;ctx.fillText(q.label,q.x,q.y);ctx.globalAlpha=1;
-  });
-  
-  document.getElementById('mfInfo').innerHTML='<span>🔴主力流入 🟢主力流出 | 点越大=金额越大 | 虚线=流向顺序 | 盘中1分钟更新</span>';
+  // Legend
+  document.getElementById('mfInfo').innerHTML='<span style="display:flex;gap:12px;flex-wrap:wrap;font-size:10px">'
+    +'<span>🔴 <b>主力流入</b></span>'
+    +'<span style="color:#34d399">🟢 <b>主力流出</b></span>'
+    +'<span style="color:#64748b">📊 <b>点越大=金额越大</b></span>'
+    +'<span style="color:#64748b">🔄 盘中60秒更新</span></span>';
   window._mfData=null;
 }
 
 function renderMFFallback(ctx,W,H){
-  ctx.fillStyle='#64748b';ctx.font='13px sans-serif';ctx.textAlign='center';
-  ctx.fillText('盘后暂无数据，盘中自动刷新',W/2,H/2);
-  ctx.fillStyle='#475569';ctx.font='10px sans-serif';
-  ctx.fillText('每60秒尝试获取',W/2,H/2+20);
-  document.getElementById('mfInfo').innerHTML='<span>⏳ 非交易时段</span>';
+  ctx.fillStyle='#64748b';ctx.font='15px sans-serif';ctx.textAlign='center';
+  ctx.fillText('⏳ 盘后暂无数据',W/2,H/2-8);
+  ctx.fillStyle='#475569';ctx.font='12px sans-serif';
+  ctx.fillText('每60秒自动尝试获取',W/2,H/2+16);
+  document.getElementById('mfInfo').innerHTML='<span style="color:#475569">⏳ 非交易时段 · 每60秒自动获取</span>';
 }
 
 let mfTimer;
