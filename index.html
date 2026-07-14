@@ -252,21 +252,19 @@ function rl(){
   document.getElementById('ls').innerHTML='<span style="color:#ef4444">📊'+codes.length+'只</span> <span style="color:#f97316">📈最高'+mx+'板</span> <span style="color:#64748b">🕐'+LBD.update_time+'</span>';
 }
 
-// ===== 板块资金流向 (棒棒糖图) =====
+// ===== 板块资金流向 (点阵图) =====
 function renderMF(){
   const c=document.getElementById('mfChart');
   if(!c)return;
   const ctx=c.getContext('2d'),W=c.width,H=c.height;
-  // Draw placeholder while loading
   renderMFFallback(ctx,W,H);
   document.getElementById('mfInfo').innerHTML='<span style="color:#38bdf8">🔄 加载资金数据...</span>';
   
-  // JSONP
   const old=document.getElementById('mfJsonp');
   if(old)old.remove();
   const s=document.createElement('script');
   s.id='mfJsonp';
-  s.src='https://push2.eastmoney.com/api/qt/clist/get?cb=mfCB&pn=1&pz=15&po=1&np=1&fields=f12,f14,f3,f62,f184,f66,f69&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb&_='+Date.now();
+  s.src='https://push2.eastmoney.com/api/qt/clist/get?cb=mfCB&pn=1&pz=20&po=1&np=1&fields=f12,f14,f3,f62,f184,f66,f69&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb&_='+Date.now();
   document.body.appendChild(s);
   setTimeout(()=>{
     if(!window._mfData){
@@ -275,14 +273,14 @@ function renderMF(){
       const cached=localStorage.getItem('mfData');
       if(cached){try{
         const cd=JSON.parse(cached);
-        if(cd&&cd.length)return drawMFChart(ctx,W,H,cd);
+        if(cd&&cd.length)return drawMFGrid(ctx,W,H,cd);
       }catch(e){}}
       renderMFFallback(ctx,W,H);
     }
   },8000);
 }
 
-// JSONP callback - 棒棒糖图 (lollipop)
+// JSONP callback
 function mfCB(d){
   window._mfData=d;
   const c=document.getElementById('mfChart');
@@ -290,93 +288,77 @@ function mfCB(d){
   const ctx=c.getContext('2d'),W=c.width,H=c.height;
   const data=d&&d.data&&d.data.diff;
   if(!data||!data.length){
-    // Try to use cached data
     const cached=localStorage.getItem('mfData');
     if(cached){try{
       const cd=JSON.parse(cached);
-      if(cd&&cd.length)return drawMFChart(ctx,W,H,cd);
+      if(cd&&cd.length)return drawMFGrid(ctx,W,H,cd);
     }catch(e){}}
     return renderMFFallback(ctx,W,H);
   }
-  
-  // Cache data for offline use
   try{localStorage.setItem('mfData',JSON.stringify(data));}catch(e){}
-  
-  drawMFChart(ctx,W,H,data);
+  drawMFGrid(ctx,W,H,data);
 }
 
-function drawMFChart(ctx,W,H,data){
-  // Sort by net inflow descending
+// 点阵图 (dot matrix): sectors as colored dots in a grid
+function drawMFGrid(ctx,W,H,data){
   data.sort((a,b)=>(b.f62||0)-(a.f62||0));
-  const top=data.slice(0,10);
-  const maxVal=Math.max(...top.map(x=>Math.abs(x.f62||0)),1);
-  const xMax=maxVal/100000000*1.2;
-  
+  const items=data.slice(0,15);
   ctx.clearRect(0,0,W,H);
   
-  // Layout
-  const ml=110,mr=100,mt=28,rowH=28,gap=4,chartH=top.length*(rowH+gap);
-  const cw=W-ml-mr;
+  const cols=5,rows=Math.ceil(items.length/cols),pad={l:40,r:40,t:32,b:20};
+  const cellW=(W-pad.l-pad.r)/cols,cellH=(H-pad.t-pad.b)/rows;
+  const maxAbs=Math.max(...items.map(x=>Math.abs(x.f62||0)),1);
   
-  // Title
-  ctx.fillStyle='#94a3b8';ctx.font='11px sans-serif';ctx.textAlign='left';
-  ctx.fillText('主力净流入(亿元)  TOP10板块',ml,mt-8);
+  ctx.fillStyle='#94a3b8';ctx.font='12px sans-serif';ctx.textAlign='left';
+  ctx.fillText('板块资金点阵图 · 红=流入 绿=流出 点越大=金额越多',pad.l,pad.t-8);
   
-  // Center axis
-  const cx=ml+cw/2;
-  ctx.strokeStyle='#334155';ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(cx,mt);ctx.lineTo(cx,mt+chartH);ctx.stroke();
-  
-  // Axis labels
-  ctx.fillStyle='#475569';ctx.font='9px sans-serif';ctx.textAlign='center';
-  ctx.fillText('← 流出',cx-cw/4,mt+chartH+16);
-  ctx.fillText('流入 →',cx+cw/4,mt+chartH+16);
-  
-  // Draw each sector
-  top.forEach((item,i)=>{
-    const val=(item.f62||0)/100000000;
-    const name=item.f14||'';
-    const chg=item.f3||0;
-    const y=mt+i*(rowH+gap);
-    const barW=(Math.abs(val)/xMax)*(cw/2-8);
-    const isIn=val>=0;
-    const color=isIn?'#ef4444':'#34d399';
-    const dotR=5+Math.min(5,Math.abs(val));
+  items.forEach((item,i)=>{
+    const col=i%cols,row=Math.floor(i/cols);
+    const cx=pad.l+cellW*col+cellW/2,cy=pad.t+cellH*row+cellH/2;
+    const inflow=(item.f62||0)/100000000,chg=item.f3||0,name=item.f14||'';
+    const isIn=inflow>=0,color=isIn?'#ef4444':'#34d399';
+    const ratio=Math.abs(inflow)/(maxAbs/100000000);
+    const radius=Math.max(10,Math.min(28,8+ratio*22));
     
-    // Sector name
-    ctx.fillStyle='#e2e8f0';ctx.font='12px sans-serif';ctx.textAlign='right';
-    ctx.fillText(name,ml-10,y+rowH/2+4);
+    // Glow
+    const g=ctx.createRadialGradient(cx,cy,0,cx,cy,radius*2);
+    g.addColorStop(0,color+'30');g.addColorStop(1,color+'00');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,radius*2,0,Math.PI*2);ctx.fill();
     
-    // Bar line (stick)
-    const barEnd=isIn?cx+barW:cx-barW;
-    const barStart=isIn?cx+4:cx-4;
-    ctx.strokeStyle=color;ctx.lineWidth=2.5;
-    ctx.beginPath();ctx.moveTo(barStart,y+rowH/2);ctx.lineTo(barEnd,y+rowH/2);ctx.stroke();
+    // Main dot
+    const dg=ctx.createRadialGradient(cx-radius*0.3,cy-radius*0.3,0,cx,cy,radius);
+    if(isIn){dg.addColorStop(0,'#f87171');dg.addColorStop(0.7,'#dc2626');dg.addColorStop(1,'#991b1b');}
+    else{dg.addColorStop(0,'#34d399');dg.addColorStop(0.7,'#10b981');dg.addColorStop(1,'#065f46');}
+    ctx.fillStyle=dg;ctx.beginPath();ctx.arc(cx,cy,radius,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#0f172a';ctx.lineWidth=2;ctx.beginPath();ctx.arc(cx,cy,radius,0,Math.PI*2);ctx.stroke();
     
-    // Dot (lollipop head)
-    ctx.fillStyle=color;
-    ctx.beginPath();ctx.arc(barEnd,y+rowH/2,dotR,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle='#0f172a';ctx.lineWidth=1.5;
-    ctx.beginPath();ctx.arc(barEnd,y+rowH/2,dotR,0,Math.PI*2);ctx.stroke();
-    
-    // Value label
-    const vx=isIn?barEnd+dotR+5:barEnd-dotR-5;
-    ctx.fillStyle=color;ctx.font='bold 11px sans-serif';
-    ctx.textAlign=isIn?'left':'right';
-    ctx.fillText((val>0?'+':'')+val.toFixed(2),vx,y+rowH/2+4);
+    // Label
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    if(radius>=16){
+      ctx.fillStyle='rgba(255,255,255,0.95)';ctx.font='bold 11px sans-serif';
+      ctx.fillText(name.length>4?name.slice(0,4):name,cx,cy-5);
+      ctx.fillStyle='rgba(255,255,255,0.75)';ctx.font='9px sans-serif';
+      ctx.fillText((isIn?'+':'')+inflow.toFixed(1)+'亿',cx,cy+9);
+    }else{
+      ctx.fillStyle='#e2e8f0';ctx.font='10px sans-serif';ctx.textBaseline='bottom';
+      ctx.fillText(name,cx,cy-radius-4);
+      ctx.fillStyle=color;ctx.font='9px sans-serif';ctx.textBaseline='top';
+      ctx.fillText((isIn?'+':'')+inflow.toFixed(1)+'亿',cx,cy+radius+4);
+    }
     
     // Change % badge
     const chgColor=chg>0?'#ef4444':chg<0?'#34d399':'#64748b';
-    ctx.fillStyle=chgColor;ctx.font='10px sans-serif';ctx.textAlign='right';
-    ctx.fillText((chg>0?'+':'')+chg.toFixed(2)+'%',W-mr+80,y+rowH/2+4);
+    const bx=cx+Math.cos(-Math.PI/4)*(radius+2),by=cy+Math.sin(-Math.PI/4)*(radius+2);
+    ctx.fillStyle=chgColor;ctx.beginPath();ctx.arc(bx,by,12,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#0f172a';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(bx,by,12,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle='#fff';ctx.font='bold 8px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText((chg>0?'+':'')+chg.toFixed(1)+'%',bx,by);
   });
   
-  // Legend
   document.getElementById('mfInfo').innerHTML='<span style="display:flex;gap:12px;flex-wrap:wrap;font-size:10px">'
-    +'<span>🔴 <b>主力流入</b></span>'
+    +'<span>🔴 <b>主力流入</b> <span style="color:#64748b">点越大=金额越多</span></span>'
     +'<span style="color:#34d399">🟢 <b>主力流出</b></span>'
-    +'<span style="color:#64748b">📊 <b>点越大=金额越大</b></span>'
-    +'<span style="color:#64748b">🔄 盘中60秒更新</span></span>';
+    +'<span style="color:#64748b">🔄 盘后缓存 · 盘中60秒更新</span></span>';
   window._mfData=null;
 }
 
