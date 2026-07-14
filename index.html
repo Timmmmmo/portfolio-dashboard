@@ -257,12 +257,9 @@ function renderMF(){
   const c=document.getElementById('mfChart');
   if(!c)return;
   const ctx=c.getContext('2d'),W=c.width,H=c.height;
-  ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#64748b';ctx.font='14px sans-serif';ctx.textAlign='center';
-  ctx.fillText('⏳ 加载资金数据...',W/2,H/2-6);
-  ctx.fillStyle='#475569';ctx.font='11px sans-serif';
-  ctx.fillText('每60秒自动更新',W/2,H/2+16);
-  document.getElementById('mfInfo').innerHTML='<span>🔄 加载中...</span>';
+  // Draw placeholder while loading
+  renderMFFallback(ctx,W,H);
+  document.getElementById('mfInfo').innerHTML='<span style="color:#38bdf8">🔄 加载资金数据...</span>';
   
   // JSONP
   const old=document.getElementById('mfJsonp');
@@ -275,9 +272,14 @@ function renderMF(){
     if(!window._mfData){
       const oldS=document.getElementById('mfJsonp');
       if(oldS)oldS.remove();
+      const cached=localStorage.getItem('mfData');
+      if(cached){try{
+        const cd=JSON.parse(cached);
+        if(cd&&cd.length)return drawMFChart(ctx,W,H,cd);
+      }catch(e){}}
       renderMFFallback(ctx,W,H);
     }
-  },5000);
+  },8000);
 }
 
 // JSONP callback - 棒棒糖图 (lollipop)
@@ -287,8 +289,23 @@ function mfCB(d){
   if(!c)return;
   const ctx=c.getContext('2d'),W=c.width,H=c.height;
   const data=d&&d.data&&d.data.diff;
-  if(!data||!data.length)return renderMFFallback(ctx,W,H);
+  if(!data||!data.length){
+    // Try to use cached data
+    const cached=localStorage.getItem('mfData');
+    if(cached){try{
+      const cd=JSON.parse(cached);
+      if(cd&&cd.length)return drawMFChart(ctx,W,H,cd);
+    }catch(e){}}
+    return renderMFFallback(ctx,W,H);
+  }
   
+  // Cache data for offline use
+  try{localStorage.setItem('mfData',JSON.stringify(data));}catch(e){}
+  
+  drawMFChart(ctx,W,H,data);
+}
+
+function drawMFChart(ctx,W,H,data){
   // Sort by net inflow descending
   data.sort((a,b)=>(b.f62||0)-(a.f62||0));
   const top=data.slice(0,10);
@@ -326,7 +343,7 @@ function mfCB(d){
     const color=isIn?'#ef4444':'#34d399';
     const dotR=5+Math.min(5,Math.abs(val));
     
-    // Sector name (left aligned)
+    // Sector name
     ctx.fillStyle='#e2e8f0';ctx.font='12px sans-serif';ctx.textAlign='right';
     ctx.fillText(name,ml-10,y+rowH/2+4);
     
@@ -342,13 +359,13 @@ function mfCB(d){
     ctx.strokeStyle='#0f172a';ctx.lineWidth=1.5;
     ctx.beginPath();ctx.arc(barEnd,y+rowH/2,dotR,0,Math.PI*2);ctx.stroke();
     
-    // Value label (next to dot)
+    // Value label
     const vx=isIn?barEnd+dotR+5:barEnd-dotR-5;
     ctx.fillStyle=color;ctx.font='bold 11px sans-serif';
     ctx.textAlign=isIn?'left':'right';
     ctx.fillText((val>0?'+':'')+val.toFixed(2),vx,y+rowH/2+4);
     
-    // Change % badge (far right)
+    // Change % badge
     const chgColor=chg>0?'#ef4444':chg<0?'#34d399':'#64748b';
     ctx.fillStyle=chgColor;ctx.font='10px sans-serif';ctx.textAlign='right';
     ctx.fillText((chg>0?'+':'')+chg.toFixed(2)+'%',W-mr+80,y+rowH/2+4);
@@ -364,11 +381,39 @@ function mfCB(d){
 }
 
 function renderMFFallback(ctx,W,H){
-  ctx.fillStyle='#64748b';ctx.font='15px sans-serif';ctx.textAlign='center';
-  ctx.fillText('⏳ 盘后暂无数据',W/2,H/2-8);
+  // Draw a placeholder chart layout
+  const ml=110,mr=100,mt=28,rowH=28,gap=4,chartH=10*(rowH+gap);
+  const cw=W-ml-mr,cx=ml+cw/2;
+  
+  ctx.clearRect(0,0,W,H);
+  
+  // Grid lines
+  ctx.strokeStyle='#1e293b';ctx.lineWidth=0.5;
+  for(let i=0;i<10;i++){
+    const y=mt+i*(rowH+gap)+rowH/2;
+    ctx.beginPath();ctx.moveTo(ml-5,y);ctx.lineTo(W-mr-5,y);ctx.stroke();
+  }
+  
+  // Center axis
+  ctx.strokeStyle='#334155';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(cx,mt);ctx.lineTo(cx,mt+chartH);ctx.stroke();
+  
+  // Axis labels
+  ctx.fillStyle='#475569';ctx.font='9px sans-serif';ctx.textAlign='center';
+  ctx.fillText('← 流出',cx-cw/4,mt+chartH+16);
+  ctx.fillText('流入 →',cx+cw/4,mt+chartH+16);
+  
+  // Title
+  ctx.fillStyle='#64748b';ctx.font='11px sans-serif';ctx.textAlign='left';
+  ctx.fillText('主力净流入(亿元)  TOP10板块',ml,mt-8);
+  
+  // Center text
+  ctx.fillStyle='#475569';ctx.font='15px sans-serif';ctx.textAlign='center';
+  ctx.fillText('⏳ 盘后暂无数据',W/2,mt+chartH/2-8);
   ctx.fillStyle='#475569';ctx.font='12px sans-serif';
-  ctx.fillText('每60秒自动尝试获取',W/2,H/2+16);
-  document.getElementById('mfInfo').innerHTML='<span style="color:#475569">⏳ 非交易时段 · 每60秒自动获取</span>';
+  ctx.fillText('每60秒自动尝试获取',W/2,mt+chartH/2+16);
+  
+  document.getElementById('mfInfo').innerHTML='<span style="color:#475569">⏳ 非交易时段 · 每60秒自动获取 · 交易时段自动显示实时数据</span>';
 }
 
 let mfTimer;
