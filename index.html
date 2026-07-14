@@ -85,7 +85,7 @@ h1{font-size:20px}
 <div class="cd" style="border-color:#38bdf8">
   <div class="ct" style="color:#38bdf8">💰 板块资金流向 (主力净流入TOP10)</div>
   <div style="position:relative">
-    <canvas id="mfChart" width="880" height="280" style="width:100%;height:260px;border-radius:8px"></canvas>
+    <canvas id="mfChart" width="880" height="360" style="width:100%;height:340px;border-radius:8px"></canvas>
   </div>
   <div id="mfInfo" style="display:flex;gap:8px;flex-wrap:wrap;font-size:10px;color:#475569;margin-top:6px"></div>
 </div>
@@ -252,7 +252,7 @@ function rl(){
   document.getElementById('ls').innerHTML='<span style="color:#ef4444">📊'+codes.length+'只</span> <span style="color:#f97316">📈最高'+mx+'板</span> <span style="color:#64748b">🕐'+LBD.update_time+'</span>';
 }
 
-// ===== 板块资金流向 (JSONP方式) =====
+// ===== 板块资金流向 (点线图) =====
 function renderMF(){
   const c=document.getElementById('mfChart');
   if(!c)return;
@@ -262,14 +262,13 @@ function renderMF(){
   ctx.fillText('加载板块资金数据...',W/2,H/2);
   document.getElementById('mfInfo').innerHTML='<span>🔄 加载中...</span>';
   
-  // JSONP: remove old script, create new one
+  // JSONP
   const old=document.getElementById('mfJsonp');
   if(old)old.remove();
   const s=document.createElement('script');
   s.id='mfJsonp';
   s.src='https://push2.eastmoney.com/api/qt/clist/get?cb=mfCB&pn=1&pz=15&po=1&np=1&fields=f12,f14,f3,f62,f184,f66,f69&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb&_='+Date.now();
   document.body.appendChild(s);
-  // Timeout: if no response in 5s, show fallback
   setTimeout(()=>{
     if(!window._mfData){
       const oldS=document.getElementById('mfJsonp');
@@ -279,7 +278,7 @@ function renderMF(){
   },5000);
 }
 
-// JSONP callback
+// JSONP callback - 点线图 (scatter: inflow vs change)
 function mfCB(d){
   window._mfData=d;
   const c=document.getElementById('mfChart');
@@ -288,40 +287,118 @@ function mfCB(d){
   const data=d&&d.data&&d.data.diff;
   if(!data||!data.length)return renderMFFallback(ctx,W,H);
   
-  // Sort by main force net inflow (f62) descending
+  // Sort by net inflow descending
   data.sort((a,b)=>(b.f62||0)-(a.f62||0));
-  const top=data.slice(0,10);
-  const maxVal=Math.max(...top.map(x=>Math.abs(x.f62||0)),1);
+  const top=data.slice(0,12);
+  
+  const pad={l:90,r:60,t:35,b:35};
+  const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
+  
+  // Find axis ranges
+  const maxInflow=Math.max(...top.map(x=>Math.abs(x.f62||0)),1);
+  const maxChg=Math.max(...top.map(x=>Math.abs(x.f3||0)),0.5);
+  const xMax=maxInflow/100000000*1.15; // 亿元
+  let yMax=Math.ceil(maxChg*1.2);
+  if(yMax<1)yMax=1;
   
   ctx.clearRect(0,0,W,H);
-  const ml=100,mr=80,mt=20,cw=W-ml-mr,bh=Math.min(22,(H-mt-20)/top.length-4);
   
+  // === Draw grid ===
+  ctx.strokeStyle='#1e293b';ctx.lineWidth=0.5;
+  // Vertical zero line
+  ctx.beginPath();ctx.moveTo(pad.l+cw/2,pad.t);ctx.lineTo(pad.l+cw/2,pad.t+ch);ctx.stroke();
+  // Horizontal zero line
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t+ch/2);ctx.lineTo(pad.l+cw,pad.t+ch/2);ctx.stroke();
+  
+  // Axis labels
+  ctx.fillStyle='#475569';ctx.font='9px sans-serif';ctx.textAlign='center';
+  ctx.fillText('← 净流出',pad.l+cw/4,pad.t+ch+18);
+  ctx.fillText('净流入 →',pad.l+cw*3/4,pad.t+ch+18);
+  ctx.fillText('↑ 涨',pad.l-5,pad.t+ch/4);
+  ctx.fillText('↓ 跌',pad.l-5,pad.t+ch*3/4);
+  
+  // Title
   ctx.fillStyle='#64748b';ctx.font='10px sans-serif';ctx.textAlign='left';
-  ctx.fillText('主力净流入(亿元)  TOP10板块',ml,mt-4);
+  ctx.fillText('板块资金流向·点线图 (净流入 vs 涨跌幅)',pad.l,pad.t-10);
   
-  top.forEach((item,i)=>{
-    const val=(item.f62||0)/100000000;
-    const name=item.f14||'';
+  // === Draw connecting flow line (from most inflow to most outflow) ===
+  const points=top.map(item=>{
+    const inflow=(item.f62||0)/100000000;
     const chg=item.f3||0;
-    const y=mt+i*(bh+6);
-    const barW=Math.abs(val)/maxVal*cw*0.8;
-    
-    ctx.fillStyle='#e2e8f0';ctx.font='11px sans-serif';ctx.textAlign='right';
-    ctx.fillText(name,ml-6,y+bh/2+4);
-    
-    const x=val>=0?ml:ml+cw-barW;
-    const color=val>=0?'#ef4444':'#34d399';
-    ctx.fillStyle=color;
-    ctx.fillRect(x,y,Math.max(barW,2),bh);
-    
-    ctx.fillStyle=color;ctx.font='10px sans-serif';ctx.textAlign='left';
-    ctx.fillText((val>0?'+':'')+val.toFixed(2)+'亿',x+barW+4,y+bh/2+4);
-    
-    ctx.fillStyle=chg>0?'#ef4444':chg<0?'#34d399':'#64748b';ctx.font='9px sans-serif';ctx.textAlign='right';
-    ctx.fillText((chg>0?'+':'')+chg.toFixed(2)+'%',W-mr-4,y+bh/2+4);
+    const x=pad.l+cw/2+(inflow/xMax)*(cw/2);
+    const y=pad.t+ch/2-(chg/yMax)*(ch/2);
+    return{x,y,inflow,chg,name:item.f14||'',amt:item.f62||0};
   });
   
-  document.getElementById('mfInfo').innerHTML='<span>🔴主力净流入 🟢主力净流出 | 盘中1分钟更新</span>';
+  // Draw flow line (gradient from inflow -> outflow)
+  ctx.beginPath();
+  points.forEach((p,i)=>{
+    if(i===0)ctx.moveTo(p.x,p.y);
+    else ctx.lineTo(p.x,p.y);
+  });
+  ctx.strokeStyle='#475569';ctx.lineWidth=1;ctx.setLineDash([4,3]);
+  ctx.stroke();ctx.setLineDash([]);
+  
+  // Draw arrow heads on flow line (every 3 points)
+  for(let i=2;i<points.length;i+=3){
+    const p=points[i-1],n=points[i];
+    const angle=Math.atan2(n.y-p.y,n.x-p.x);
+    const as=5;
+    ctx.beginPath();
+    ctx.moveTo(n.x,n.y);
+    ctx.lineTo(n.x-as*Math.cos(angle-0.4),n.y-as*Math.sin(angle-0.4));
+    ctx.moveTo(n.x,n.y);
+    ctx.lineTo(n.x-as*Math.cos(angle+0.4),n.y-as*Math.sin(angle+0.4));
+    ctx.strokeStyle='#64748b';ctx.lineWidth=1;ctx.stroke();
+  }
+  
+  // === Draw dots ===
+  points.forEach((p,i)=>{
+    const radius=Math.max(5,Math.min(12,Math.sqrt(Math.abs(p.amt)/10000000)));
+    const isIn=p.inflow>=0;
+    const color=isIn?'#ef4444':'#34d399';
+    const alpha=1-i/top.length*0.4;
+    
+    // Glow
+    const grad=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,radius*3);
+    grad.addColorStop(0,color+'40');
+    grad.addColorStop(1,color+'00');
+    ctx.fillStyle=grad;
+    ctx.beginPath();ctx.arc(p.x,p.y,radius*3,0,Math.PI*2);ctx.fill();
+    
+    // Dot
+    ctx.fillStyle=color;
+    ctx.globalAlpha=alpha;
+    ctx.beginPath();ctx.arc(p.x,p.y,radius,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#0f172a';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.arc(p.x,p.y,radius,0,Math.PI*2);ctx.stroke();
+    ctx.globalAlpha=1;
+    
+    // Label
+    const lx=p.x>pad.l+cw/2?p.x+radius+4:p.x-radius-4;
+    ctx.fillStyle='#e2e8f0';ctx.font='10px sans-serif';
+    ctx.textAlign=p.x>pad.l+cw/2?'left':'right';
+    ctx.fillText(p.name,lx,p.y+3);
+    
+    // Value label
+    ctx.fillStyle=isIn?'#ef4444':'#34d399';ctx.font='8px sans-serif';
+    ctx.textAlign=p.x>pad.l+cw/2?'left':'right';
+    ctx.fillText((isIn?'+':'')+p.inflow.toFixed(2)+'亿',lx,p.y+14);
+  });
+  
+  // Quadrant labels
+  const qs=[
+    {x:pad.l+cw*0.7,y:pad.t+ch*0.15,label:'⚡ 量价齐升',cl:'#ef4444'},
+    {x:pad.l+cw*0.3,y:pad.t+ch*0.15,label:'⚠️ 背离·出货',cl:'#f97316'},
+    {x:pad.l+cw*0.7,y:pad.t+ch*0.85,label:'🔽 背离·吸筹',cl:'#38bdf8'},
+    {x:pad.l+cw*0.3,y:pad.t+ch*0.85,label:'💧 量价齐跌',cl:'#34d399'},
+  ];
+  qs.forEach(q=>{
+    ctx.fillStyle=q.cl;ctx.font='8px sans-serif';ctx.textAlign='center';
+    ctx.globalAlpha=0.6;ctx.fillText(q.label,q.x,q.y);ctx.globalAlpha=1;
+  });
+  
+  document.getElementById('mfInfo').innerHTML='<span>🔴主力流入 🟢主力流出 | 点越大=金额越大 | 虚线=流向顺序 | 盘中1分钟更新</span>';
   window._mfData=null;
 }
 
