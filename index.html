@@ -85,7 +85,7 @@ h1{font-size:20px}
 <div class="cd" style="border-color:#38bdf8;background:var(--g2)">
   <div class="ct" style="color:#38bdf8;font-size:14px">💰 板块资金流向</div>
   <div style="position:relative;background:var(--g1);border-radius:8px;padding:4px">
-    <canvas id="mfChart" width="880" height="340" style="width:100%;height:320px;border-radius:8px;display:block"></canvas>
+    <canvas id="mfChart" width="880" height="360" style="width:100%;height:340px;border-radius:8px;display:block"></canvas>
   </div>
   <div id="mfInfo" style="display:flex;gap:8px;flex-wrap:wrap;font-size:11px;color:#475569;margin-top:8px;padding:4px 0"></div>
 </div>
@@ -328,119 +328,131 @@ function mfCB(d){
   drawMFGrid(ctx,W,H,data);
 }
 
-// 点阵图 (dot matrix) - 美化版
+// 资金流向: 左流入 右流出 对比图
 function drawMFGrid(ctx,W,H,data){
   data.sort((a,b)=>(b.f62||0)-(a.f62||0));
-  const items=data.slice(0,12).filter(x=>Math.abs(x.f62||0)>5000000);
-  if(!items.length)items=data.slice(0,12);
+  const inflows=data.filter(x=>(x.f62||0)>0).slice(0,10);
+  const outflows=data.filter(x=>(x.f62||0)<0).reverse().slice(0,10);
   ctx.clearRect(0,0,W,H);
   
-  const cols=4,rows=Math.ceil(items.length/cols);
-  const pad={l:20,r:20,t:40,b:20};
-  const cellW=(W-pad.l-pad.r)/cols,cellH=(H-pad.t-pad.b)/rows;
-  const maxAbs=Math.max(...items.map(x=>Math.abs(x.f62||0)),1);
+  const titleH=32,rowH=26,gap=2,ml=10,mr=10;
+  const chartH=Math.max(inflows.length,outflows.length)*(rowH+gap);
+  const halfW=(W-ml-mr)/2-8;
+  const cx=W/2; // center line
+  const maxIn=Math.max(...inflows.map(x=>Math.abs(x.f62||0)),1);
+  const maxOut=Math.max(...outflows.map(x=>Math.abs(x.f62||0)),1);
   
   // Title bar
-  ctx.fillStyle='#1e293b';
-  ctx.fillRect(0,0,W,32);
-  ctx.fillStyle='#94a3b8';ctx.font='12px sans-serif';ctx.textAlign='left';
-  ctx.fillText('💰 板块资金点阵 · 红=流入 绿=流出',14,20);
-  ctx.fillStyle='#475569';ctx.font='10px sans-serif';ctx.textAlign='right';
-  ctx.fillText('圆越大=金额越多  ·  角标=涨跌幅',W-14,20);
+  ctx.fillStyle='#1e293b';ctx.fillRect(0,0,W,titleH);
+  ctx.fillStyle='#ef4444';ctx.font='bold 12px sans-serif';ctx.textAlign='left';
+  ctx.fillText('+ 流入',14,20);
+  ctx.fillStyle='#34d399';ctx.font='bold 12px sans-serif';ctx.textAlign='right';
+  ctx.fillText('流出 -',W-14,20);
+  ctx.fillStyle='#475569';ctx.font='9px sans-serif';ctx.textAlign='center';
+  ctx.fillText('TOP10',W/2,20);
   
-  items.forEach((item,i)=>{
-    const col=i%cols,row=Math.floor(i/cols);
-    const cx=pad.l+cellW*col+cellW/2,cy=pad.t+cellH*row+cellH/2;
-    const inflow=(item.f62||0)/100000000,chg=item.f3||0,name=item.f14||'';
-    const isIn=inflow>=0;
-    const ratio=Math.abs(inflow)/(maxAbs/100000000);
-    const radius=Math.max(12,Math.min(32,10+ratio*24));
+  // Center divider
+  ctx.strokeStyle='#334155';ctx.lineWidth=1;ctx.setLineDash([3,4]);
+  ctx.beginPath();ctx.moveTo(cx,titleH+4);ctx.lineTo(cx,titleH+chartH+4);ctx.stroke();
+  ctx.setLineDash([]);
+  
+  // Draw inflow bars (left side, bars extend right from center)
+  inflows.forEach((item,i)=>{
+    const val=(item.f62||0)/100000000;
+    const y=titleH+4+i*(rowH+gap);
+    const barW=Math.min(halfW-70,(val/(maxIn/100000000))*(halfW-70));
+    const name=item.f14||'';
+    const chg=item.f3||0;
     
-    // Shadow
-    ctx.fillStyle='rgba(0,0,0,0.3)';
-    ctx.beginPath();ctx.arc(cx+2,cy+2,radius+1,0,Math.PI*2);ctx.fill();
+    // Bar
+    ctx.fillStyle='#ef4444';ctx.globalAlpha=0.85;
+    ctx.fillRect(cx-barW,y+4,barW,rowH-8);
+    ctx.globalAlpha=1;
     
-    // Outer glow
-    const glow=ctx.createRadialGradient(cx,cy,0,cx,cy,radius*2);
-    const gColor=isIn?'rgba(239,68,68,':'rgba(52,211,153,';
-    glow.addColorStop(0,gColor+'0.15)');glow.addColorStop(1,gColor+'0)');
-    ctx.fillStyle=glow;ctx.beginPath();ctx.arc(cx,cy,radius*2,0,Math.PI*2);ctx.fill();
+    // Name
+    ctx.fillStyle='#e2e8f0';ctx.font='11px sans-serif';ctx.textAlign='right';
+    ctx.fillText(name,cx-barW-6,y+rowH/2+4);
     
-    // Dot body
-    const dg=ctx.createRadialGradient(cx-radius*0.2,cy-radius*0.2,2,cx,cy,radius);
-    if(isIn){
-      dg.addColorStop(0,'#ef4444');dg.addColorStop(0.6,'#dc2626');dg.addColorStop(1,'#991b1b');
-    }else{
-      dg.addColorStop(0,'#34d399');dg.addColorStop(0.6,'#10b981');dg.addColorStop(1,'#065f46');
-    }
-    ctx.fillStyle=dg;ctx.beginPath();ctx.arc(cx,cy,radius,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle='rgba(255,255,255,0.1)';ctx.lineWidth=1;
-    ctx.beginPath();ctx.arc(cx,cy,radius,0,Math.PI*2);ctx.stroke();
+    // Value
+    ctx.fillStyle='#ef4444';ctx.font='bold 11px sans-serif';ctx.textAlign='left';
+    ctx.fillText('+'+val.toFixed(2),cx+6,y+rowH/2+4);
     
-    // Highlight
-    ctx.fillStyle='rgba(255,255,255,0.12)';
-    ctx.beginPath();ctx.arc(cx-radius*0.25,cy-radius*0.25,radius*0.4,0,Math.PI*2);ctx.fill();
-    
-    // Sector name
-    ctx.textAlign='center';ctx.textBaseline='middle';
-    if(radius>=18){
-      ctx.fillStyle='rgba(255,255,255,0.95)';ctx.font='bold 11px sans-serif';
-      ctx.fillText(name.length>4?name.slice(0,4):name,cx,cy-5);
-      ctx.fillStyle='rgba(255,255,255,0.8)';ctx.font='9px sans-serif';
-      ctx.fillText((isIn?'+':'')+inflow.toFixed(1)+'亿',cx,cy+9);
-    }else{
-      // Name below
-      ctx.fillStyle='#e2e8f0';ctx.font='10px sans-serif';ctx.textBaseline='bottom';
-      ctx.fillText(name,cx,cy-radius-6);
-      ctx.fillStyle=isIn?'#ef4444':'#34d399';ctx.font='9px sans-serif';ctx.textBaseline='top';
-      ctx.fillText((isIn?'+':'')+inflow.toFixed(1)+'亿',cx,cy+radius+6);
-    }
-    
-    // Change % badge
-    if(chg!==0){
-      const chgColor=chg>0?'#ef4444':'#34d399';
-      const angle=-Math.PI/3;
-      const bx=cx+Math.cos(angle)*(radius+2),by=cy+Math.sin(angle)*(radius+2);
-      ctx.fillStyle=chgColor;ctx.beginPath();ctx.arc(bx,by,11,0,Math.PI*2);ctx.fill();
-      ctx.strokeStyle='#0f172a';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(bx,by,11,0,Math.PI*2);ctx.stroke();
-      ctx.fillStyle='#fff';ctx.font='bold 8px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-      ctx.fillText((chg>0?'+':'')+chg.toFixed(1)+'%',bx,by);
-    }
+    // Change %
+    const chgColor=chg>0?'#ef4444':chg<0?'#34d399':'#64748b';
+    ctx.fillStyle=chgColor;ctx.font='9px sans-serif';ctx.textAlign='left';
+    ctx.fillText((chg>0?'+':'')+chg.toFixed(2)+'%',cx+90,y+rowH/2+4);
   });
   
-  document.getElementById('mfInfo').innerHTML='<span style="display:flex;gap:16px;flex-wrap:wrap;font-size:11px;align-items:center">'
-    +'<span style="display:inline-flex;align-items:center;gap:4px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,#ef4444,#991b1b)"></span> <b>主力流入</b></span>'
-    +'<span style="display:inline-flex;align-items:center;gap:4px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,#34d399,#065f46)"></span> <b>主力流出</b></span>'
-    +'<span style="color:#64748b">| 点越大=金额越多</span>'
+  // Draw outflow bars (right side, bars extend left from center)
+  outflows.forEach((item,i)=>{
+    const val=Math.abs((item.f62||0))/100000000;
+    const y=titleH+4+i*(rowH+gap);
+    const barW=Math.min(halfW-70,(val/(maxOut/100000000))*(halfW-70));
+    const name=item.f14||'';
+    const chg=item.f3||0;
+    
+    // Bar
+    ctx.fillStyle='#34d399';ctx.globalAlpha=0.85;
+    ctx.fillRect(cx,y+4,barW,rowH-8);
+    ctx.globalAlpha=1;
+    
+    // Name
+    ctx.fillStyle='#e2e8f0';ctx.font='11px sans-serif';ctx.textAlign='left';
+    ctx.fillText(name,cx+barW+6,y+rowH/2+4);
+    
+    // Value
+    ctx.fillStyle='#34d399';ctx.font='bold 11px sans-serif';ctx.textAlign='right';
+    ctx.fillText('-'+val.toFixed(2),cx-6,y+rowH/2+4);
+    
+    // Change %
+    const chgColor=chg>0?'#ef4444':chg<0?'#34d399':'#64748b';
+    ctx.fillStyle=chgColor;ctx.font='9px sans-serif';ctx.textAlign='right';
+    ctx.fillText((chg>0?'+':'')+chg.toFixed(2)+'%',cx-90,y+rowH/2+4);
+  });
+  
+  // If no data, show placeholder
+  if(!inflows.length&&!outflows.length){
+    ctx.fillStyle='#475569';ctx.font='14px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('⏳ 暂无板块资金数据',W/2,H/2);
+  }
+  
+  document.getElementById('mfInfo').innerHTML='<span style="display:flex;gap:20px;flex-wrap:wrap;font-size:11px;align-items:center">'
+    +'<span style="display:inline-flex;align-items:center;gap:4px"><span style="display:inline-block;width:14px;height:8px;border-radius:2px;background:#ef4444"></span> <b>主力流入</b> <span style="color:#64748b">+表示</span></span>'
+    +'<span style="display:inline-flex;align-items:center;gap:4px"><span style="display:inline-block;width:14px;height:8px;border-radius:2px;background:#34d399"></span> <b>主力流出</b> <span style="color:#64748b">-表示</span></span>'
+    +'<span style="color:#64748b">🔥 条越长=金额越大  ·  右侧数字=涨跌幅</span>'
     +'<span style="color:#64748b">| 盘中60秒更新</span></span>';
   window._mfData=null;
 }
 
 function renderMFFallback(ctx,W,H){
-  const cols=4,rows=3,pad={l:20,r:20,t:40,b:20};
-  const cellW=(W-pad.l-pad.r)/cols,cellH=(H-pad.t-pad.b)/rows;
-  
   ctx.clearRect(0,0,W,H);
+  const titleH=32,rowH=26,gap=2,ml=10,mr=10;
+  const halfW=(W-ml-mr)/2-8,cx=W/2;
   
   // Title bar
-  ctx.fillStyle='#1e293b';
-  ctx.fillRect(0,0,W,32);
+  ctx.fillStyle='#1e293b';ctx.fillRect(0,0,W,titleH);
   ctx.fillStyle='#475569';ctx.font='12px sans-serif';ctx.textAlign='left';
-  ctx.fillText('💰 板块资金点阵',14,20);
+  ctx.fillText('+ 流入',14,20);
+  ctx.fillStyle='#475569';ctx.font='12px sans-serif';ctx.textAlign='right';
+  ctx.fillText('流出 -',W-14,20);
+  ctx.fillStyle='#475569';ctx.font='9px sans-serif';ctx.textAlign='center';
+  ctx.fillText('TOP10',W/2,20);
   
-  // Grid placeholders
-  for(let r=0;r<rows;r++){
-    for(let c=0;c<cols;c++){
-      const cx=pad.l+cellW*c+cellW/2,cy=pad.t+cellH*r+cellH/2;
-      ctx.strokeStyle='#1e293b';ctx.lineWidth=1;ctx.setLineDash([3,3]);
-      ctx.beginPath();ctx.arc(cx,cy,14,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
-    }
+  // Center divider
+  ctx.strokeStyle='#1e293b';ctx.lineWidth=1;ctx.setLineDash([3,4]);
+  ctx.beginPath();ctx.moveTo(cx,titleH+4);ctx.lineTo(cx,titleH+10*(rowH+gap)+4);ctx.stroke();
+  ctx.setLineDash([]);
+  
+  // Placeholder bars
+  for(let i=0;i<8;i++){
+    const y=titleH+4+i*(rowH+gap);
+    const barW=40+Math.random()*80;
+    ctx.fillStyle='#1e293b';ctx.fillRect(cx-barW,y+4,barW,rowH-8);
+    ctx.fillStyle='#1e293b';ctx.fillRect(cx,y+4,barW,rowH-8);
   }
   
   ctx.fillStyle='#475569';ctx.font='14px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText('⏳ 等待数据...',W/2,H/2-8);
-  ctx.fillStyle='#475569';ctx.font='11px sans-serif';
-  ctx.fillText('盘中自动获取',W/2,H/2+12);
+  ctx.fillText('⏳ 等待数据...',W/2,H/2);
   document.getElementById('mfInfo').innerHTML='<span style="color:#475569;font-size:11px">⏳ 非交易时段 · 每60秒自动获取</span>';
 }
 
