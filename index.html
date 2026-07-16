@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>📊 持仓智能Dashboard</title>
 <style>
-:root{--bg:#0f172a;--fg:#e2e8f0;--cd:#1e293b;--bd:#334155;--sm:#64748b;--sb:#475569;--s2:#94a3b8;--s3:#cbd5e1;--s4:#38bdf8;--s5:#1a1a3e;--s6:#450a0a;--s7:#064e3b;--s8:#1e1b4b;--s9:#fbbf24;--s0:#0f172a;--sx:#1e293b}
-[data-theme=light]{--bg:#f1f5f9;--fg:#1e293b;--cd:#ffffff;--bd:#cbd5e1;--sm:#64748b;--sb:#94a3b8;--s2:#64748b;--s3:#475569;--s4:#0284c7;--s5:#e2e8f0;--s6:#fef2f2;--s7:#f0fdf4;--s8:#eef2ff;--s9:#f59e0b;--s0:#ffffff;--sx:#f8fafc}
+:root{--bg:#0f172a;--fg:#e2e8f0;--cd:#1e293b;--bd:#334155;--sm:#64748b;--sb:#475569;--s2:#94a3b8;--s3:#cbd5e1;--s4:#38bdf8;--s5:#1a1a3e;--s6:#450a0a;--s7:#064e3b;--s8:#1e1b4b;--s9:#fbbf24;--s0:#0f172a;--sx:#1e293b;--g1:linear-gradient(135deg,#1e293b,#0f172a);--g2:linear-gradient(135deg,#1e1b4b,#0f172a);--g3:linear-gradient(135deg,#450a0a,#1e293b);--g4:linear-gradient(135deg,#064e3b,#1e293b)}
+[data-theme=light]{--bg:#f1f5f9;--fg:#1e293b;--cd:#ffffff;--bd:#cbd5e1;--sm:#64748b;--sb:#94a3b8;--s2:#64748b;--s3:#475569;--s4:#0284c7;--s5:#e2e8f0;--s6:#fef2f2;--s7:#f0fdf4;--s8:#eef2ff;--s9:#f59e0b;--s0:#ffffff;--sx:#f8fafc;--g1:linear-gradient(135deg,#fff,#f8fafc);--g2:linear-gradient(135deg,#eef2ff,#fff);--g3:linear-gradient(135deg,#fef2f2,#fff);--g4:linear-gradient(135deg,#f0fdf4,#fff)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);padding:16px;font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;transition:background .3s,color .3s}
 h1{font-size:20px}
@@ -82,10 +82,10 @@ h1{font-size:20px}
   <div class="ln">主板≥9.90% | 科创/创业板≥19.90% | 北交所≥29.90% | 全市场5000+</div>
 </div>
 
-<div class="cd" style="border-color:#38bdf8">
-  <div class="ct" style="color:#38bdf8">💰 板块资金流向 (主力净流入TOP10)</div>
-  <div style="position:relative">
-    <canvas id="mfChart" width="880" height="320" style="width:100%;height:300px;border-radius:8px"></canvas>
+<div class="cd" style="border-color:#38bdf8;background:var(--g2)">
+  <div class="ct" style="color:#38bdf8;font-size:14px">💰 板块资金流向</div>
+  <div style="position:relative;background:var(--g1);border-radius:8px;padding:4px">
+    <canvas id="mfChart" width="880" height="340" style="width:100%;height:320px;border-radius:8px;display:block"></canvas>
   </div>
   <div id="mfInfo" style="display:flex;gap:8px;flex-wrap:wrap;font-size:11px;color:#475569;margin-top:8px;padding:4px 0"></div>
 </div>
@@ -128,8 +128,8 @@ const H=[
   {c:'sz000762',n:'西藏矿业',d:'锂矿',l:'锂矿周期底部',r:'锂价低迷'},
   {c:'sz300174',n:'元力股份',d:'超级电容',l:'底部企稳',r:'市场有限'}
 ];
-const IX={sh000001:'sh',sz399001:'sz',sz399006:'cy',sh000688:'kc',hkHSI:'',usDJI:'',usIXIC:'',usINX:''};
-const IXN={sh000001:'上证',sz399001:'深证',sz399006:'创业板',sh000688:'科创50',hkHSI:'恒生指数',usDJI:'道琼斯',usIXIC:'纳斯达克',usINX:'标普500'};
+const IX={sh000001:'sh',sz399001:'sz',sz399006:'cy',sh000688:'kc',hkHSI:'',usDJI:'',usIXIC:'',usINX:'',jp_nk225:'',kr_kospi:''};
+const IXN={sh000001:'上证',sz399001:'深证',sz399006:'创业板',sh000688:'科创50',hkHSI:'恒生指数',usDJI:'道琼斯',usIXIC:'纳斯达克',usINX:'标普500',jp_nk225:'<span style="color:#f97316">日经225🗾</span>',kr_kospi:'<span style="color:#38bdf8">韩国KOSPI🇰🇷</span>'};
 const LBD={"update_time":"2026-07-10 20:37","days":4,"data":{"2026-04-16":{"stocks":[{"code":"sh605388","name":"均瑶健康","streak":2,"sector":"主板","chg":9.96}],"count":1,"max_streak":2},"2026-05-27":{"stocks":[{"code":"sz002251","name":"步步高","streak":2,"sector":"主板","chg":12.01}],"count":1,"max_streak":2},"2026-06-30":{"stocks":[{"code":"sz000004","name":"国华退","streak":2,"sector":"主板","chg":13.33}],"count":1,"max_streak":2},"2026-07-03":{"stocks":[{"code":"sz000004","name":"国华退","streak":2,"sector":"主板","chg":12.5}],"count":1,"max_streak":2}}};
 const NEWS_DATA={"update_time": "2026-07-11 18:58", "news": [], "analysis": [], "total": 0, "status": "ok"};
 
@@ -155,7 +155,11 @@ function ms(){
     const now=h*60+m;
     if(now<usEnd)usOpen=true;
   }
-  return{open:aOpen,usOpen:usOpen,any:aOpen||usOpen}
+  // 日股: 08:00-14:00 周一至周五
+  const jpOpen=(w>0&&w<6&&!isHd)&&(h*60+m)>=480&&(h*60+m)<840;
+  // 韩股: 08:00-14:30 周一至周五
+  const krOpen=(w>0&&w<6&&!isHd)&&(h*60+m)>=480&&(h*60+m)<870;
+  return{open:aOpen,usOpen:usOpen,any:aOpen||usOpen,jpOpen:jpOpen,krOpen:krOpen}
 }
 
 async function fx(){
@@ -164,6 +168,12 @@ async function fx(){
     const r=await fetch('https://qt.gtimg.cn/q='+cs+'&_='+Date.now(),{cache:'no-store'});
     const t=await r.text(),d={};
     t.split(';').forEach(l=>{if(!l.includes('~'))return;const e=l.indexOf('=');if(e<0)return;d[l.slice(0,e).replace('var ','').trim()]=l.slice(e+2,l.lastIndexOf('"')).split('~')});
+    // Also fetch JP/KR from Sina
+    try{
+      const r2=await fetch('https://hq.sinajs.cn/list=int_nk225,int_kospi',{headers:{'Referer':'https://finance.sina.com.cn'}});
+      const t2=await r2.text();
+      t2.split(';').forEach(l=>{if(!l.includes('='))return;const k=l.split('=')[0].trim();const v=l.split('=')[1].trim().slice(1,-1).split(',');if(v&&v.length>1)d[k]=v});
+    }catch(e){}
     return d;
   }catch{return null}
 }
@@ -171,15 +181,34 @@ async function fx(){
 function rd(d){
   const s=ms();
   document.getElementById('tm').textContent=new Date().toLocaleTimeString('zh-CN');
-  document.getElementById('mb').innerHTML=(s.open?'<span class="bdg bgo">🟢 A股交易中</span>':(s.usOpen?'<span class="bdg bgo" style="background:#1e1b4b">🌙 美股交易中</span>':'<span class="bdg bgc">🔴 收盘</span>'));
+  // Multi-market status badge
+  let badge='<span class="bdg bgc">🔴 收盘</span>';
+  if(s.open)badge='<span class="bdg bgo">🟢 A股交易中</span>';
+  else if(s.jpOpen)badge='<span class="bdg bgo" style="background:#1e1b4b;color:#f97316">🗾 日股交易中</span>';
+  else if(s.krOpen)badge='<span class="bdg bgo" style="background:#1e1b4b;color:#38bdf8">🇰🇷 韩股交易中</span>';
+  else if(s.usOpen)badge='<span class="bdg bgo" style="background:#1e1b4b">🌙 美股交易中</span>';
+  document.getElementById('mb').innerHTML=badge;
   document.getElementById('sd').className='dot'+(s.any?'':' off');
-  document.getElementById('st').textContent=s.open?'实时':s.usOpen?'夜盘':'盘后';
+  let statusText='盘后';
+  if(s.open)statusText='实时';
+  else if(s.jpOpen||s.krOpen)statusText='亚盘';
+  else if(s.usOpen)statusText='夜盘';
+  document.getElementById('st').textContent=statusText;
   if(!d){document.getElementById('sg').innerHTML='<div class="ld1">⚠️ 获取失败</div>';return}
 
   let xh='';
   for(const [c] of Object.entries(IX)){
-    const p=d['v_'+c];let v='--',ch='--',cl='#94a3b8';
-    if(p&&p.length>4){const pr=+p[3]||0,cls=+p[4]||pr,cg=cls?((pr-cls)/cls*100):0;v=pr.toFixed(2);ch=(cg>0?'+':'')+cg.toFixed(2)+'%';cl=cg>0?'#ef4444':cg<0?'#34d399':'#94a3b8'}
+    const p=d['v_'+c]||d['hq_str_'+c];let v='--',ch='--',cl='#94a3b8';
+    if(p&&p.length>4){
+      // Sina format: [name, price, change%] or Tencent: [1, name, ..., price, prev_close, ...]
+      const isSina=c.startsWith('jp_')||c.startsWith('kr_');
+      if(isSina){
+        const pr=+p[1]||0,prev=+p[2]||pr;
+        if(pr&&prev){const cg=prev?((pr-prev)/prev*100):0;v=pr.toFixed(2);ch=(cg>0?'+':'')+cg.toFixed(2)+'%';cl=cg>0?'#ef4444':cg<0?'#34d399':'#94a3b8'}
+      }else{
+        const pr=+p[3]||0,cls=+p[4]||pr,cg=cls?((pr-cls)/cls*100):0;v=pr.toFixed(2);ch=(cg>0?'+':'')+cg.toFixed(2)+'%';cl=cg>0?'#ef4444':cg<0?'#34d399':'#94a3b8'
+      }
+    }
     const kn=c==='sh000688'?'<span style="color:#38bdf8">科创50🚀</span>':IXN[c];
     xh+=`<div class="ii"${c==='sh000688'?' style="border:1px solid #334155"':''}><div class="n1">${kn}</div><div class="v1" style="color:${cl}">${v}</div><div class="p1" style="color:${cl}">${ch}</div></div>`;
   }
@@ -299,103 +328,120 @@ function mfCB(d){
   drawMFGrid(ctx,W,H,data);
 }
 
-// 点阵图 (dot matrix): sectors as colored dots in a grid
+// 点阵图 (dot matrix) - 美化版
 function drawMFGrid(ctx,W,H,data){
   data.sort((a,b)=>(b.f62||0)-(a.f62||0));
-  const items=data.slice(0,15);
+  const items=data.slice(0,12).filter(x=>Math.abs(x.f62||0)>5000000);
+  if(!items.length)items=data.slice(0,12);
   ctx.clearRect(0,0,W,H);
   
-  const cols=5,rows=Math.ceil(items.length/cols),pad={l:40,r:40,t:32,b:20};
+  const cols=4,rows=Math.ceil(items.length/cols);
+  const pad={l:20,r:20,t:40,b:20};
   const cellW=(W-pad.l-pad.r)/cols,cellH=(H-pad.t-pad.b)/rows;
   const maxAbs=Math.max(...items.map(x=>Math.abs(x.f62||0)),1);
   
+  // Title bar
+  ctx.fillStyle='#1e293b';
+  ctx.fillRect(0,0,W,32);
   ctx.fillStyle='#94a3b8';ctx.font='12px sans-serif';ctx.textAlign='left';
-  ctx.fillText('板块资金点阵图 · 红=流入 绿=流出 点越大=金额越多',pad.l,pad.t-8);
+  ctx.fillText('💰 板块资金点阵 · 红=流入 绿=流出',14,20);
+  ctx.fillStyle='#475569';ctx.font='10px sans-serif';ctx.textAlign='right';
+  ctx.fillText('圆越大=金额越多  ·  角标=涨跌幅',W-14,20);
   
   items.forEach((item,i)=>{
     const col=i%cols,row=Math.floor(i/cols);
     const cx=pad.l+cellW*col+cellW/2,cy=pad.t+cellH*row+cellH/2;
     const inflow=(item.f62||0)/100000000,chg=item.f3||0,name=item.f14||'';
-    const isIn=inflow>=0,color=isIn?'#ef4444':'#34d399';
+    const isIn=inflow>=0;
     const ratio=Math.abs(inflow)/(maxAbs/100000000);
-    const radius=Math.max(10,Math.min(28,8+ratio*22));
+    const radius=Math.max(12,Math.min(32,10+ratio*24));
     
-    // Glow
-    const g=ctx.createRadialGradient(cx,cy,0,cx,cy,radius*2);
-    g.addColorStop(0,color+'30');g.addColorStop(1,color+'00');
-    ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,radius*2,0,Math.PI*2);ctx.fill();
+    // Shadow
+    ctx.fillStyle='rgba(0,0,0,0.3)';
+    ctx.beginPath();ctx.arc(cx+2,cy+2,radius+1,0,Math.PI*2);ctx.fill();
     
-    // Main dot
-    const dg=ctx.createRadialGradient(cx-radius*0.3,cy-radius*0.3,0,cx,cy,radius);
-    if(isIn){dg.addColorStop(0,'#f87171');dg.addColorStop(0.7,'#dc2626');dg.addColorStop(1,'#991b1b');}
-    else{dg.addColorStop(0,'#34d399');dg.addColorStop(0.7,'#10b981');dg.addColorStop(1,'#065f46');}
+    // Outer glow
+    const glow=ctx.createRadialGradient(cx,cy,0,cx,cy,radius*2);
+    const gColor=isIn?'rgba(239,68,68,':'rgba(52,211,153,';
+    glow.addColorStop(0,gColor+'0.15)');glow.addColorStop(1,gColor+'0)');
+    ctx.fillStyle=glow;ctx.beginPath();ctx.arc(cx,cy,radius*2,0,Math.PI*2);ctx.fill();
+    
+    // Dot body
+    const dg=ctx.createRadialGradient(cx-radius*0.2,cy-radius*0.2,2,cx,cy,radius);
+    if(isIn){
+      dg.addColorStop(0,'#ef4444');dg.addColorStop(0.6,'#dc2626');dg.addColorStop(1,'#991b1b');
+    }else{
+      dg.addColorStop(0,'#34d399');dg.addColorStop(0.6,'#10b981');dg.addColorStop(1,'#065f46');
+    }
     ctx.fillStyle=dg;ctx.beginPath();ctx.arc(cx,cy,radius,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle='#0f172a';ctx.lineWidth=2;ctx.beginPath();ctx.arc(cx,cy,radius,0,Math.PI*2);ctx.stroke();
+    ctx.strokeStyle='rgba(255,255,255,0.1)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.arc(cx,cy,radius,0,Math.PI*2);ctx.stroke();
     
-    // Label
+    // Highlight
+    ctx.fillStyle='rgba(255,255,255,0.12)';
+    ctx.beginPath();ctx.arc(cx-radius*0.25,cy-radius*0.25,radius*0.4,0,Math.PI*2);ctx.fill();
+    
+    // Sector name
     ctx.textAlign='center';ctx.textBaseline='middle';
-    if(radius>=16){
+    if(radius>=18){
       ctx.fillStyle='rgba(255,255,255,0.95)';ctx.font='bold 11px sans-serif';
       ctx.fillText(name.length>4?name.slice(0,4):name,cx,cy-5);
-      ctx.fillStyle='rgba(255,255,255,0.75)';ctx.font='9px sans-serif';
+      ctx.fillStyle='rgba(255,255,255,0.8)';ctx.font='9px sans-serif';
       ctx.fillText((isIn?'+':'')+inflow.toFixed(1)+'亿',cx,cy+9);
     }else{
+      // Name below
       ctx.fillStyle='#e2e8f0';ctx.font='10px sans-serif';ctx.textBaseline='bottom';
-      ctx.fillText(name,cx,cy-radius-4);
-      ctx.fillStyle=color;ctx.font='9px sans-serif';ctx.textBaseline='top';
-      ctx.fillText((isIn?'+':'')+inflow.toFixed(1)+'亿',cx,cy+radius+4);
+      ctx.fillText(name,cx,cy-radius-6);
+      ctx.fillStyle=isIn?'#ef4444':'#34d399';ctx.font='9px sans-serif';ctx.textBaseline='top';
+      ctx.fillText((isIn?'+':'')+inflow.toFixed(1)+'亿',cx,cy+radius+6);
     }
     
     // Change % badge
-    const chgColor=chg>0?'#ef4444':chg<0?'#34d399':'#64748b';
-    const bx=cx+Math.cos(-Math.PI/4)*(radius+2),by=cy+Math.sin(-Math.PI/4)*(radius+2);
-    ctx.fillStyle=chgColor;ctx.beginPath();ctx.arc(bx,by,12,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle='#0f172a';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(bx,by,12,0,Math.PI*2);ctx.stroke();
-    ctx.fillStyle='#fff';ctx.font='bold 8px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText((chg>0?'+':'')+chg.toFixed(1)+'%',bx,by);
+    if(chg!==0){
+      const chgColor=chg>0?'#ef4444':'#34d399';
+      const angle=-Math.PI/3;
+      const bx=cx+Math.cos(angle)*(radius+2),by=cy+Math.sin(angle)*(radius+2);
+      ctx.fillStyle=chgColor;ctx.beginPath();ctx.arc(bx,by,11,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle='#0f172a';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(bx,by,11,0,Math.PI*2);ctx.stroke();
+      ctx.fillStyle='#fff';ctx.font='bold 8px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText((chg>0?'+':'')+chg.toFixed(1)+'%',bx,by);
+    }
   });
   
-  document.getElementById('mfInfo').innerHTML='<span style="display:flex;gap:12px;flex-wrap:wrap;font-size:10px">'
-    +'<span>🔴 <b>主力流入</b> <span style="color:#64748b">点越大=金额越多</span></span>'
-    +'<span style="color:#34d399">🟢 <b>主力流出</b></span>'
-    +'<span style="color:#64748b">🔄 盘后缓存 · 盘中60秒更新</span></span>';
+  document.getElementById('mfInfo').innerHTML='<span style="display:flex;gap:16px;flex-wrap:wrap;font-size:11px;align-items:center">'
+    +'<span style="display:inline-flex;align-items:center;gap:4px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,#ef4444,#991b1b)"></span> <b>主力流入</b></span>'
+    +'<span style="display:inline-flex;align-items:center;gap:4px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,#34d399,#065f46)"></span> <b>主力流出</b></span>'
+    +'<span style="color:#64748b">| 点越大=金额越多</span>'
+    +'<span style="color:#64748b">| 盘中60秒更新</span></span>';
   window._mfData=null;
 }
 
 function renderMFFallback(ctx,W,H){
-  // Draw a placeholder chart layout
-  const ml=110,mr=100,mt=28,rowH=28,gap=4,chartH=10*(rowH+gap);
-  const cw=W-ml-mr,cx=ml+cw/2;
+  const cols=4,rows=3,pad={l:20,r:20,t:40,b:20};
+  const cellW=(W-pad.l-pad.r)/cols,cellH=(H-pad.t-pad.b)/rows;
   
   ctx.clearRect(0,0,W,H);
   
-  // Grid lines
-  ctx.strokeStyle='#1e293b';ctx.lineWidth=0.5;
-  for(let i=0;i<10;i++){
-    const y=mt+i*(rowH+gap)+rowH/2;
-    ctx.beginPath();ctx.moveTo(ml-5,y);ctx.lineTo(W-mr-5,y);ctx.stroke();
+  // Title bar
+  ctx.fillStyle='#1e293b';
+  ctx.fillRect(0,0,W,32);
+  ctx.fillStyle='#475569';ctx.font='12px sans-serif';ctx.textAlign='left';
+  ctx.fillText('💰 板块资金点阵',14,20);
+  
+  // Grid placeholders
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const cx=pad.l+cellW*c+cellW/2,cy=pad.t+cellH*r+cellH/2;
+      ctx.strokeStyle='#1e293b';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+      ctx.beginPath();ctx.arc(cx,cy,14,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
+    }
   }
   
-  // Center axis
-  ctx.strokeStyle='#334155';ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(cx,mt);ctx.lineTo(cx,mt+chartH);ctx.stroke();
-  
-  // Axis labels
-  ctx.fillStyle='#475569';ctx.font='9px sans-serif';ctx.textAlign='center';
-  ctx.fillText('← 流出',cx-cw/4,mt+chartH+16);
-  ctx.fillText('流入 →',cx+cw/4,mt+chartH+16);
-  
-  // Title
-  ctx.fillStyle='#64748b';ctx.font='11px sans-serif';ctx.textAlign='left';
-  ctx.fillText('主力净流入(亿元)  TOP10板块',ml,mt-8);
-  
-  // Center text
-  ctx.fillStyle='#475569';ctx.font='15px sans-serif';ctx.textAlign='center';
-  ctx.fillText('⏳ 盘后暂无数据',W/2,mt+chartH/2-8);
-  ctx.fillStyle='#475569';ctx.font='12px sans-serif';
-  ctx.fillText('每60秒自动尝试获取',W/2,mt+chartH/2+16);
-  
-  document.getElementById('mfInfo').innerHTML='<span style="color:#475569">⏳ 非交易时段 · 每60秒自动获取 · 交易时段自动显示实时数据</span>';
+  ctx.fillStyle='#475569';ctx.font='14px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('⏳ 等待数据...',W/2,H/2-8);
+  ctx.fillStyle='#475569';ctx.font='11px sans-serif';
+  ctx.fillText('盘中自动获取',W/2,H/2+12);
+  document.getElementById('mfInfo').innerHTML='<span style="color:#475569;font-size:11px">⏳ 非交易时段 · 每60秒自动获取</span>';
 }
 
 let mfTimer;
@@ -413,7 +459,7 @@ function rf(){
 
 function nh(){const n=new Date();return Math.max(60,Math.floor((new Date(n.getFullYear(),n.getMonth(),n.getDate(),n.getHours()+1,0,0,0)-n)/1000))}
 function cd(s){if(window._t)clearInterval(window._t);let r=s;
-  window._t=setInterval(()=>{r--;const st=ms();document.getElementById('cd').textContent=st.open?r+'s':st.usOpen?r+'s🌙':new Date(Date.now()+r*1000).getHours().toString().padStart(2,'0')+':00('+Math.floor(r/60)+'分)';if(r<=0){clearInterval(window._t);rf()}},1000)}
+  window._t=setInterval(()=>{r--;const st=ms();document.getElementById('cd').textContent=st.open?r+'s':st.jpOpen||st.krOpen?r+'s🌏':st.usOpen?r+'s🌙':new Date(Date.now()+r*1000).getHours().toString().padStart(2,'0')+':00('+Math.floor(r/60)+'分)';if(r<=0){clearInterval(window._t);rf()}},1000)}
 
 rf();
 </script>
