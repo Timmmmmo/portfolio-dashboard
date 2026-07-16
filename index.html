@@ -339,8 +339,20 @@ function drawMFLines(ctx,W,H){
   const hist=mfHistory;
   if(!hist.length)return drawMFPlaceholder(ctx,W,H,'暂无数据');
   
-  const pad={l:55,r:25,t:38,b:35};
+  const pad={l:55,r:25,t:38,b:40};
   const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
+  
+  // Fixed X-axis: 09:30 (open) to 15:00 (close) = 330 minutes
+  const OPEN=570, CLOSE=900; // minutes from midnight
+  const RANGE=CLOSE-OPEN; // 330 min
+  
+  // Calculate X position from time string
+  function timeToX(t){
+    const [h,m]=t.split(':').map(Number);
+    const mins=h*60+m;
+    const pct=Math.max(0,Math.min(1,(mins-OPEN)/RANGE));
+    return pad.l+pct*cw;
+  }
   
   // Find y range: max(|in|, |out|)
   let maxVal=0;
@@ -358,12 +370,8 @@ function drawMFLines(ctx,W,H){
   ctx.fillText('采集点: '+hist.length+'  ·  每30s更新',W-12,18);
   
   // === Background: split by zero line ===
-  // Upper half (inflow area) - subtle red tint
-  ctx.fillStyle='rgba(239,68,68,0.03)';
-  ctx.fillRect(pad.l,pad.t,cw,ch/2);
-  // Lower half (outflow area) - subtle green tint  
-  ctx.fillStyle='rgba(52,211,153,0.03)';
-  ctx.fillRect(pad.l,pad.t+ch/2,cw,ch/2);
+  ctx.fillStyle='rgba(239,68,68,0.03)';ctx.fillRect(pad.l,pad.t,cw,ch/2);
+  ctx.fillStyle='rgba(52,211,153,0.03)';ctx.fillRect(pad.l,pad.t+ch/2,cw,ch/2);
   
   // === Y-axis grid ===
   ctx.strokeStyle='#1e293b';ctx.lineWidth=0.5;
@@ -371,100 +379,112 @@ function drawMFLines(ctx,W,H){
     if(i===0)continue;
     const y=pad.t+ch/2-(i/4)*(ch/2);
     ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cw,y);ctx.stroke();
-    // Y labels
     ctx.fillStyle='#475569';ctx.font='9px sans-serif';ctx.textAlign='right';
     ctx.fillText((yMax*i/4).toFixed(1)+'亿',pad.l-6,y+3);
   }
   
-  // === Zero line (thick, centered) ===
+  // === Zero line ===
   ctx.strokeStyle='#334155';ctx.lineWidth=2;
   ctx.beginPath();ctx.moveTo(pad.l,pad.t+ch/2);ctx.lineTo(pad.l+cw,pad.t+ch/2);ctx.stroke();
-  // "0" label
   ctx.fillStyle='#475569';ctx.font='9px sans-serif';ctx.textAlign='right';
   ctx.fillText('0',pad.l-6,pad.t+ch/2+3);
   
-  // Axis labels
+  // Axis direction labels
   ctx.fillStyle='#ef4444';ctx.font='9px sans-serif';ctx.textAlign='left';
   ctx.fillText('↑ 流入',pad.l+cw+2,pad.t+ch/4+3);
   ctx.fillStyle='#34d399';ctx.font='9px sans-serif';
   ctx.fillText('↓ 流出',pad.l+cw+2,pad.t+ch*3/4+3);
   
-  // === Draw lines ===
-  function toX(i){return pad.l+(i/(hist.length-1||1))*cw}
+  // === Draw lines at their actual time positions ===
   function toY(v){return pad.t+ch/2-(v/yMax)*(ch/2)}
   
-  function drawLine(data,color,label,side){
+  function drawLine(data,color,label){
     if(data.length<2)return;
-    ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.lineJoin='round';
-    ctx.beginPath();
+    const pts=[]; // {x,y}
     data.forEach((v,i)=>{
-      const x=toX(i),y=toY(Math.abs(v));
-      if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+      const x=timeToX(hist[i].t);
+      if(x>=pad.l&&x<=pad.l+cw)pts.push({x,y:toY(Math.abs(v))});
     });
+    if(pts.length<2)return;
+    
+    ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.lineJoin='round';
+    ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);
+    for(let j=1;j<pts.length;j++)ctx.lineTo(pts[j].x,pts[j].y);
     ctx.stroke();
     
-    // Area fill (only up to zero line)
+    // Area fill
     ctx.fillStyle=color+'18';
-    ctx.beginPath();
-    ctx.moveTo(toX(0),pad.t+ch/2);
-    data.forEach((v,i)=>{ctx.lineTo(toX(i),toY(Math.abs(v)))});
-    ctx.lineTo(toX(data.length-1),pad.t+ch/2);
+    ctx.beginPath();ctx.moveTo(pts[0].x,pad.t+ch/2);
+    pts.forEach(p=>ctx.lineTo(p.x,p.y));
+    ctx.lineTo(pts[pts.length-1].x,pad.t+ch/2);
     ctx.closePath();ctx.fill();
     
     // Latest point dot
-    const lastIdx=data.length-1;
-    const lx=toX(lastIdx),ly=toY(Math.abs(data[lastIdx]));
-    ctx.fillStyle=color;
-    ctx.beginPath();ctx.arc(lx,ly,4,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle='#0f172a';ctx.lineWidth=1.5;
-    ctx.beginPath();ctx.arc(lx,ly,4,0,Math.PI*2);ctx.stroke();
+    const lp=pts[pts.length-1];
+    ctx.fillStyle=color;ctx.beginPath();ctx.arc(lp.x,lp.y,4,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#0f172a';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(lp.x,lp.y,4,0,Math.PI*2);ctx.stroke();
     
     // Label
-    const lastV=data[lastIdx];
+    const lastV=data[data.length-1];
     ctx.fillStyle=color;ctx.font='bold 9px sans-serif';
     ctx.textAlign='left';ctx.textBaseline='bottom';
-    ctx.fillText(label+Math.abs(lastV).toFixed(2)+'亿',lx+6,ly-2);
+    ctx.fillText(label+Math.abs(lastV).toFixed(2)+'亿',lp.x+6,lp.y-2);
   }
   
-  // Inflow (goes UP from zero - positive values)
-  const inData=hist.map(h=>h.in);
-  drawLine(inData,'#ef4444','流入+','up');
+  // Inflow
+  drawLine(hist.map(h=>h.in),'#ef4444','流入+');
+  // Outflow
+  drawLine(hist.map(h=>h.out),'#34d399','流出-');
   
-  // Outflow (goes DOWN from zero - negative values stored as positive for drawing)
-  const outData=hist.map(h=>h.out);
-  drawLine(outData,'#34d399','流出-','down');
-  
-  // Net flow line (goes either direction)
+  // Net flow (crosses zero)
   if(hist.length>=2){
     const netData=hist.map(h=>h.net);
     ctx.strokeStyle='#fbbf24';ctx.lineWidth=2;ctx.lineJoin='round';
     ctx.beginPath();
+    let started=false;
     netData.forEach((v,i)=>{
-      const x=toX(i),y=pad.t+ch/2-(v/yMax)*(ch/2);
-      if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+      const x=timeToX(hist[i].t);
+      if(x<pad.l||x>pad.l+cw)return;
+      const y=pad.t+ch/2-(v/yMax)*(ch/2);
+      if(!started){ctx.moveTo(x,y);started=true;}else ctx.lineTo(x,y);
     });
-    ctx.stroke();
+    if(started)ctx.stroke();
     
-    // Dot at latest net
-    const li=netData.length-1;
-    const lx=toX(li),ly=pad.t+ch/2-(netData[li]/yMax)*(ch/2);
-    ctx.fillStyle='#fbbf24';
-    ctx.beginPath();ctx.arc(lx,ly,4,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle='#0f172a';ctx.lineWidth=1.5;
-    ctx.beginPath();ctx.arc(lx,ly,4,0,Math.PI*2);ctx.stroke();
-    
-    ctx.fillStyle='#fbbf24';ctx.font='bold 9px sans-serif';ctx.textAlign='left';ctx.textBaseline='bottom';
-    ctx.fillText('净额'+(netData[li]>0?'+':'')+netData[li].toFixed(2)+'亿',lx+6,ly-2);
+    // Latest net dot
+    if(started){
+      const li=netData.length-1;
+      const lx=timeToX(hist[li].t);
+      const ly=pad.t+ch/2-(netData[li]/yMax)*(ch/2);
+      if(lx>=pad.l&&lx<=pad.l+cw){
+        ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.arc(lx,ly,4,0,Math.PI*2);ctx.fill();
+        ctx.strokeStyle='#0f172a';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(lx,ly,4,0,Math.PI*2);ctx.stroke();
+        ctx.fillStyle='#fbbf24';ctx.font='bold 9px sans-serif';ctx.textAlign='left';ctx.textBaseline='bottom';
+        ctx.fillText('净额'+(netData[li]>0?'+':'')+netData[li].toFixed(2)+'亿',lx+6,ly-2);
+      }
+    }
   }
   
-  // === X-axis labels ===
-  ctx.fillStyle='#475569';ctx.font='9px sans-serif';ctx.textAlign='center';
-  const labelInterval=Math.max(1,Math.floor(hist.length/8));
-  for(let i=0;i<hist.length;i+=labelInterval){
-    ctx.fillText(hist[i].t,toX(i),pad.t+ch+16);
-  }
-  if(hist.length>1&&(hist.length-1)%labelInterval!==0){
-    ctx.fillText(hist[hist.length-1].t,toX(hist.length-1),pad.t+ch+16);
+  // === X-axis: fixed 09:30-15:00 with hourly markers ===
+  const hourMarkers=[570,600,630,660,690,720,750,780,810,840,870,900]; // minutes
+  const hourLabels=['09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00'];
+  ctx.strokeStyle='#1e293b';ctx.lineWidth=0.5;
+  hourMarkers.forEach((t,i)=>{
+    const x=pad.l+((t-OPEN)/RANGE)*cw;
+    // Tick line
+    ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,pad.t+ch);ctx.stroke();
+    // Label
+    ctx.fillStyle='#475569';ctx.font='9px sans-serif';ctx.textAlign='center';
+    ctx.fillText(hourLabels[i],x,pad.t+ch+16);
+  });
+  
+  // Current time indicator (if during market hours)
+  const now=new Date();const nowMins=now.getHours()*60+now.getMinutes();
+  if(nowMins>=OPEN&&nowMins<=CLOSE){
+    const nx=pad.l+((nowMins-OPEN)/RANGE)*cw;
+    ctx.strokeStyle='rgba(251,191,36,0.5)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(nx,pad.t+ch/2-10);ctx.lineTo(nx,pad.t+ch+5);ctx.stroke();
+    ctx.fillStyle='#fbbf24';ctx.font='8px sans-serif';ctx.textAlign='center';
+    ctx.fillText('现在',nx,pad.t+ch+26);
   }
   
   // === Legend ===
@@ -480,13 +500,14 @@ function drawMFLines(ctx,W,H){
     +'<span><span style="color:#ef4444">🔴</span> 流入 <span style="color:#64748b">'+last.in.toFixed(2)+'亿</span></span>'
     +'<span><span style="color:#34d399">🟢</span> 流出 <span style="color:#64748b">'+last.out.toFixed(2)+'亿</span></span>'
     +'<span><span style="color:#fbbf24">🟡</span> 净额 <span style="color:#64748b">'+(last.net>0?'+':'')+last.net.toFixed(2)+'亿</span></span>'
-    +'<span style="color:#64748b">| 零轴以上=流入 以下=流出 · 每30秒采集</span></span>';
+    +'<span style="color:#64748b">| X轴:09:30→15:00  ·  每30秒采集</span></span>';
 }
 
 function drawMFPlaceholder(ctx,W,H,msg){
   msg=msg||'⏳ 等待数据...';
-  const pad={l:55,r:25,t:38,b:35};
+  const pad={l:55,r:25,t:38,b:40};
   const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
+  const OPEN=570,CLOSE=900,RANGE=CLOSE-OPEN;
   
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle='#1e293b';ctx.fillRect(0,0,W,28);
@@ -506,6 +527,17 @@ function drawMFPlaceholder(ctx,W,H,msg){
   }
   ctx.strokeStyle='#1e293b';ctx.lineWidth=2;
   ctx.beginPath();ctx.moveTo(pad.l,pad.t+ch/2);ctx.lineTo(pad.l+cw,pad.t+ch/2);ctx.stroke();
+  
+  // X-axis markers
+  const hourMarkers=[570,600,630,660,690,720,750,780,810,840,870,900];
+  const hourLabels=['09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00'];
+  ctx.strokeStyle='#1e293b';ctx.lineWidth=0.5;
+  hourMarkers.forEach((t,i)=>{
+    const x=pad.l+((t-OPEN)/RANGE)*cw;
+    ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,pad.t+ch);ctx.stroke();
+    ctx.fillStyle='#475569';ctx.font='9px sans-serif';ctx.textAlign='center';
+    ctx.fillText(hourLabels[i],x,pad.t+ch+16);
+  });
   
   ctx.fillStyle='#475569';ctx.font='14px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.fillText(msg,W/2,pad.t+ch/2-10);
