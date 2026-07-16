@@ -339,81 +339,123 @@ function drawMFLines(ctx,W,H){
   const hist=mfHistory;
   if(!hist.length)return drawMFPlaceholder(ctx,W,H,'暂无数据');
   
-  const pad={l:55,r:25,t:35,b:35};
+  const pad={l:55,r:25,t:38,b:35};
   const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
   
-  // Find y range
+  // Find y range: max(|in|, |out|)
   let maxVal=0;
-  hist.forEach(h=>{const a=Math.abs(h.in),b=Math.abs(h.out),c=Math.abs(h.net);if(a>maxVal)maxVal=a;if(b>maxVal)maxVal=b;if(c>maxVal)maxVal=c});
-  maxVal=Math.ceil(maxVal*1.2)||1;
-  const yMax=maxVal; // in 亿元
+  hist.forEach(h=>{const a=Math.abs(h.in),b=Math.abs(h.out);if(a>maxVal)maxVal=a;if(b>maxVal)maxVal=b});
+  maxVal=Math.ceil(maxVal*1.25)||1;
+  const yMax=maxVal;
   
   ctx.clearRect(0,0,W,H);
   
   // === Title bar ===
   ctx.fillStyle='#1e293b';ctx.fillRect(0,0,W,28);
   ctx.fillStyle='#94a3b8';ctx.font='11px sans-serif';ctx.textAlign='left';
-  ctx.fillText('📈 板块资金分时走势',12,19);
+  ctx.fillText('📈 板块资金流向 · 零轴分界',12,19);
   ctx.fillStyle='#475569';ctx.font='9px sans-serif';ctx.textAlign='right';
   ctx.fillText('采集点: '+hist.length+'  ·  每30s更新',W-12,18);
   
-  // === Grid ===
+  // === Background: split by zero line ===
+  // Upper half (inflow area) - subtle red tint
+  ctx.fillStyle='rgba(239,68,68,0.03)';
+  ctx.fillRect(pad.l,pad.t,cw,ch/2);
+  // Lower half (outflow area) - subtle green tint  
+  ctx.fillStyle='rgba(52,211,153,0.03)';
+  ctx.fillRect(pad.l,pad.t+ch/2,cw,ch/2);
+  
+  // === Y-axis grid ===
   ctx.strokeStyle='#1e293b';ctx.lineWidth=0.5;
-  for(let i=0;i<=4;i++){
-    const y=pad.t+ch-i*ch/4;
+  for(let i=-4;i<=4;i++){
+    if(i===0)continue;
+    const y=pad.t+ch/2-(i/4)*(ch/2);
     ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cw,y);ctx.stroke();
     // Y labels
     ctx.fillStyle='#475569';ctx.font='9px sans-serif';ctx.textAlign='right';
     ctx.fillText((yMax*i/4).toFixed(1)+'亿',pad.l-6,y+3);
   }
   
-  // === Zero line ===
-  ctx.strokeStyle='#334155';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+  // === Zero line (thick, centered) ===
+  ctx.strokeStyle='#334155';ctx.lineWidth=2;
   ctx.beginPath();ctx.moveTo(pad.l,pad.t+ch/2);ctx.lineTo(pad.l+cw,pad.t+ch/2);ctx.stroke();
-  ctx.setLineDash([]);
+  // "0" label
+  ctx.fillStyle='#475569';ctx.font='9px sans-serif';ctx.textAlign='right';
+  ctx.fillText('0',pad.l-6,pad.t+ch/2+3);
+  
+  // Axis labels
+  ctx.fillStyle='#ef4444';ctx.font='9px sans-serif';ctx.textAlign='left';
+  ctx.fillText('↑ 流入',pad.l+cw+2,pad.t+ch/4+3);
+  ctx.fillStyle='#34d399';ctx.font='9px sans-serif';
+  ctx.fillText('↓ 流出',pad.l+cw+2,pad.t+ch*3/4+3);
   
   // === Draw lines ===
   function toX(i){return pad.l+(i/(hist.length-1||1))*cw}
   function toY(v){return pad.t+ch/2-(v/yMax)*(ch/2)}
   
-  // Helper: draw a polyline
-  function drawLine(data,color,label){
+  function drawLine(data,color,label,side){
     if(data.length<2)return;
     ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.lineJoin='round';
     ctx.beginPath();
     data.forEach((v,i)=>{
-      const x=toX(i),y=toY(v);
+      const x=toX(i),y=toY(Math.abs(v));
       if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
     });
     ctx.stroke();
     
-    // Area fill
-    ctx.fillStyle=color+'15';
+    // Area fill (only up to zero line)
+    ctx.fillStyle=color+'18';
     ctx.beginPath();
-    const lastIdx=data.length-1;
     ctx.moveTo(toX(0),pad.t+ch/2);
-    data.forEach((v,i)=>{ctx.lineTo(toX(i),toY(v))});
-    ctx.lineTo(toX(lastIdx),pad.t+ch/2);
+    data.forEach((v,i)=>{ctx.lineTo(toX(i),toY(Math.abs(v)))});
+    ctx.lineTo(toX(data.length-1),pad.t+ch/2);
     ctx.closePath();ctx.fill();
     
-    // Label at latest point
-    const lx=toX(lastIdx),ly=toY(data[lastIdx]);
+    // Latest point dot
+    const lastIdx=data.length-1;
+    const lx=toX(lastIdx),ly=toY(Math.abs(data[lastIdx]));
+    ctx.fillStyle=color;
+    ctx.beginPath();ctx.arc(lx,ly,4,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#0f172a';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.arc(lx,ly,4,0,Math.PI*2);ctx.stroke();
+    
+    // Label
+    const lastV=data[lastIdx];
     ctx.fillStyle=color;ctx.font='bold 9px sans-serif';
     ctx.textAlign='left';ctx.textBaseline='bottom';
-    ctx.fillText(label+data[lastIdx].toFixed(2)+'亿',lx+4,ly-2);
+    ctx.fillText(label+Math.abs(lastV).toFixed(2)+'亿',lx+6,ly-2);
   }
   
-  // Net flow line
-  const netData=hist.map(h=>h.net);
-  drawLine(netData,'#38bdf8','净额');
-  
-  // Inflow line  
+  // Inflow (goes UP from zero - positive values)
   const inData=hist.map(h=>h.in);
-  drawLine(inData,'#ef4444','流入');
+  drawLine(inData,'#ef4444','流入+','up');
   
-  // Outflow line
+  // Outflow (goes DOWN from zero - negative values stored as positive for drawing)
   const outData=hist.map(h=>h.out);
-  drawLine(outData,'#34d399','流出');
+  drawLine(outData,'#34d399','流出-','down');
+  
+  // Net flow line (goes either direction)
+  if(hist.length>=2){
+    const netData=hist.map(h=>h.net);
+    ctx.strokeStyle='#fbbf24';ctx.lineWidth=2;ctx.lineJoin='round';
+    ctx.beginPath();
+    netData.forEach((v,i)=>{
+      const x=toX(i),y=pad.t+ch/2-(v/yMax)*(ch/2);
+      if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+    
+    // Dot at latest net
+    const li=netData.length-1;
+    const lx=toX(li),ly=pad.t+ch/2-(netData[li]/yMax)*(ch/2);
+    ctx.fillStyle='#fbbf24';
+    ctx.beginPath();ctx.arc(lx,ly,4,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#0f172a';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.arc(lx,ly,4,0,Math.PI*2);ctx.stroke();
+    
+    ctx.fillStyle='#fbbf24';ctx.font='bold 9px sans-serif';ctx.textAlign='left';ctx.textBaseline='bottom';
+    ctx.fillText('净额'+(netData[li]>0?'+':'')+netData[li].toFixed(2)+'亿',lx+6,ly-2);
+  }
   
   // === X-axis labels ===
   ctx.fillStyle='#475569';ctx.font='9px sans-serif';ctx.textAlign='center';
@@ -421,54 +463,54 @@ function drawMFLines(ctx,W,H){
   for(let i=0;i<hist.length;i+=labelInterval){
     ctx.fillText(hist[i].t,toX(i),pad.t+ch+16);
   }
-  // Last point
   if(hist.length>1&&(hist.length-1)%labelInterval!==0){
     ctx.fillText(hist[hist.length-1].t,toX(hist.length-1),pad.t+ch+16);
   }
   
   // === Legend ===
   const lgY=pad.t-20;
-  ctx.fillStyle='#ef4444';ctx.beginPath();ctx.arc(12,lgY+4,4,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='#e2e8f0';ctx.font='9px sans-serif';ctx.textAlign='left';
-  ctx.fillText('流入',22,lgY+8);
-  ctx.fillStyle='#34d399';ctx.beginPath();ctx.arc(62,lgY+4,4,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='#e2e8f0';ctx.font='9px sans-serif';
-  ctx.fillText('流出',72,lgY+8);
-  ctx.fillStyle='#38bdf8';ctx.beginPath();ctx.arc(112,lgY+4,4,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='#e2e8f0';ctx.font='9px sans-serif';
-  ctx.fillText('净额',122,lgY+8);
+  [['#ef4444','流入',12],['#34d399','流出',72],['#fbbf24','净额',132]].forEach(([c,l,x])=>{
+    ctx.fillStyle=c;ctx.beginPath();ctx.arc(x,lgY+4,4,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#e2e8f0';ctx.font='9px sans-serif';ctx.textAlign='left';
+    ctx.fillText(l,x+8,lgY+8);
+  });
   
+  const last=hist[hist.length-1];
   document.getElementById('mfInfo').innerHTML='<span style="display:flex;gap:16px;flex-wrap:wrap;font-size:11px;align-items:center">'
-    +'<span><span style="color:#ef4444">🔴</span> 流入 <span style="color:#64748b">'+hist[hist.length-1].in.toFixed(2)+'亿</span></span>'
-    +'<span><span style="color:#34d399">🟢</span> 流出 <span style="color:#64748b">'+hist[hist.length-1].out.toFixed(2)+'亿</span></span>'
-    +'<span><span style="color:#38bdf8">🔵</span> 净额 <span style="color:#64748b">'+(hist[hist.length-1].net>0?'+':'')+hist[hist.length-1].net.toFixed(2)+'亿</span></span>'
-    +'<span style="color:#64748b">| 每30秒自动采集 · 当前累计值</span></span>';
+    +'<span><span style="color:#ef4444">🔴</span> 流入 <span style="color:#64748b">'+last.in.toFixed(2)+'亿</span></span>'
+    +'<span><span style="color:#34d399">🟢</span> 流出 <span style="color:#64748b">'+last.out.toFixed(2)+'亿</span></span>'
+    +'<span><span style="color:#fbbf24">🟡</span> 净额 <span style="color:#64748b">'+(last.net>0?'+':'')+last.net.toFixed(2)+'亿</span></span>'
+    +'<span style="color:#64748b">| 零轴以上=流入 以下=流出 · 每30秒采集</span></span>';
 }
 
 function drawMFPlaceholder(ctx,W,H,msg){
   msg=msg||'⏳ 等待数据...';
-  const pad={l:55,r:25,t:35,b:35};
+  const pad={l:55,r:25,t:38,b:35};
   const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
   
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle='#1e293b';ctx.fillRect(0,0,W,28);
   ctx.fillStyle='#475569';ctx.font='11px sans-serif';ctx.textAlign='left';
-  ctx.fillText('📈 板块资金分时走势',12,19);
+  ctx.fillText('📈 板块资金流向 · 零轴分界',12,19);
+  
+  // Background tint
+  ctx.fillStyle='rgba(239,68,68,0.03)';ctx.fillRect(pad.l,pad.t,cw,ch/2);
+  ctx.fillStyle='rgba(52,211,153,0.03)';ctx.fillRect(pad.l,pad.t+ch/2,cw,ch/2);
   
   // Grid
   ctx.strokeStyle='#1e293b';ctx.lineWidth=0.5;
-  for(let i=0;i<=4;i++){
-    const y=pad.t+ch-i*ch/4;
+  for(let i=-4;i<=4;i++){
+    if(i===0)continue;
+    const y=pad.t+ch/2-(i/4)*(ch/2);
     ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cw,y);ctx.stroke();
   }
-  ctx.strokeStyle='#1e293b';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+  ctx.strokeStyle='#1e293b';ctx.lineWidth=2;
   ctx.beginPath();ctx.moveTo(pad.l,pad.t+ch/2);ctx.lineTo(pad.l+cw,pad.t+ch/2);ctx.stroke();
-  ctx.setLineDash([]);
   
   ctx.fillStyle='#475569';ctx.font='14px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText(msg,W/2,H/2-6);
+  ctx.fillText(msg,W/2,pad.t+ch/2-10);
   ctx.fillStyle='#475569';ctx.font='10px sans-serif';
-  ctx.fillText('开盘后自动采集分时数据',W/2,H/2+14);
+  ctx.fillText('开盘后自动采集分时数据',W/2,pad.t+ch/2+12);
   document.getElementById('mfInfo').innerHTML='<span style="color:#475569;font-size:11px">⏳ 非交易时段</span>';
 }
 
