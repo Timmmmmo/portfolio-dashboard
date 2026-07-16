@@ -114,8 +114,8 @@ h1{font-size:20px}
 
 <div class="cd" style="border-color:#57e1a2;background:var(--g2)">
   <div class="ct" style="color:#57e1a2;font-size:14px">🌳 资金流树 · 政策→板块→个股</div>
-  <div id="ftContainer"><div class="ld1"><span class="sp"></span>加载主题数据...</div></div>
-  <div class="ftinfo">实时数据 · 东方财富行业板块</div>
+  <div id="ftContainer"><div class="ld1"><span class="sp"></span>等待板块数据...</div></div>
+  <div class="ftinfo">东方财富100行业板块 · 每30秒随🟢数据联动刷新</div>
 </div>
 
 <div class="cd"><div class="ct">📰 新闻</div><div id="nc"></div></div>
@@ -264,7 +264,6 @@ function rd(d){
 
   rl();
   startMF();
-  renderFT();
 }
 
 function rl(){
@@ -311,7 +310,7 @@ function renderMF(){
   if(old)old.remove();
   const s=document.createElement('script');
   s.id='mfJsonp';
-  s.src='https://push2.eastmoney.com/api/qt/clist/get?cb=mfCB&pn=1&pz=20&po=1&np=1&fields=f12,f14,f3,f62,f184,f66,f69&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb&_='+Date.now();
+  s.src='https://push2.eastmoney.com/api/qt/clist/get?cb=mfCB&pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62,f184,f66,f69&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb&_='+Date.now();
   document.body.appendChild(s);
   setTimeout(()=>{
     if(!window._mfData){
@@ -340,6 +339,8 @@ function mfCB(d){
   if(mfHistory.length>MF_MAX_POINTS)mfHistory.shift();
   try{localStorage.setItem('mfHist',JSON.stringify(mfHistory.slice(-30)));}catch(e){}
   drawMFLines(ctx,W,H);
+  // Also render FlowTree with same data (all 100 sectors)
+  renderFTFromData(data);
   window._mfData=null;
 }
 
@@ -514,7 +515,7 @@ function startMF(){
   },30000);
 }
 
-// ===== 资金流树: 政策→板块→个股 (FlowTree) =====
+// ===== 资金流树: 政策→板块→个股 (FlowTree, 共享东方财富数据) =====
 const FT_THEMES = [
   {id:'ai',name:'AI+',icon:'🧠',color:'#57e1a2',policy:'科技自立自强/数字中国',
     keywords:['半导体','芯片','AI','算力','软件','通信','计算机','互联网','光模块','封测','电子','元件','IT'],
@@ -536,70 +537,32 @@ const FT_THEMES = [
     hk:[],narrative:'负向分支同样保留，说明资金从哪些方向撤出'}
 ];
 
-let ftTimer;
-
-function renderFT(){
-  const old=document.getElementById('ftJsonp');
-  if(old)old.remove();
-  const s=document.createElement('script');
-  s.id='ftJsonp';
-  s.src='https://push2.eastmoney.com/api/qt/clist/get?cb=ftCB&pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62,f184,f66,f69&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb&_='+Date.now();
-  document.body.appendChild(s);
-  setTimeout(()=>{
-    if(!window._ftData){
-      const oldS=document.getElementById('ftJsonp');
-      if(oldS)oldS.remove();
-      document.getElementById('ftContainer').innerHTML='<div class="ld1">⏳ 资金流数据超时</div>';
-    }
-  },10000);
-}
-
-function ftCB(d){
-  window._ftData=d;
-  const data=d&&d.data&&d.data.diff;
-  if(!data||!data.length){
-    document.getElementById('ftContainer').innerHTML='<div class="ftne">暂无行业板块数据</div>';
-    window._ftData=null;
-    return;
-  }
-  // Group sectors by theme
+function renderFTFromData(data){
+  if(!data||!data.length)return;
   const themes = FT_THEMES.map(t=>({...t,sectors:[],totalFlow:0,posFlow:0,negFlow:0,count:0}));
   data.forEach(x=>{
     const name=(x.f14||'').trim(),flow=((x.f62||0)/100000000),chg=((x.f3||0)/100);
     for(let ti=0;ti<themes.length;ti++){
-      const t=themes[ti];
-      let matched=false;
-      for(const kw of t.keywords){
-        if(name.includes(kw)){matched=true;break;}
-      }
+      const t=themes[ti];let matched=false;
+      for(const kw of t.keywords){if(name.includes(kw)){matched=true;break;}}
       if(matched){
         t.sectors.push({name,flow,chg,code:x.f12});
         t.totalFlow+=flow;
         if(flow>0)t.posFlow+=flow;else t.negFlow+=flow;
-        t.count++;
-        break;
+        t.count++;break;
       }
     }
   });
-  // Sort themes by abs total flow
   themes.sort((a,b)=>Math.abs(b.totalFlow)-Math.abs(a.totalFlow));
-  // Find max abs flow for bar scaling
   const maxAbsFlow = Math.max(...themes.map(t=>Math.abs(t.totalFlow)),1);
-  // Build HTML
   let html='<div class="ft2">';
   themes.forEach(t=>{
     const isPos=t.totalFlow>=0;
     const flowColor=isPos?'#ef4444':'#34d399';
     const flowSign=isPos?'+':'';
-    // Sort sectors within theme
     t.sectors.sort((a,b)=>Math.abs(b.flow)-Math.abs(a.flow));
     const topSectors=t.sectors.slice(0,6);
-    // Find matching holdings
-    const matchHoldings = H.filter(h=>{
-      for(const hk of t.hk){if(h.n.includes(hk))return true;}
-      return false;
-    });
-    // Policy tag
+    const matchHoldings = H.filter(h=>{for(const hk of t.hk){if(h.n.includes(hk))return true;}return false;});
     const policyTag = t.policy.split('/')[0];
     html+=`<div class="ftc" style="border-left:3px solid ${t.color}">
       <div class="ftch">
@@ -607,7 +570,6 @@ function ftCB(d){
         <div class="ftcv" style="color:${flowColor}">${flowSign}${t.totalFlow.toFixed(1)}亿 <span style="font-size:10px;color:var(--sm)">${t.count}板块</span></div>
       </div>
       <div class="ftpo">${t.narrative}</div>`;
-    // Sector bars
     if(topSectors.length){
       html+='<div class="ftxy">';
       topSectors.forEach(s=>{
@@ -621,29 +583,12 @@ function ftCB(d){
       });
       if(t.sectors.length>6)html+=`<div style="grid-column:1/-1;font-size:9px;color:var(--sm);text-align:center;padding:2px">+${t.sectors.length-6}个板块</div>`;
       html+='</div>';
-    }else{
-      html+='<div class="ftne">暂无匹配板块</div>';
-    }
-    // Holdings that match this theme
-    if(matchHoldings.length){
-      html+=`<div class="ftst">📌 持仓关联: ${matchHoldings.map(h=>`<span>${h.n}</span>`).join('')}</div>`;
-    }
-    // Keywords
-    html+=`<div class="ftsk">${t.keywords.slice(0,6).map(k=>`<span>${k}</span>`).join('')}</div>`;
-    html+='</div>';
+    }else{html+='<div class="ftne">暂无匹配板块</div>';}
+    if(matchHoldings.length)html+=`<div class="ftst">📌 持仓关联: ${matchHoldings.map(h=>`<span>${h.n}</span>`).join('')}</div>`;
+    html+=`<div class="ftsk">${t.keywords.slice(0,6).map(k=>`<span>${k}</span>`).join('')}</div></div>`;
   });
   html+='</div>';
   document.getElementById('ftContainer').innerHTML=html;
-  window._ftData=null;
-}
-
-function startFT(){
-  if(ftTimer)clearInterval(ftTimer);
-  renderFT();
-  ftTimer=setInterval(()=>{
-    const st=ms();
-    if(st.open||st.usOpen)renderFT();
-  },60000); // 1 minute refresh for tree data
 }
 
 function rf(){
@@ -657,9 +602,6 @@ function cd(s){if(window._t)clearInterval(window._t);let r=s;
   window._t=setInterval(()=>{r--;const st=ms();document.getElementById('cd').textContent=st.open?r+'s':st.jpOpen||st.krOpen?r+'s🌏':st.usOpen?r+'s🌙':new Date(Date.now()+r*1000).getHours().toString().padStart(2,'0')+':00('+Math.floor(r/60)+'分)';if(r<=0){clearInterval(window._t);rf()}},1000)}
 
 rf();
-// Start FlowTree on load
-renderFT();
-startFT();
 </script>
 </body>
 </html>
