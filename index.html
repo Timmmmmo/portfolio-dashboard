@@ -50,6 +50,28 @@ h1{font-size:20px}
 .sp{display:inline-block;width:14px;height:14px;border:2px solid var(--bd);border-top-color:var(--s4);border-radius:50%;animation:s .8s linear infinite;margin-right:6px;vertical-align:middle}
 @keyframes s{to{transform:rotate(360deg)}}
 .ft{text-align:center;color:var(--sb);font-size:11px;padding:12px;border-top:1px solid var(--cd);margin-top:16px}
+/* FlowTree 资金流树 */
+.ftc{background:var(--cd);border-radius:10px;padding:14px;border:1px solid var(--bd);margin-bottom:10px;transition:all .2s}
+.ftc:hover{border-color:var(--s4);transform:translateY(-1px)}
+.ftch{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:4px}
+.ftcn{font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px}
+.ftcv{font-size:12px;font-weight:600;display:flex;gap:10px;align-items:center}
+.ftpo{font-size:10px;color:var(--sm);margin-bottom:6px;padding:2px 8px;background:var(--s0);border-radius:4px;display:inline-block}
+.ftxy{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px}
+@media(max-width:600px){.ftxy{grid-template-columns:1fr}}
+.ftln{background:var(--s0);border-radius:6px;padding:5px 8px;display:flex;justify-content:space-between;align-items:center;font-size:11px;gap:4px}
+.ftln .nm{color:var(--s3);flex-shrink:0}
+.ftln .br{height:4px;border-radius:2px;flex:1;min-width:20px}
+.ftln .vl{font-weight:600;white-space:nowrap;flex-shrink:0;min-width:48px;text-align:right}
+.ftst{font-size:10px;color:var(--sm);margin-top:6px;padding:4px 0;display:flex;flex-wrap:wrap;gap:4px}
+.ftst span{background:var(--s0);padding:1px 6px;border-radius:3px;font-size:9px}
+.ftsk{font-size:10px;color:var(--s4);margin-top:4px;display:flex;gap:4px;flex-wrap:wrap}
+.ftne{color:var(--sm);font-size:11px;text-align:center;padding:20px;font-style:italic}
+.ft2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:8px}
+.fttag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;margin-left:4px}
+.fthot{background:rgba(239,68,68,0.12);color:#ef4444}
+.ftcold{background:rgba(52,211,153,0.12);color:#34d399}
+.ftinfo{font-size:10px;color:var(--sm);text-align:right;margin-top:6px;padding:2px 0}
 </style>
 </head>
 <body>
@@ -88,6 +110,12 @@ h1{font-size:20px}
     <canvas id="mfChart" width="880" height="720" style="width:100%;height:680px;border-radius:8px;display:block"></canvas>
   </div>
   <div id="mfInfo" style="display:flex;gap:8px;flex-wrap:wrap;font-size:11px;color:#475569;margin-top:8px;padding:4px 0"></div>
+</div>
+
+<div class="cd" style="border-color:#57e1a2;background:var(--g2)">
+  <div class="ct" style="color:#57e1a2;font-size:14px">🌳 资金流树 · 政策→板块→个股</div>
+  <div id="ftContainer"><div class="ld1"><span class="sp"></span>加载主题数据...</div></div>
+  <div class="ftinfo">实时数据 · 东方财富行业板块</div>
 </div>
 
 <div class="cd"><div class="ct">📰 新闻</div><div id="nc"></div></div>
@@ -138,26 +166,20 @@ function ms(){
   const hd=['2026-01-01','2026-02-16','2026-02-17','2026-02-18','2026-02-19','2026-02-20','2026-04-06','2026-05-01','2026-06-22','2026-09-28','2026-10-01','2026-10-02','2026-10-05','2026-10-06','2026-10-07'];
   const td=d.toISOString().slice(0,10);
   const isHd=hd.includes(td);
-  // A股: 09:30-15:00 周一至周五
   const aOpen=(w>0&&w<6&&!isHd)&&(h*60+m)>=570&&(h*60+m)<=900;
-  // 美股: 夏令时21:30-04:00(次日) 冬令时22:30-05:00(次日) 周一至周五
-  // 简单判断: 夏令时(3月-11月) 21:30-04:00
-  const isSummer=(d.getMonth()>=2&&d.getMonth()<=9); // 约等于夏令时
-  const usStart=isSummer?1290:1350; // 21:30=1290min, 22:30=1350min
-  const usEnd=isSummer?240:300; // 04:00=240min, 05:00=300min
+  const isSummer=(d.getMonth()>=2&&d.getMonth()<=9);
+  const usStart=isSummer?1290:1350;
+  const usEnd=isSummer?240:300;
   let usOpen=false;
   if(w>0&&w<6&&!isHd){
     const now=h*60+m;
     if(now>=usStart||now<usEnd)usOpen=true;
   }
-  // 周六早盘收尾(夏令时04:00=周六凌晨)
   if(w===6&&h<usEnd/60&&!isHd){
     const now=h*60+m;
     if(now<usEnd)usOpen=true;
   }
-  // 日股: 08:00-14:00 周一至周五
   const jpOpen=(w>0&&w<6&&!isHd)&&(h*60+m)>=480&&(h*60+m)<840;
-  // 韩股: 08:00-14:30 周一至周五
   const krOpen=(w>0&&w<6&&!isHd)&&(h*60+m)>=480&&(h*60+m)<870;
   return{open:aOpen,usOpen:usOpen,any:aOpen||usOpen,jpOpen:jpOpen,krOpen:krOpen}
 }
@@ -168,7 +190,6 @@ async function fx(){
     const r=await fetch('https://qt.gtimg.cn/q='+cs+'&_='+Date.now(),{cache:'no-store'});
     const t=await r.text(),d={};
     t.split(';').forEach(l=>{if(!l.includes('~'))return;const e=l.indexOf('=');if(e<0)return;d[l.slice(0,e).replace('var ','').trim()]=l.slice(e+2,l.lastIndexOf('"')).split('~')});
-    // Also fetch JP/KR from Sina
     try{
       const r2=await fetch('https://hq.sinajs.cn/list=int_nk225,int_kospi',{headers:{'Referer':'https://finance.sina.com.cn'}});
       const t2=await r2.text();
@@ -181,7 +202,6 @@ async function fx(){
 function rd(d){
   const s=ms();
   document.getElementById('tm').textContent=new Date().toLocaleTimeString('zh-CN');
-  // Multi-market status badge
   let badge='<span class="bdg bgc">🔴 收盘</span>';
   if(s.open)badge='<span class="bdg bgo">🟢 A股交易中</span>';
   else if(s.jpOpen)badge='<span class="bdg bgo" style="background:#1e1b4b;color:#f97316">🗾 日股交易中</span>';
@@ -200,14 +220,12 @@ function rd(d){
   for(const [c] of Object.entries(IX)){
     const p=d['v_'+c]||d['hq_str_'+c];let v='--',ch='--',cl='#94a3b8';
     if(p&&p.length>4){
-      // Sina format: [name, price, change%] or Tencent: [1, name, ..., price, prev_close, ...]
       const isSina=c.startsWith('jp_')||c.startsWith('kr_');
       if(isSina){
         const pr=+p[1]||0,prev=+p[2]||pr;
         if(pr&&prev){const cg=prev?((pr-prev)/prev*100):0;v=pr.toFixed(2);ch=(cg>0?'+':'')+cg.toFixed(2)+'%';cl=cg>0?'#ef4444':cg<0?'#34d399':'#94a3b8'}
       }else{
-        const pr=+p[3]||0,cls=+p[4]||pr,cg=cls?((pr-cls)/cls*100):0;v=pr.toFixed(2);ch=(cg>0?'+':'')+cg.toFixed(2)+'%';cl=cg>0?'#ef4444':cg<0?'#34d399':'#94a3b8'
-      }
+        const pr=+p[3]||0,cls=+p[4]||pr,cg=cls?((pr-cls)/cls*100):0;v=pr.toFixed(2);ch=(cg>0?'+':'')+cg.toFixed(2)+'%';cl=cg>0?'#ef4444':cg<0?'#34d399':'#94a3b8'}
     }
     const kn=c==='sh000688'?'<span style="color:#38bdf8">科创50🚀</span>':IXN[c];
     xh+=`<div class="ii"${c==='sh000688'?' style="border:1px solid #334155"':''}><div class="n1">${kn}</div><div class="v1" style="color:${cl}">${v}</div><div class="p1" style="color:${cl}">${ch}</div></div>`;
@@ -225,11 +243,9 @@ function rd(d){
   }
   document.getElementById('sg').innerHTML=sh;
 
-  // 新闻 + 逻辑判断
   const nd=NEWS_DATA;
   if(nd&&nd.news&&nd.news.length){
     let nh=nd.news.slice(0,20).map(x=>`<div class="ni"><span class="nx">${x.time||''}</span><span class="nt" style="color:#38bdf8">财联社</span><a href="${x.url||'#'}" target="_blank" rel="noopener" style="color:#cbd5e1;text-decoration:none" title="${x.title||x.content||''}">${x.title||x.content||''}</a><span style="color:#475569;font-size:9px;margin-left:3px">🔗</span></div>`).join('');
-    // 在新闻下方追加逻辑判断
     if(nd.analysis&&nd.analysis.length){
       nh+='<div style="border-top:1px solid #334155;margin-top:8px;padding-top:8px;font-size:11px;color:#94a3b8;display:flex;flex-wrap:wrap;gap:6px">';
       nd.analysis.slice(0,10).forEach(a=>{
@@ -244,11 +260,11 @@ function rd(d){
     document.getElementById('nc').innerHTML='<div class="ld1">暂无新闻，整点更新</div>';
   }
 
-  // 关注方向
   document.getElementById('wc').innerHTML=`<div class="wc"><div class="wt1">🐵昭衍新药(实验猴) <span class="wk wh">hot</span><span class="wk wn">新方向</span></div><div class="wr1">"CXO的卖水人"——新药安全评价必须用猴子。中国最大猴群(3万只)+供给受限(繁殖需5年)+CXO投融资回暖。物理不可替代，逻辑类似氦气。参考：603127</div></div><div class="wc"><div class="wt1">🔬半导体设备 <span class="wk wh">hot</span></div><div class="wr1">参考：北方华创/中微公司</div></div><div class="wc"><div class="wt1">💊泰格医药(CXO) <span class="wk wh">hot</span></div><div class="wr1">CXO卖水人逻辑，投融资回暖+降息催化</div></div><div class="wc"><div class="wt1">📦AI应用 <span class="wk wd">趋势</span></div><div class="wr1">参考：金山办公/科大讯飞</div></div><div class="wc"><div class="wt1">⚡固态电池 <span class="wk wh">hot</span></div><div class="wr1">参考：宁德时代/当升科技</div></div>`;
 
   rl();
   startMF();
+  renderFT();
 }
 
 function rl(){
@@ -282,8 +298,8 @@ function rl(){
 }
 
 // ===== 板块资金流向: 分时折线图 =====
-let mfHistory=[]; // [{t:'09:30', in:3.5, out:-1.2, net:2.3}]
-const MF_MAX_POINTS=60; // keep last 60 points (30min of 30s data)
+let mfHistory=[];
+const MF_MAX_POINTS=60;
 
 function renderMF(){
   const c=document.getElementById('mfChart');
@@ -291,7 +307,6 @@ function renderMF(){
   const ctx=c.getContext('2d'),W=c.width,H=c.height;
   drawMFPlaceholder(ctx,W,H);
   document.getElementById('mfInfo').innerHTML='<span style="color:#38bdf8">🔄 加载资金数据...</span>';
-  
   const old=document.getElementById('mfJsonp');
   if(old)old.remove();
   const s=document.createElement('script');
@@ -317,20 +332,13 @@ function mfCB(d){
     if(mfHistory.length)return drawMFLines(ctx,W,H);
     return drawMFPlaceholder(ctx,W,H);
   }
-  
-  // Calculate totals
   let totalIn=0,totalOut=0;
   data.forEach(x=>{const v=(x.f62||0)/100000000;if(v>0)totalIn+=v;else totalOut+=v});
-  
-  // Add to history
   const now=new Date();
   const timeStr=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
   mfHistory.push({t:timeStr,in:totalIn,out:totalOut,net:totalIn+totalOut});
   if(mfHistory.length>MF_MAX_POINTS)mfHistory.shift();
-  
-  // Cache
   try{localStorage.setItem('mfHist',JSON.stringify(mfHistory.slice(-30)));}catch(e){}
-  
   drawMFLines(ctx,W,H);
   window._mfData=null;
 }
@@ -338,42 +346,27 @@ function mfCB(d){
 function drawMFLines(ctx,W,H){
   const hist=mfHistory;
   if(!hist.length)return drawMFPlaceholder(ctx,W,H,'暂无数据');
-  
   const pad={l:55,r:25,t:38,b:40};
   const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
-  
-  // Fixed X-axis: 09:30 (open) to 15:00 (close) = 330 minutes
-  const OPEN=570, CLOSE=900; // minutes from midnight
-  const RANGE=CLOSE-OPEN; // 330 min
-  
-  // Calculate X position from time string
+  const OPEN=570, CLOSE=900, RANGE=CLOSE-OPEN;
   function timeToX(t){
     const [h,m]=t.split(':').map(Number);
     const mins=h*60+m;
     const pct=Math.max(0,Math.min(1,(mins-OPEN)/RANGE));
     return pad.l+pct*cw;
   }
-  
-  // Find y range: max(|in|, |out|)
   let maxVal=0;
   hist.forEach(h=>{const a=Math.abs(h.in),b=Math.abs(h.out);if(a>maxVal)maxVal=a;if(b>maxVal)maxVal=b});
   maxVal=Math.ceil(maxVal*1.25)||1;
   const yMax=maxVal;
-  
   ctx.clearRect(0,0,W,H);
-  
-  // === Title bar ===
   ctx.fillStyle='#1e293b';ctx.fillRect(0,0,W,28);
   ctx.fillStyle='#94a3b8';ctx.font='11px sans-serif';ctx.textAlign='left';
   ctx.fillText('📈 板块资金流向 · 零轴分界',12,19);
   ctx.fillStyle='#475569';ctx.font='9px sans-serif';ctx.textAlign='right';
   ctx.fillText('采集点: '+hist.length+'  ·  每30s更新',W-12,18);
-  
-  // === Background: split by zero line ===
   ctx.fillStyle='rgba(239,68,68,0.03)';ctx.fillRect(pad.l,pad.t,cw,ch/2);
   ctx.fillStyle='rgba(52,211,153,0.03)';ctx.fillRect(pad.l,pad.t+ch/2,cw,ch/2);
-  
-  // === Y-axis grid ===
   ctx.strokeStyle='#1e293b';ctx.lineWidth=0.5;
   for(let i=-4;i<=4;i++){
     if(i===0)continue;
@@ -382,61 +375,41 @@ function drawMFLines(ctx,W,H){
     ctx.fillStyle='#475569';ctx.font='9px sans-serif';ctx.textAlign='right';
     ctx.fillText((yMax*i/4).toFixed(1)+'亿',pad.l-6,y+3);
   }
-  
-  // === Zero line ===
   ctx.strokeStyle='#334155';ctx.lineWidth=2;
   ctx.beginPath();ctx.moveTo(pad.l,pad.t+ch/2);ctx.lineTo(pad.l+cw,pad.t+ch/2);ctx.stroke();
   ctx.fillStyle='#475569';ctx.font='9px sans-serif';ctx.textAlign='right';
   ctx.fillText('0',pad.l-6,pad.t+ch/2+3);
-  
-  // Axis direction labels
   ctx.fillStyle='#ef4444';ctx.font='9px sans-serif';ctx.textAlign='left';
   ctx.fillText('↑ 流入',pad.l+cw+2,pad.t+ch/4+3);
   ctx.fillStyle='#34d399';ctx.font='9px sans-serif';
   ctx.fillText('↓ 流出',pad.l+cw+2,pad.t+ch*3/4+3);
-  
-  // === Draw lines at their actual time positions ===
   function toY(v){return pad.t+ch/2-(v/yMax)*(ch/2)}
-  
   function drawLine(data,color,label){
     if(data.length<2)return;
-    const pts=[]; // {x,y}
+    const pts=[];
     data.forEach((v,i)=>{
       const x=timeToX(hist[i].t);
       if(x>=pad.l&&x<=pad.l+cw)pts.push({x,y:toY(Math.abs(v))});
     });
     if(pts.length<2)return;
-    
     ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.lineJoin='round';
     ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);
     for(let j=1;j<pts.length;j++)ctx.lineTo(pts[j].x,pts[j].y);
     ctx.stroke();
-    
-    // Area fill
     ctx.fillStyle=color+'18';
     ctx.beginPath();ctx.moveTo(pts[0].x,pad.t+ch/2);
     pts.forEach(p=>ctx.lineTo(p.x,p.y));
     ctx.lineTo(pts[pts.length-1].x,pad.t+ch/2);
     ctx.closePath();ctx.fill();
-    
-    // Latest point dot
     const lp=pts[pts.length-1];
     ctx.fillStyle=color;ctx.beginPath();ctx.arc(lp.x,lp.y,4,0,Math.PI*2);ctx.fill();
     ctx.strokeStyle='#0f172a';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(lp.x,lp.y,4,0,Math.PI*2);ctx.stroke();
-    
-    // Label
     const lastV=data[data.length-1];
-    ctx.fillStyle=color;ctx.font='bold 9px sans-serif';
-    ctx.textAlign='left';ctx.textBaseline='bottom';
+    ctx.fillStyle=color;ctx.font='bold 9px sans-serif';ctx.textAlign='left';ctx.textBaseline='bottom';
     ctx.fillText(label+Math.abs(lastV).toFixed(2)+'亿',lp.x+6,lp.y-2);
   }
-  
-  // Inflow
   drawLine(hist.map(h=>h.in),'#ef4444','流入+');
-  // Outflow
   drawLine(hist.map(h=>h.out),'#34d399','流出-');
-  
-  // Net flow (crosses zero)
   if(hist.length>=2){
     const netData=hist.map(h=>h.net);
     ctx.strokeStyle='#fbbf24';ctx.lineWidth=2;ctx.lineJoin='round';
@@ -449,8 +422,6 @@ function drawMFLines(ctx,W,H){
       if(!started){ctx.moveTo(x,y);started=true;}else ctx.lineTo(x,y);
     });
     if(started)ctx.stroke();
-    
-    // Latest net dot
     if(started){
       const li=netData.length-1;
       const lx=timeToX(hist[li].t);
@@ -463,21 +434,15 @@ function drawMFLines(ctx,W,H){
       }
     }
   }
-  
-  // === X-axis: fixed 09:30-15:00 with hourly markers ===
-  const hourMarkers=[570,600,630,660,690,720,750,780,810,840,870,900]; // minutes
+  const hourMarkers=[570,600,630,660,690,720,750,780,810,840,870,900];
   const hourLabels=['09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00'];
   ctx.strokeStyle='#1e293b';ctx.lineWidth=0.5;
   hourMarkers.forEach((t,i)=>{
     const x=pad.l+((t-OPEN)/RANGE)*cw;
-    // Tick line
     ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,pad.t+ch);ctx.stroke();
-    // Label
     ctx.fillStyle='#475569';ctx.font='9px sans-serif';ctx.textAlign='center';
     ctx.fillText(hourLabels[i],x,pad.t+ch+16);
   });
-  
-  // Current time indicator (if during market hours)
   const now=new Date();const nowMins=now.getHours()*60+now.getMinutes();
   if(nowMins>=OPEN&&nowMins<=CLOSE){
     const nx=pad.l+((nowMins-OPEN)/RANGE)*cw;
@@ -486,15 +451,12 @@ function drawMFLines(ctx,W,H){
     ctx.fillStyle='#fbbf24';ctx.font='8px sans-serif';ctx.textAlign='center';
     ctx.fillText('现在',nx,pad.t+ch+26);
   }
-  
-  // === Legend ===
   const lgY=pad.t-20;
   [['#ef4444','流入',12],['#34d399','流出',72],['#fbbf24','净额',132]].forEach(([c,l,x])=>{
     ctx.fillStyle=c;ctx.beginPath();ctx.arc(x,lgY+4,4,0,Math.PI*2);ctx.fill();
     ctx.fillStyle='#e2e8f0';ctx.font='9px sans-serif';ctx.textAlign='left';
     ctx.fillText(l,x+8,lgY+8);
   });
-  
   const last=hist[hist.length-1];
   document.getElementById('mfInfo').innerHTML='<span style="display:flex;gap:16px;flex-wrap:wrap;font-size:11px;align-items:center">'
     +'<span><span style="color:#ef4444">🔴</span> 流入 <span style="color:#64748b">'+last.in.toFixed(2)+'亿</span></span>'
@@ -508,17 +470,12 @@ function drawMFPlaceholder(ctx,W,H,msg){
   const pad={l:55,r:25,t:38,b:40};
   const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
   const OPEN=570,CLOSE=900,RANGE=CLOSE-OPEN;
-  
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle='#1e293b';ctx.fillRect(0,0,W,28);
   ctx.fillStyle='#475569';ctx.font='11px sans-serif';ctx.textAlign='left';
   ctx.fillText('📈 板块资金流向 · 零轴分界',12,19);
-  
-  // Background tint
   ctx.fillStyle='rgba(239,68,68,0.03)';ctx.fillRect(pad.l,pad.t,cw,ch/2);
   ctx.fillStyle='rgba(52,211,153,0.03)';ctx.fillRect(pad.l,pad.t+ch/2,cw,ch/2);
-  
-  // Grid
   ctx.strokeStyle='#1e293b';ctx.lineWidth=0.5;
   for(let i=-4;i<=4;i++){
     if(i===0)continue;
@@ -527,8 +484,6 @@ function drawMFPlaceholder(ctx,W,H,msg){
   }
   ctx.strokeStyle='#1e293b';ctx.lineWidth=2;
   ctx.beginPath();ctx.moveTo(pad.l,pad.t+ch/2);ctx.lineTo(pad.l+cw,pad.t+ch/2);ctx.stroke();
-  
-  // X-axis markers
   const hourMarkers=[570,600,630,660,690,720,750,780,810,840,870,900];
   const hourLabels=['09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00'];
   ctx.strokeStyle='#1e293b';ctx.lineWidth=0.5;
@@ -538,7 +493,6 @@ function drawMFPlaceholder(ctx,W,H,msg){
     ctx.fillStyle='#475569';ctx.font='9px sans-serif';ctx.textAlign='center';
     ctx.fillText(hourLabels[i],x,pad.t+ch+16);
   });
-  
   ctx.fillStyle='#475569';ctx.font='14px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.fillText(msg,W/2,pad.t+ch/2-10);
   ctx.fillStyle='#475569';ctx.font='10px sans-serif';
@@ -546,11 +500,9 @@ function drawMFPlaceholder(ctx,W,H,msg){
   document.getElementById('mfInfo').innerHTML='<span style="color:#475569;font-size:11px">⏳ 非交易时段</span>';
 }
 
-// Override startMF to poll every 30s during market hours
 let mfTimer;
 function startMF(){
   if(mfTimer)clearInterval(mfTimer);
-  // Load cached history
   try{
     const c=localStorage.getItem('mfHist');
     if(c){const p=JSON.parse(c);if(p&&p.length)mfHistory=p}
@@ -560,6 +512,138 @@ function startMF(){
     const st=ms();
     if(st.open||st.usOpen)renderMF();
   },30000);
+}
+
+// ===== 资金流树: 政策→板块→个股 (FlowTree) =====
+const FT_THEMES = [
+  {id:'ai',name:'AI+',icon:'🧠',color:'#57e1a2',policy:'科技自立自强/数字中国',
+    keywords:['半导体','芯片','AI','算力','软件','通信','计算机','互联网','光模块','封测','电子','元件','IT'],
+    hk:['中芯国际'],narrative:'十五五数智化主线，算力、模型、场景应用为主枝'},
+  {id:'manufacturing',name:'先进制造',icon:'⚙️',color:'#8be58f',policy:'现代化产业体系/实体经济',
+    keywords:['通用设备','专用设备','自动化','机器人','航天','航空','军工','高端装备','仪器','机械','电机'],
+    hk:[],narrative:'设备更新、工艺替代和出口链，偏好有真实订单约束的硬制造'},
+  {id:'green',name:'绿色低碳',icon:'🌿',color:'#b7e67a',policy:'全面绿色转型/能源安全',
+    keywords:['光伏','风电','电池','锂电','储能','电网','新能源','电力','氢能','环保'],
+    hk:['比亚迪','西藏矿业','元力'],narrative:'电网、储能、材料和海外订单承接真实资本开支'},
+  {id:'security',name:'安全底线',icon:'🛡️',color:'#72d8ec',policy:'国家安全/产业链韧性',
+    keywords:['军工','安全','信创','国产','种业','农业','粮食','稀土','新材料'],
+    hk:['彤程新材','金宏气体','索辰'],narrative:'外部不确定性上升时，供应链韧性和数据安全分叉'},
+  {id:'consumption',name:'内需消费',icon:'🔬',color:'#f0c766',policy:'强大国内市场/民生改善',
+    keywords:['医药','医疗','消费','汽车','家电','食品','饮料','旅游','社服','零售','养殖'],
+    hk:['华大智造','中国电影'],narrative:'人口结构变化、服务供给升级和品牌出海'},
+  {id:'finance',name:'金融地产',icon:'📊',color:'#f26b6b',policy:'风险化解/高质量发展',
+    keywords:['银行','保险','证券','房地产','金融','多元金融','地产'],
+    hk:[],narrative:'负向分支同样保留，说明资金从哪些方向撤出'}
+];
+
+let ftTimer;
+
+function renderFT(){
+  const old=document.getElementById('ftJsonp');
+  if(old)old.remove();
+  const s=document.createElement('script');
+  s.id='ftJsonp';
+  s.src='https://push2.eastmoney.com/api/qt/clist/get?cb=ftCB&pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62,f184,f66,f69&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb&_='+Date.now();
+  document.body.appendChild(s);
+  setTimeout(()=>{
+    if(!window._ftData){
+      const oldS=document.getElementById('ftJsonp');
+      if(oldS)oldS.remove();
+      document.getElementById('ftContainer').innerHTML='<div class="ld1">⏳ 资金流数据超时</div>';
+    }
+  },10000);
+}
+
+function ftCB(d){
+  window._ftData=d;
+  const data=d&&d.data&&d.data.diff;
+  if(!data||!data.length){
+    document.getElementById('ftContainer').innerHTML='<div class="ftne">暂无行业板块数据</div>';
+    window._ftData=null;
+    return;
+  }
+  // Group sectors by theme
+  const themes = FT_THEMES.map(t=>({...t,sectors:[],totalFlow:0,posFlow:0,negFlow:0,count:0}));
+  data.forEach(x=>{
+    const name=(x.f14||'').trim(),flow=((x.f62||0)/100000000),chg=((x.f3||0)/100);
+    for(let ti=0;ti<themes.length;ti++){
+      const t=themes[ti];
+      let matched=false;
+      for(const kw of t.keywords){
+        if(name.includes(kw)){matched=true;break;}
+      }
+      if(matched){
+        t.sectors.push({name,flow,chg,code:x.f12});
+        t.totalFlow+=flow;
+        if(flow>0)t.posFlow+=flow;else t.negFlow+=flow;
+        t.count++;
+        break;
+      }
+    }
+  });
+  // Sort themes by abs total flow
+  themes.sort((a,b)=>Math.abs(b.totalFlow)-Math.abs(a.totalFlow));
+  // Find max abs flow for bar scaling
+  const maxAbsFlow = Math.max(...themes.map(t=>Math.abs(t.totalFlow)),1);
+  // Build HTML
+  let html='<div class="ft2">';
+  themes.forEach(t=>{
+    const isPos=t.totalFlow>=0;
+    const flowColor=isPos?'#ef4444':'#34d399';
+    const flowSign=isPos?'+':'';
+    // Sort sectors within theme
+    t.sectors.sort((a,b)=>Math.abs(b.flow)-Math.abs(a.flow));
+    const topSectors=t.sectors.slice(0,6);
+    // Find matching holdings
+    const matchHoldings = H.filter(h=>{
+      for(const hk of t.hk){if(h.n.includes(hk))return true;}
+      return false;
+    });
+    // Policy tag
+    const policyTag = t.policy.split('/')[0];
+    html+=`<div class="ftc" style="border-left:3px solid ${t.color}">
+      <div class="ftch">
+        <div class="ftcn"><span>${t.icon}</span>${t.name}<span class="fttag" style="background:${t.color}22;color:${t.color}">${policyTag}</span></div>
+        <div class="ftcv" style="color:${flowColor}">${flowSign}${t.totalFlow.toFixed(1)}亿 <span style="font-size:10px;color:var(--sm)">${t.count}板块</span></div>
+      </div>
+      <div class="ftpo">${t.narrative}</div>`;
+    // Sector bars
+    if(topSectors.length){
+      html+='<div class="ftxy">';
+      topSectors.forEach(s=>{
+        const pct = Math.abs(s.flow)/maxAbsFlow;
+        const barColor = s.flow>=0?'#ef4444':'#34d399';
+        html+=`<div class="ftln">
+          <span class="nm">${s.name}</span>
+          <span class="br" style="width:${Math.max(20,pct*80)}%;background:${barColor}44"></span>
+          <span class="vl" style="color:${barColor}">${s.flow>=0?'+':''}${s.flow.toFixed(1)}亿</span>
+        </div>`;
+      });
+      if(t.sectors.length>6)html+=`<div style="grid-column:1/-1;font-size:9px;color:var(--sm);text-align:center;padding:2px">+${t.sectors.length-6}个板块</div>`;
+      html+='</div>';
+    }else{
+      html+='<div class="ftne">暂无匹配板块</div>';
+    }
+    // Holdings that match this theme
+    if(matchHoldings.length){
+      html+=`<div class="ftst">📌 持仓关联: ${matchHoldings.map(h=>`<span>${h.n}</span>`).join('')}</div>`;
+    }
+    // Keywords
+    html+=`<div class="ftsk">${t.keywords.slice(0,6).map(k=>`<span>${k}</span>`).join('')}</div>`;
+    html+='</div>';
+  });
+  html+='</div>';
+  document.getElementById('ftContainer').innerHTML=html;
+  window._ftData=null;
+}
+
+function startFT(){
+  if(ftTimer)clearInterval(ftTimer);
+  renderFT();
+  ftTimer=setInterval(()=>{
+    const st=ms();
+    if(st.open||st.usOpen)renderFT();
+  },60000); // 1 minute refresh for tree data
 }
 
 function rf(){
@@ -573,6 +657,9 @@ function cd(s){if(window._t)clearInterval(window._t);let r=s;
   window._t=setInterval(()=>{r--;const st=ms();document.getElementById('cd').textContent=st.open?r+'s':st.jpOpen||st.krOpen?r+'s🌏':st.usOpen?r+'s🌙':new Date(Date.now()+r*1000).getHours().toString().padStart(2,'0')+':00('+Math.floor(r/60)+'分)';if(r<=0){clearInterval(window._t);rf()}},1000)}
 
 rf();
+// Start FlowTree on load
+renderFT();
+startFT();
 </script>
 </body>
 </html>
