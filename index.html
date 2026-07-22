@@ -111,7 +111,7 @@ h1{font-size:20px}
 
 <div class="cd" style="border-color:#f97316;background:var(--g2)">
   <div class="ct" style="color:#f97316;font-size:14px">📈 板块资金流向 · 折线图</div>
-  <div id="cfDynamic" style="background:#0a0e1a;border-radius:8px;padding:12px;min-height:300px">
+  <div id="cfDynamic" style="background:#0a0e1a;border-radius:10px;padding:0;min-height:500px">
     <div style="text-align:center;padding:50px 20px;color:#64748b;font-size:13px">
       <div><span class="sp"></span></div>
       <div style="margin-top:12px">⏳ 正在获取板块资金数据...</div>
@@ -360,8 +360,8 @@ function renderCFDynamic(){
   topNames.forEach(n=>{sectorHistory[n].forEach(h=>{const a=Math.abs(h.flow);if(a>maxVal)maxVal=a;});});
   maxVal=Math.ceil(maxVal*1.3/10)*10;
 
-  // SVG dimensions
-  const svgW=880, svgH=280, padL=55, padR=20, padT=20, padB=30;
+  // SVG dimensions - 2倍纵轴高度
+  const svgW=880, svgH=560, padL=60, padR=20, padT=30, padB=40;
   const chartW=svgW-padL-padR, chartH=svgH-padT-padB;
   const midY=padT+chartH/2;
 
@@ -383,39 +383,42 @@ function renderCFDynamic(){
     return {name:n,points,color,flow:latest[n]};
   }).filter(Boolean);
 
-  // Y-axis grid (5 lines)
+  // Background gradient
+  const bgGradId='bgGrad'+Date.now();
+  // Y-axis grid (more lines)
   let yGrid='';
-  for(let i=-4;i<=4;i++){
+  for(let i=-8;i<=8;i++){
     if(i===0)continue;
-    const y=toY(maxVal*i/4);
-    yGrid+=`<line x1="${padL}" y1="${y}" x2="${padL+chartW}" y2="${y}" stroke="rgba(51,65,85,0.3)" stroke-width="0.5"/>`;
+    const y=toY(maxVal*i/8);
+    yGrid+=`<line x1="${padL}" y1="${y}" x2="${padL+chartW}" y2="${y}" stroke="rgba(51,65,85,0.2)" stroke-width="0.5"/>`;
   }
-  // Zero line
-  yGrid+=`<line x1="${padL}" y1="${midY}" x2="${padL+chartW}" y2="${midY}" stroke="rgba(71,85,105,0.5)" stroke-width="1"/>`;
+  // Zero line - thicker
+  yGrid+=`<line x1="${padL}" y1="${midY}" x2="${padL+chartW}" y2="${midY}" stroke="rgba(71,85,105,0.6)" stroke-width="1.5"/>`;
 
-  // Y-axis labels
+  // Y-axis labels - bigger
   let yLabels='';
-  for(let i=-4;i<=4;i++){
+  for(let i=-8;i<=8;i++){
     if(i===0)continue;
-    const y=toY(maxVal*i/4);
-    yLabels+=`<text x="${padL-6}" y="${y+3}" fill="#475569" font-size="9" text-anchor="end">${(maxVal*i/4).toFixed(0)}</text>`;
+    const y=toY(maxVal*i/8);
+    yLabels+=`<text x="${padL-8}" y="${y+4}" fill="#64748b" font-size="11" text-anchor="end" font-family="sans-serif">${(maxVal*i/8).toFixed(0)}</text>`;
   }
-  yLabels+=`<text x="${padL-6}" y="${midY+3}" fill="#475569" font-size="9" text-anchor="end">0</text>`;
-  yLabels+=`<text x="${padL-1}" y="${midY-4}" fill="#475569" font-size="8" text-anchor="start">亿</text>`;
+  yLabels+=`<text x="${padL-8}" y="${midY+4}" fill="#64748b" font-size="11" text-anchor="end" font-family="sans-serif">0</text>`;
+  yLabels+=`<text x="${padL-2}" y="${midY-6}" fill="#64748b" font-size="10" text-anchor="start" font-family="sans-serif">亿</text>`;
 
-  // X-axis labels
+  // X-axis labels - bigger
   const xLabels=[{t:570,l:'09:30'},{t:630,l:'10:30'},{t:690,l:'11:30'},{t:780,l:'13:00'},{t:840,l:'14:00'},{t:900,l:'15:00'}];
-  let xHtml='<div style="display:flex;justify-content:space-between;padding:2px 0 0 0;font-size:8px;color:#475569">';
+  let xHtml='<div style="display:flex;justify-content:space-between;padding:4px 0 0 0;font-size:10px;color:#64748b">';
   xLabels.forEach(m=>{xHtml+=`<span>${m.l}</span>`;});
   xHtml+='</div>';
 
-  // Build legend
+  // Build legend - with value badges
   let legend='';
   lines.forEach(l=>{
     const sign=l.flow>=0?'+':'';
-    legend+=`<span style="display:inline-flex;align-items:center;gap:3px;margin:0 6px 2px 0;font-size:9px;color:#94a3b8">
-      <span style="width:8px;height:3px;border-radius:1px;background:${l.color}"></span>
-      ${l.name} <span style="color:${l.color}">${sign}${l.flow.toFixed(1)}</span>
+    legend+=`<span style="display:inline-flex;align-items:center;gap:4px;margin:2px 8px 2px 0;font-size:10px;color:#94a3b8;background:rgba(15,23,42,0.6);padding:2px 6px;border-radius:4px;border:1px solid rgba(51,65,85,0.3)">
+      <span style="width:10px;height:4px;border-radius:2px;background:${l.color}"></span>
+      <span style="color:#e2e8f0">${l.name}</span>
+      <span style="color:${l.color};font-weight:600">${sign}${l.flow.toFixed(1)}</span>
     </span>`;
   });
 
@@ -424,37 +427,60 @@ function renderCFDynamic(){
   let nowLine='';
   if(nowMins>=CF_OPEN&&nowMins<=CF_CLOSE){
     const nx=padL+((nowMins-CF_OPEN)/(CF_CLOSE-CF_OPEN))*chartW;
-    nowLine=`<line x1="${nx}" y1="${padT}" x2="${nx}" y2="${padT+chartH}" stroke="rgba(251,191,36,0.3)" stroke-width="1" stroke-dasharray="3,3"/>`;
+    nowLine=`<line x1="${nx}" y1="${padT}" x2="${nx}" y2="${padT+chartH}" stroke="rgba(251,191,36,0.4)" stroke-width="1.5" stroke-dasharray="4,4"/>`;
   }
 
-  // Build the polylines with glow
+  // Build the polylines with glow + data points
   let polylines='';
   lines.forEach(l=>{
-    polylines+=`<polyline points="${l.points}" fill="none" stroke="${l.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.85"/>`;
     // Glow
-    polylines+=`<polyline points="${l.points}" fill="none" stroke="${l.color}" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" opacity="0.15"/>`;
+    polylines+=`<polyline points="${l.points}" fill="none" stroke="${l.color}" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" opacity="0.12"/>`;
+    // Main line - thicker
+    polylines+=`<polyline points="${l.points}" fill="none" stroke="${l.color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.9"/>`;
+    // Data points (every 3rd point to avoid clutter)
+    const pts=l.points.split(' ');
+    pts.forEach((p,i)=>{
+      if(i%3===0||i===pts.length-1){
+        const [x,y]=p.split(',');
+        polylines+=`<circle cx="${x}" cy="${y}" r="3" fill="${l.color}" opacity="0.7" stroke="#0a0e1a" stroke-width="1"/>`;
+      }
+    });
+    // Latest point - larger
+    const lastPt=pts[pts.length-1];
+    if(lastPt){
+      const [lx,ly]=lastPt.split(',');
+      polylines+=`<circle cx="${lx}" cy="${ly}" r="5" fill="${l.color}" stroke="#0a0e1a" stroke-width="2"/>`;
+    }
   });
 
-  el.innerHTML=`<div style="background:#0a0e1a;border-radius:8px;overflow:hidden">
-    <div style="display:flex;align-items:center;gap:6px;padding:4px 8px;flex-wrap:wrap;border-bottom:1px solid rgba(51,65,85,0.3)">
-      <span style="color:#94a3b8;font-size:11px">板块资金流向</span>
-      <span style="display:inline-block;padding:1px 8px;border-radius:10px;background:rgba(249,115,22,0.15);color:#f97316;font-size:9px">折线图</span>
+  el.innerHTML=`<div style="background:linear-gradient(180deg,#0f172a 0%,#0a0e1a 100%);border-radius:10px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.3)">
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;flex-wrap:wrap;border-bottom:1px solid rgba(51,65,85,0.3)">
+      <span style="color:#e2e8f0;font-size:12px;font-weight:600">📈 板块资金流向</span>
+      <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:rgba(249,115,22,0.15);color:#f97316;font-size:9px;font-weight:500">实时折线图</span>
       <span style="flex:1"></span>
-      <span style="font-size:9px;color:#475569">${times.length}时间点 · 30s刷新</span>
+      <span style="font-size:9px;color:#64748b">⏱ ${times.length}个时间点 · 每30秒刷新</span>
     </div>
-    <div style="padding:2px 8px;flex-wrap:wrap;display:flex;border-bottom:1px solid rgba(51,65,85,0.2)">${legend}</div>
-    <div style="position:relative;overflow-x:auto">
+    <div style="padding:4px 10px;display:flex;flex-wrap:wrap;border-bottom:1px solid rgba(51,65,85,0.15)">${legend}</div>
+    <div style="position:relative;overflow-x:auto;padding:4px 0">
       <svg width="${svgW}" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}" style="display:block;min-width:${svgW}px">
+        <defs>
+          <linearGradient id="${bgGradId}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(239,68,68,0.03)"/>
+            <stop offset="50%" stop-color="rgba(15,23,42,0)"/>
+            <stop offset="100%" stop-color="rgba(52,211,153,0.03)"/>
+          </linearGradient>
+        </defs>
+        <rect x="${padL}" y="${padT}" width="${chartW}" height="${chartH}" fill="url(#${bgGradId})" rx="4"/>
         ${yGrid}
         ${nowLine}
         ${polylines}
         ${yLabels}
       </svg>
     </div>
-    <div style="padding:0 55px 2px 55px">${xHtml}</div>
-    <div style="display:flex;justify-content:space-between;padding:2px 8px 4px;font-size:8px;color:#475569;border-top:1px solid rgba(51,65,85,0.3)">
-      <span>显示${lines.length}个板块 · 采集${times.length}点</span>
-      <span>东方财富100行业板块</span>
+    <div style="padding:0 60px 2px 60px">${xHtml}</div>
+    <div style="display:flex;justify-content:space-between;padding:3px 10px 5px;font-size:9px;color:#64748b;border-top:1px solid rgba(51,65,85,0.3)">
+      <span>📊 显示 ${lines.length} 个板块 · 共 ${times.length} 个采集点</span>
+      <span>数据来源: 东方财富100行业板块</span>
     </div>
   </div>`;
 }
