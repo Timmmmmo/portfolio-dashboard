@@ -118,6 +118,7 @@ h1{font-size:20px}
   <div class="ct" style="color:#f97316;font-size:14px">💰 主力资金流向 · 分时</div>
   <div class="cfBox">
     <canvas id="cfChart" width="880" height="440" style="width:100%;height:420px;border-radius:8px;display:block"></canvas>
+    <div id="cfStatus" style="text-align:center;padding:6px;font-size:10px;color:#64748b;background:#0a0e1a;border-radius:0 0 8px 8px">⏳ 首次加载中，等待数据...</div>
   </div>
 </div>
 
@@ -346,12 +347,14 @@ function drawCFChart(){
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle='#0a0e1a';ctx.fillRect(0,0,W,H);
 
-  // Empty state
+  // Empty state - bright text so user can see it
   if(!hist.length){
-    ctx.fillStyle='#475569';ctx.font='13px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText('⏳ 获取板块资金数据...',W/2,H/2-10);
-    ctx.fillStyle='#334155';ctx.font='10px sans-serif';
-    ctx.fillText('东方财富100行业板块 · 每30秒刷新',W/2,H/2+16);
+    ctx.fillStyle='#94a3b8';ctx.font='14px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('⏳ 正在获取板块资金数据...',W/2,H/2-14);
+    ctx.fillStyle='#64748b';ctx.font='11px sans-serif';
+    ctx.fillText('东方财富100行业板块 · 每30秒自动刷新',W/2,H/2+12);
+    ctx.fillStyle='#475569';ctx.font='10px sans-serif';
+    ctx.fillText('首次加载可能需要5-10秒',W/2,H/2+32);
     return;
   }
 
@@ -472,41 +475,68 @@ function drawCFChart(){
   }
 }
 
-// 独立30秒数据获取
+// 独立30秒数据获取（双保险: JSONP + fetch直连）
 function fetchCFData(){
+  const st=document.getElementById('cfStatus');
+  if(st)st.textContent='⏳ 正在获取数据('+new Date().toLocaleTimeString()+')...';
+  
+  // 方法1: JSONP (东方财富原生)
   const old=document.getElementById('cfJsonp');
   if(old)old.remove();
   const s=document.createElement('script');
   s.id='cfJsonp';
   s.src='https://push2.eastmoney.com/api/qt/clist/get?cb=cfCB&pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb&_='+Date.now();
   document.body.appendChild(s);
-  // 超时处理：6秒后如果没返回，标记为失败
-  setTimeout(()=>{
+
+  // 方法2: Fetch直连 (通过CORS代理)
+  fetch('https://api.allorigins.win/raw?url='+encodeURIComponent('https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb'),{mode:'cors'})
+    .then(r=>r.json())
+    .then(d=>{
+      if(d&&d.data&&d.data.diff&&d.data.diff.length)cfProcessData(d);
+    })
+    .catch(()=>{});
+
+  // 超时处理：8秒后如果没返回，触发draw（保持上次数据）
+  if(window._cfTimer)clearTimeout(window._cfTimer);
+  window._cfTimer=setTimeout(()=>{
     const os=document.getElementById('cfJsonp');
-    if(os){os.remove();drawCFChart();}
+    if(os)os.remove();
+    drawCFChart();
+    if(st&&!cfHistory.length)st.textContent='⏳ 数据请求超时，正在重试('+new Date().toLocaleTimeString()+')...';
+    else if(st)st.textContent='✅ 最后更新:'+new Date().toLocaleTimeString()+' | 数据点:'+cfHistory.length;
   },8000);
+}
+
+function cfProcessData(d){
+  const data=d&&d.data&&d.data.diff;
+  if(!data||!data.length)return;
+  let totalFlow=0;
+  const sectors=[];
+  data.forEach(x=>{
+    const flow=((x.f62||0)/100000000);
+    totalFlow+=flow;
+    if(x.f14)sectors.push({name:x.f14,flow:flow});
+  });
+  sectors.sort((a,b)=>Math.abs(b.flow)-Math.abs(a.flow));
+  const now=new Date();
+  const tStr=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  cfHistory.push({t:tStr,flow:totalFlow,top3:sectors.slice(0,3),bot3:sectors.slice(-3).reverse()});
+  if(cfHistory.length>60)cfHistory.shift();
+  try{localStorage.setItem('cfHist',JSON.stringify(cfHistory.slice(-30)));}catch(e){}
+  const st=document.getElementById('cfStatus');
+  if(st)st.textContent='✅ '+now.toLocaleTimeString()+' | 板块:'+sectors.length+' | 总净额:'+(totalFlow>0?'+':'')+totalFlow.toFixed(1)+'亿 | 点:'+cfHistory.length;
+  drawCFChart();
 }
 
 function cfCB(d){
   const os=document.getElementById('cfJsonp');
   if(os)os.remove();
-  const data=d&&d.data&&d.data.diff;
-  if(data&&data.length){
-    let totalFlow=0;
-    const sectors=[];
-    data.forEach(x=>{
-      const flow=((x.f62||0)/100000000);
-      totalFlow+=flow;
-      if(x.f14)sectors.push({name:x.f14,flow:flow});
-    });
-    sectors.sort((a,b)=>Math.abs(b.flow)-Math.abs(a.flow));
-    const now=new Date();
-    const tStr=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
-    cfHistory.push({t:tStr,flow:totalFlow,top3:sectors.slice(0,3),bot3:sectors.slice(-3).reverse()});
-    if(cfHistory.length>60)cfHistory.shift();
-    try{localStorage.setItem('cfHist',JSON.stringify(cfHistory.slice(-30)));}catch(e){}
+  cfProcessData(d);
+  // 如果JSONP返回空但fetch还没返回，更新状态
+  if(!d||!d.data||!d.data.diff||!d.data.diff.length){
+    const st=document.getElementById('cfStatus');
+    if(st&&!cfHistory.length)st.textContent='⚠️ 数据为空('+new Date().toLocaleTimeString()+')，等待fetch回源...';
   }
-  drawCFChart();
 }
 
 function startCF(){
