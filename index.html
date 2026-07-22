@@ -110,15 +110,14 @@ h1{font-size:20px}
 </div>
 
 <div class="cd" style="border-color:#f97316;background:var(--g2)">
-  <div class="ct" style="color:#f97316;font-size:14px">📈 板块资金流向 · 折线图</div>
-  <div id="cfDynamic" style="background:#0a0e1a;border-radius:10px;padding:0;min-height:500px">
-    <div style="text-align:center;padding:50px 20px;color:#64748b;font-size:13px">
+  <div class="ct" style="color:#f97316;font-size:14px">📈 收盘资金流向</div>
+  <div id="cfDynamic" style="background:#fff;border-radius:8px;padding:0;min-height:400px;border:1px solid #e5e7eb">
+    <div style="text-align:center;padding:50px 20px;color:#9ca3af;font-size:13px">
       <div><span class="sp"></span></div>
       <div style="margin-top:12px">⏳ 正在获取板块资金数据...</div>
-      <div style="margin-top:6px;font-size:10px;color:#475569">东方财富100行业板块 · 每30秒自动刷新</div>
     </div>
   </div>
-  <div id="cfStatus" style="text-align:center;padding:4px;font-size:10px;color:#64748b;background:#0a0e1a;border-radius:0 0 8px 8px;margin-top:0">⏳ 首次加载中...</div>
+  <div id="cfStatus" style="text-align:center;padding:3px;font-size:9px;color:#9ca3af;background:#fff;border-radius:0 0 8px 8px;margin-top:0;border:1px solid #e5e7eb;border-top:none">⏳ 首次加载中...</div>
 </div>
 
 <div class="cd"><div class="ct">📰 新闻</div><div id="nc"></div></div>
@@ -331,7 +330,6 @@ function renderFTFromData(data){
 // ===== 板块资金流向折线图 (SVG多线) =====
 let sectorHistory = {}; // { name: [{t, flow}], ... }
 let sectorOrder = []; // ordered list of sectors by latest flow
-const SVG_COLORS = ['#ef4444','#f97316','#eab308','#22c55e','#06b6d4','#3b82f6','#8b5cf6','#ec4899','#14b8a6','#f59e0b','#84cc16','#10b981','#0ea5e9','#6366f1','#d946ef','#f43f5e'];
 const CF_OPEN=570, CF_CLOSE=900;
 let cfTimer = null;
 let cfHistory = []; // keep for backward compat
@@ -341,146 +339,133 @@ function renderCFDynamic(){
   if(!el)return;
   const names=Object.keys(sectorHistory);
   if(!names.length){
-    el.innerHTML=`<div style="text-align:center;padding:50px 20px;color:#64748b;font-size:13px">
+    el.innerHTML=`<div style="text-align:center;padding:50px 20px;color:#9ca3af;font-size:13px;background:#fff;border-radius:8px">
       <div><span class="sp"></span></div>
       <div style="margin-top:12px">⏳ 正在获取板块资金数据...</div>
-      <div style="margin-top:6px;font-size:10px;color:#475569">东方财富100行业板块 · 每30秒自动刷新</div>
     </div>`;
     return;
   }
 
-  // Get latest flow for each sector, pick top 12 by abs flow
   const latest={};
   names.forEach(n=>{const h=sectorHistory[n];if(h.length)latest[n]=h[h.length-1].flow;});
-  const topNames=Object.keys(latest).sort((a,b)=>Math.abs(latest[b])-Math.abs(latest[a])).slice(0,12);
+  const topNames=Object.keys(latest).sort((a,b)=>Math.abs(latest[b])-Math.abs(latest[a])).slice(0,10);
   if(!topNames.length)return;
 
-  // Find max abs value across all selected sectors
   let maxVal=10;
   topNames.forEach(n=>{sectorHistory[n].forEach(h=>{const a=Math.abs(h.flow);if(a>maxVal)maxVal=a;});});
-  maxVal=Math.ceil(maxVal*1.3/10)*10;
+  maxVal=Math.ceil(maxVal*1.25/10)*10;
 
-  // SVG dimensions - 2倍纵轴高度
-  const svgW=880, svgH=560, padL=60, padR=20, padT=30, padB=40;
+  // Color mapping: warm for positive, cool for negative
+  const warmColors=['#dc2626','#ea580c','#d97706','#ca8a04','#a16207','#e11d48','#be123c','#f97316'];
+  const coolColors=['#16a34a','#059669','#0284c7','#2563eb','#6366f1','#0891b2','#0d9488','#4f46e5'];
+  function getColor(n,idx){
+    const f=latest[n]||0;
+    if(f>0)return warmColors[idx%warmColors.length];
+    return coolColors[idx%coolColors.length];
+  }
+
+  // SVG dimensions
+  const svgW=880, svgH=480, padL=50, padR=120, padT=45, padB=35;
   const chartW=svgW-padL-padR, chartH=svgH-padT-padB;
   const midY=padT+chartH/2;
 
   function toX(i,total){return padL+(i/(total-1||1))*chartW;}
   function toY(v){return midY-(v/maxVal)*(chartH/2);}
 
-  // Build time points (union of all timestamps)
   const allTimes=new Set();
   topNames.forEach(n=>{sectorHistory[n].forEach(h=>allTimes.add(h.t));});
   const times=Array.from(allTimes).sort();
   if(times.length<2)return;
 
-  // Build polylines
   const lines=topNames.map((n,ci)=>{
     const pts=sectorHistory[n].filter(h=>times.includes(h.t));
     if(pts.length<2)return null;
     const points=pts.map((h,i)=>`${toX(i,pts.length).toFixed(1)},${toY(h.flow).toFixed(1)}`).join(' ');
-    const color=SVG_COLORS[ci%SVG_COLORS.length];
-    return {name:n,points,color,flow:latest[n]};
+    const color=getColor(n,ci);
+    return {name:n,points,color,flow:latest[n],ptsLen:pts.length};
   }).filter(Boolean);
+  // Sort by flow value descending
+  lines.sort((a,b)=>b.flow-a.flow);
 
-  // Background gradient
-  const bgGradId='bgGrad'+Date.now();
-  // Y-axis grid (more lines)
+  // Grid
   let yGrid='';
   for(let i=-8;i<=8;i++){
     if(i===0)continue;
     const y=toY(maxVal*i/8);
-    yGrid+=`<line x1="${padL}" y1="${y}" x2="${padL+chartW}" y2="${y}" stroke="rgba(51,65,85,0.2)" stroke-width="0.5"/>`;
+    yGrid+=`<line x1="${padL}" y1="${y}" x2="${padL+chartW}" y2="${y}" stroke="#e5e7eb" stroke-width="0.5"/>`;
   }
-  // Zero line - thicker
-  yGrid+=`<line x1="${padL}" y1="${midY}" x2="${padL+chartW}" y2="${midY}" stroke="rgba(71,85,105,0.6)" stroke-width="1.5"/>`;
+  yGrid+=`<line x1="${padL}" y1="${midY}" x2="${padL+chartW}" y2="${midY}" stroke="#d1d5db" stroke-width="1"/>`;
 
-  // Y-axis labels - bigger
+  // Y-axis labels
   let yLabels='';
   for(let i=-8;i<=8;i++){
     if(i===0)continue;
     const y=toY(maxVal*i/8);
-    yLabels+=`<text x="${padL-8}" y="${y+4}" fill="#64748b" font-size="11" text-anchor="end" font-family="sans-serif">${(maxVal*i/8).toFixed(0)}</text>`;
+    if(i%2===0){
+      yLabels+=`<text x="${padL-8}" y="${y+4}" fill="#9ca3af" font-size="11" text-anchor="end">${(maxVal*i/8).toFixed(0)}</text>`;
+    }
   }
-  yLabels+=`<text x="${padL-8}" y="${midY+4}" fill="#64748b" font-size="11" text-anchor="end" font-family="sans-serif">0</text>`;
-  yLabels+=`<text x="${padL-2}" y="${midY-6}" fill="#64748b" font-size="10" text-anchor="start" font-family="sans-serif">亿</text>`;
+  yLabels+=`<text x="${padL-8}" y="${midY+4}" fill="#9ca3af" font-size="11" text-anchor="end">0</text>`;
+  yLabels+=`<text x="${padL-2}" y="${midY-8}" fill="#9ca3af" font-size="10" text-anchor="start">亿</text>`;
 
-  // X-axis labels - bigger
-  const xLabels=[{t:570,l:'09:30'},{t:630,l:'10:30'},{t:690,l:'11:30'},{t:780,l:'13:00'},{t:840,l:'14:00'},{t:900,l:'15:00'}];
-  let xHtml='<div style="display:flex;justify-content:space-between;padding:4px 0 0 0;font-size:10px;color:#64748b">';
-  xLabels.forEach(m=>{xHtml+=`<span>${m.l}</span>`;});
-  xHtml+='</div>';
+  // X-axis labels
+  const xMarkers=[{t:570,l:'09:30'},{t:630,l:'10:30'},{t:690,l:'11:30'},{t:780,l:'13:00'},{t:840,l:'14:00'},{t:900,l:'15:00'}];
 
-  // Build legend - with value badges
-  let legend='';
-  lines.forEach(l=>{
-    const sign=l.flow>=0?'+':'';
-    legend+=`<span style="display:inline-flex;align-items:center;gap:4px;margin:2px 8px 2px 0;font-size:10px;color:#94a3b8;background:rgba(15,23,42,0.6);padding:2px 6px;border-radius:4px;border:1px solid rgba(51,65,85,0.3)">
-      <span style="width:10px;height:4px;border-radius:2px;background:${l.color}"></span>
-      <span style="color:#e2e8f0">${l.name}</span>
-      <span style="color:${l.color};font-weight:600">${sign}${l.flow.toFixed(1)}</span>
-    </span>`;
-  });
-
-  // 当前时间垂直线
-  const now=new Date();const nowMins=now.getHours()*60+now.getMinutes();
-  let nowLine='';
-  if(nowMins>=CF_OPEN&&nowMins<=CF_CLOSE){
-    const nx=padL+((nowMins-CF_OPEN)/(CF_CLOSE-CF_OPEN))*chartW;
-    nowLine=`<line x1="${nx}" y1="${padT}" x2="${nx}" y2="${padT+chartH}" stroke="rgba(251,191,36,0.4)" stroke-width="1.5" stroke-dasharray="4,4"/>`;
-  }
-
-  // Build the polylines with glow + data points
+  // Polylines
   let polylines='';
   lines.forEach(l=>{
-    // Glow
-    polylines+=`<polyline points="${l.points}" fill="none" stroke="${l.color}" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" opacity="0.12"/>`;
-    // Main line - thicker
-    polylines+=`<polyline points="${l.points}" fill="none" stroke="${l.color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.9"/>`;
-    // Data points (every 3rd point to avoid clutter)
+    polylines+=`<polyline points="${l.points}" fill="none" stroke="${l.color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.85"/>`;
+    // Latest point dot
     const pts=l.points.split(' ');
-    pts.forEach((p,i)=>{
-      if(i%3===0||i===pts.length-1){
-        const [x,y]=p.split(',');
-        polylines+=`<circle cx="${x}" cy="${y}" r="3" fill="${l.color}" opacity="0.7" stroke="#0a0e1a" stroke-width="1"/>`;
-      }
-    });
-    // Latest point - larger
     const lastPt=pts[pts.length-1];
     if(lastPt){
       const [lx,ly]=lastPt.split(',');
-      polylines+=`<circle cx="${lx}" cy="${ly}" r="5" fill="${l.color}" stroke="#0a0e1a" stroke-width="2"/>`;
+      polylines+=`<circle cx="${lx}" cy="${ly}" r="4" fill="${l.color}" stroke="#fff" stroke-width="1.5"/>`;
     }
   });
 
-  el.innerHTML=`<div style="background:linear-gradient(180deg,#0f172a 0%,#0a0e1a 100%);border-radius:10px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.3)">
-    <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;flex-wrap:wrap;border-bottom:1px solid rgba(51,65,85,0.3)">
-      <span style="color:#e2e8f0;font-size:12px;font-weight:600">📈 板块资金流向</span>
-      <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:rgba(249,115,22,0.15);color:#f97316;font-size:9px;font-weight:500">实时折线图</span>
-      <span style="flex:1"></span>
-      <span style="font-size:9px;color:#64748b">⏱ ${times.length}个时间点 · 每30秒刷新</span>
+  // Right-side labels
+  let rightLabels='';
+  lines.forEach(l=>{
+    const pts=l.points.split(' ');
+    const lastPt=pts[pts.length-1];
+    if(!lastPt)return;
+    const [lx,ly]=lastPt.split(',');
+    const sign=l.flow>=0?'+':'';
+    const labelX=padL+chartW+8;
+    const labelY=parseFloat(ly);
+    const bg=l.flow>=0?'#fff':'#fff';
+    const txtColor=l.flow>=0?'#dc2626':'#16a34a';
+    rightLabels+=`
+      <g>
+        <rect x="${labelX}" y="${labelY-12}" width="100" height="22" rx="4" fill="white" stroke="${l.color}" stroke-width="1.5"/>
+        <text x="${labelX+8}" y="${labelY+4}" fill="#374151" font-size="10" font-weight="600" font-family="sans-serif">${l.name}</text>
+        <text x="${labelX+8}" y="${labelY+16}" fill="${txtColor}" font-size="9" font-family="sans-serif">${sign}${l.flow.toFixed(2)}</text>
+      </g>`;
+  });
+
+  // X-axis lines + labels
+  let xAxisHtml='';
+  xMarkers.forEach(m=>{
+    const x=padL+((m.t-570)/(900-570))*chartW;
+    xAxisHtml+=`<text x="${x}" y="${svgH-8}" fill="#9ca3af" font-size="11" text-anchor="middle" font-family="sans-serif">${m.l}</text>`;
+    xAxisHtml+=`<line x1="${x}" y1="${padT}" x2="${x}" y2="${padT+chartH}" stroke="#f3f4f6" stroke-width="0.5"/>`;
+  });
+
+  el.innerHTML=`<div style="background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.06);font-family:sans-serif">
+    <div style="padding:10px 14px 4px;text-align:center">
+      <div style="font-size:18px;font-weight:900;color:#fbbf24;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;letter-spacing:2px">7月22日收盘资金流向</div>
     </div>
-    <div style="padding:4px 10px;display:flex;flex-wrap:wrap;border-bottom:1px solid rgba(51,65,85,0.15)">${legend}</div>
-    <div style="position:relative;overflow-x:auto;padding:4px 0">
-      <svg width="${svgW}" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}" style="display:block;min-width:${svgW}px">
-        <defs>
-          <linearGradient id="${bgGradId}" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="rgba(239,68,68,0.03)"/>
-            <stop offset="50%" stop-color="rgba(15,23,42,0)"/>
-            <stop offset="100%" stop-color="rgba(52,211,153,0.03)"/>
-          </linearGradient>
-        </defs>
-        <rect x="${padL}" y="${padT}" width="${chartW}" height="${chartH}" fill="url(#${bgGradId})" rx="4"/>
-        ${yGrid}
-        ${nowLine}
-        ${polylines}
-        ${yLabels}
-      </svg>
-    </div>
-    <div style="padding:0 60px 2px 60px">${xHtml}</div>
-    <div style="display:flex;justify-content:space-between;padding:3px 10px 5px;font-size:9px;color:#64748b;border-top:1px solid rgba(51,65,85,0.3)">
-      <span>📊 显示 ${lines.length} 个板块 · 共 ${times.length} 个采集点</span>
-      <span>数据来源: 东方财富100行业板块</span>
+    <svg width="${svgW}" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}" style="display:block;width:100%;height:auto">
+      ${yGrid}
+      ${xAxisHtml}
+      ${polylines}
+      ${yLabels}
+      ${rightLabels}
+    </svg>
+    <div style="display:flex;justify-content:space-between;padding:2px 14px 6px;font-size:9px;color:#9ca3af">
+      <span>${lines.length}个板块 · ${times.length}个采集点</span>
+      <span>数据:东方财富100行业板块</span>
     </div>
   </div>`;
 }
