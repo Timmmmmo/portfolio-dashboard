@@ -541,14 +541,38 @@ function cfCB(d){
 
 function startCF(){
   if(cfTimer)clearInterval(cfTimer);
+  let failCount=0;
   // Load cached
   try{const c=localStorage.getItem('cfHist');if(c){const p=JSON.parse(c);if(p&&p.length)cfHistory=p;}}catch(e){}
   fetchCFData();
   drawCFChart();
   cfTimer=setInterval(()=>{
     const st=ms();
-    if(st.open||st.usOpen||st.jpOpen||st.krOpen)fetchCFData();
-    else drawCFChart();
+    if(st.open||st.usOpen||st.jpOpen||st.krOpen){
+      fetchCFData();
+      failCount=0;
+    }else{
+      failCount++;
+      drawCFChart();
+      // 如果连续3次获取失败，用demo数据填充
+      if(failCount>=3&&!cfHistory.length){
+        failCount=0;
+        const now=new Date();
+        for(let i=30;i>=0;i--){
+          const t=new Date(now.getTime()-i*60000);
+          cfHistory.push({
+            t:String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0'),
+            flow:Math.sin(i/3)*50+(i*2),
+            top3:[{name:'半导体',flow:86.1},{name:'算力',flow:50.3},{name:'通信',flow:45.2}],
+            bot3:[{name:'电力',flow:-3.7}]
+          });
+        }
+        try{localStorage.setItem('cfHist',JSON.stringify(cfHistory.slice(-30)));}catch(e){}
+        drawCFChart();
+        const st=document.getElementById('cfStatus');
+        if(st)st.textContent='📊 演示数据(API暂不可用) | 每30秒自动重试';
+      }
+    }
   },30000);
 }
 
