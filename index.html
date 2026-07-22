@@ -110,7 +110,7 @@ h1{font-size:20px}
 </div>
 
 <div class="cd" style="border-color:#f97316;background:var(--g2)">
-  <div class="ct" style="color:#f97316;font-size:14px">💰 主力资金流向 · 动态</div>
+  <div class="ct" style="color:#f97316;font-size:14px">📈 板块资金流向 · 折线图</div>
   <div id="cfDynamic" style="background:#0a0e1a;border-radius:8px;padding:12px;min-height:300px">
     <div style="text-align:center;padding:50px 20px;color:#64748b;font-size:13px">
       <div><span class="sp"></span></div>
@@ -328,18 +328,19 @@ function renderFTFromData(data){
   document.getElementById('ftContainer').innerHTML=html;
 }
 
-// ===== 资金流向动态HTML图表 (取代Canvas) =====
-let cfHistory = [];
+// ===== 板块资金流向折线图 (SVG多线) =====
+let sectorHistory = {}; // { name: [{t, flow}], ... }
+let sectorOrder = []; // ordered list of sectors by latest flow
+const SVG_COLORS = ['#ef4444','#f97316','#eab308','#22c55e','#06b6d4','#3b82f6','#8b5cf6','#ec4899','#14b8a6','#f59e0b','#84cc16','#10b981','#0ea5e9','#6366f1','#d946ef','#f43f5e'];
 const CF_OPEN=570, CF_CLOSE=900;
 let cfTimer = null;
+let cfHistory = []; // keep for backward compat
 
 function renderCFDynamic(){
   const el=document.getElementById('cfDynamic');
   if(!el)return;
-  const hist=cfHistory;
-  const last=hist.length?hist[hist.length-1]:null;
-
-  if(!hist.length){
+  const names=Object.keys(sectorHistory);
+  if(!names.length){
     el.innerHTML=`<div style="text-align:center;padding:50px 20px;color:#64748b;font-size:13px">
       <div><span class="sp"></span></div>
       <div style="margin-top:12px">⏳ 正在获取板块资金数据...</div>
@@ -348,132 +349,167 @@ function renderCFDynamic(){
     return;
   }
 
-  // Y-axis range
+  // Get latest flow for each sector, pick top 12 by abs flow
+  const latest={};
+  names.forEach(n=>{const h=sectorHistory[n];if(h.length)latest[n]=h[h.length-1].flow;});
+  const topNames=Object.keys(latest).sort((a,b)=>Math.abs(latest[b])-Math.abs(latest[a])).slice(0,12);
+  if(!topNames.length)return;
+
+  // Find max abs value across all selected sectors
   let maxVal=10;
-  hist.forEach(h=>{const a=Math.abs(h.flow);if(a>maxVal)maxVal=a;});
-  maxVal=Math.ceil(maxVal*1.4/10)*10;
+  topNames.forEach(n=>{sectorHistory[n].forEach(h=>{const a=Math.abs(h.flow);if(a>maxVal)maxVal=a;});});
+  maxVal=Math.ceil(maxVal*1.3/10)*10;
 
-  // Build time series bars
-  let barsHtml='';
-  const step=Math.max(1,Math.floor(hist.length/60));
-  for(let i=0;i<hist.length;i+=step){
-    const h=hist[i];
-    const pct=(h.flow/maxVal)*50;
-    const barH=Math.abs(pct);
-    const isPos=h.flow>=0;
-    const barColor=isPos?'#ef4444':'#34d399';
-    const opacity=0.3+(i/hist.length)*0.7;
-    barsHtml+=`<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;height:200px;position:relative">
-      <div style="width:${Math.max(2,Math.min(8,400/hist.length))}px;height:${barH}px;background:${barColor};opacity:${opacity};border-radius:2px 2px 0 0;${isPos?'':'order:2;border-radius:0 0 2px 2px'};transition:height 0.5s"></div>
-    </div>`;
+  // SVG dimensions
+  const svgW=880, svgH=280, padL=55, padR=20, padT=20, padB=30;
+  const chartW=svgW-padL-padR, chartH=svgH-padT-padB;
+  const midY=padT+chartH/2;
+
+  function toX(i,total){return padL+(i/(total-1||1))*chartW;}
+  function toY(v){return midY-(v/maxVal)*(chartH/2);}
+
+  // Build time points (union of all timestamps)
+  const allTimes=new Set();
+  topNames.forEach(n=>{sectorHistory[n].forEach(h=>allTimes.add(h.t));});
+  const times=Array.from(allTimes).sort();
+  if(times.length<2)return;
+
+  // Build polylines
+  const lines=topNames.map((n,ci)=>{
+    const pts=sectorHistory[n].filter(h=>times.includes(h.t));
+    if(pts.length<2)return null;
+    const points=pts.map((h,i)=>`${toX(i,pts.length).toFixed(1)},${toY(h.flow).toFixed(1)}`).join(' ');
+    const color=SVG_COLORS[ci%SVG_COLORS.length];
+    return {name:n,points,color,flow:latest[n]};
+  }).filter(Boolean);
+
+  // Y-axis grid (5 lines)
+  let yGrid='';
+  for(let i=-4;i<=4;i++){
+    if(i===0)continue;
+    const y=toY(maxVal*i/4);
+    yGrid+=`<line x1="${padL}" y1="${y}" x2="${padL+chartW}" y2="${y}" stroke="rgba(51,65,85,0.3)" stroke-width="0.5"/>`;
+  }
+  // Zero line
+  yGrid+=`<line x1="${padL}" y1="${midY}" x2="${padL+chartW}" y2="${midY}" stroke="rgba(71,85,105,0.5)" stroke-width="1"/>`;
+
+  // Y-axis labels
+  let yLabels='';
+  for(let i=-4;i<=4;i++){
+    if(i===0)continue;
+    const y=toY(maxVal*i/4);
+    yLabels+=`<text x="${padL-6}" y="${y+3}" fill="#475569" font-size="9" text-anchor="end">${(maxVal*i/4).toFixed(0)}</text>`;
+  }
+  yLabels+=`<text x="${padL-6}" y="${midY+3}" fill="#475569" font-size="9" text-anchor="end">0</text>`;
+  yLabels+=`<text x="${padL-1}" y="${midY-4}" fill="#475569" font-size="8" text-anchor="start">亿</text>`;
+
+  // X-axis labels
+  const xLabels=[{t:570,l:'09:30'},{t:630,l:'10:30'},{t:690,l:'11:30'},{t:780,l:'13:00'},{t:840,l:'14:00'},{t:900,l:'15:00'}];
+  let xHtml='<div style="display:flex;justify-content:space-between;padding:2px 0 0 0;font-size:8px;color:#475569">';
+  xLabels.forEach(m=>{xHtml+=`<span>${m.l}</span>`;});
+  xHtml+='</div>';
+
+  // Build legend
+  let legend='';
+  lines.forEach(l=>{
+    const sign=l.flow>=0?'+':'';
+    legend+=`<span style="display:inline-flex;align-items:center;gap:3px;margin:0 6px 2px 0;font-size:9px;color:#94a3b8">
+      <span style="width:8px;height:3px;border-radius:1px;background:${l.color}"></span>
+      ${l.name} <span style="color:${l.color}">${sign}${l.flow.toFixed(1)}</span>
+    </span>`;
+  });
+
+  // 当前时间垂直线
+  const now=new Date();const nowMins=now.getHours()*60+now.getMinutes();
+  let nowLine='';
+  if(nowMins>=CF_OPEN&&nowMins<=CF_CLOSE){
+    const nx=padL+((nowMins-CF_OPEN)/(CF_CLOSE-CF_OPEN))*chartW;
+    nowLine=`<line x1="${nx}" y1="${padT}" x2="${nx}" y2="${padT+chartH}" stroke="rgba(251,191,36,0.3)" stroke-width="1" stroke-dasharray="3,3"/>`;
   }
 
-  // Top sectors
-  let topHtml='';
-  if(last&&last.top3){
-    topHtml=last.top3.slice(0,3).map((s,i)=>{
-      return `<span style="color:${i===0?'#ef4444':'#f97316'};font-size:11px;font-weight:600">${s.name} <span style="font-weight:400">${s.flow>=0?'+':''}${s.flow.toFixed(1)}亿</span></span>`;
-    }).join(' ');
-  }
-  if(last&&last.bot3&&last.bot3.length){
-    topHtml+=` <span style="color:#34d399;font-size:11px">${last.bot3[0].name}${last.bot3[0].flow.toFixed(1)}亿</span>`;
-  }
-
-  // Current flow value
-  const flowColor=last.flow>=0?'#ef4444':'#34d399';
-  const flowSign=last.flow>=0?'+':'';
-
-  // Time labels
-  const timeLabels=[{t:570,l:'09:30'},{t:630,l:'10:30'},{t:690,l:'11:30'},{t:780,l:'13:00'},{t:840,l:'14:00'},{t:900,l:'15:00'}];
-  const nowMins=new Date().getHours()*60+new Date().getMinutes();
+  // Build the polylines with glow
+  let polylines='';
+  lines.forEach(l=>{
+    polylines+=`<polyline points="${l.points}" fill="none" stroke="${l.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.85"/>`;
+    // Glow
+    polylines+=`<polyline points="${l.points}" fill="none" stroke="${l.color}" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" opacity="0.15"/>`;
+  });
 
   el.innerHTML=`<div style="background:#0a0e1a;border-radius:8px;overflow:hidden">
-    <!-- Header: value + sector labels -->
-    <div style="display:flex;align-items:center;gap:8px;padding:4px 8px;flex-wrap:wrap;border-bottom:1px solid rgba(51,65,85,0.3)">
-      <span style="color:#94a3b8;font-size:11px">资金流向</span>
-      <span style="display:inline-block;padding:1px 8px;border-radius:10px;background:rgba(249,115,22,0.15);color:#f97316;font-size:9px">主力净流入</span>
-      <span style="color:${flowColor};font-size:14px;font-weight:700">${flowSign}${last.flow.toFixed(1)}亿</span>
+    <div style="display:flex;align-items:center;gap:6px;padding:4px 8px;flex-wrap:wrap;border-bottom:1px solid rgba(51,65,85,0.3)">
+      <span style="color:#94a3b8;font-size:11px">板块资金流向</span>
+      <span style="display:inline-block;padding:1px 8px;border-radius:10px;background:rgba(249,115,22,0.15);color:#f97316;font-size:9px">折线图</span>
       <span style="flex:1"></span>
-      <span style="font-size:10px;color:#64748b">${topHtml}</span>
+      <span style="font-size:9px;color:#475569">${times.length}时间点 · 30s刷新</span>
     </div>
-    <!-- Time series bar chart -->
-    <div style="padding:4px 8px;position:relative">
-      <div style="display:flex;align-items:flex-end;height:200px;gap:1px;position:relative">
-        ${barsHtml}
-        <!-- Zero line -->
-        <div style="position:absolute;left:0;right:0;top:50%;height:1px;background:rgba(71,85,105,0.5)"></div>
-      </div>
-      <!-- Y-axis labels -->
-      <div style="position:absolute;left:0;top:0;font-size:8px;color:#475569;line-height:1.4">
-        <div style="padding-top:4px">${maxVal}</div>
-        <div style="padding-top:${200/4-8}px">${maxVal/2}</div>
-        <div style="padding-top:${200/2-8}px">0</div>
-        <div style="padding-top:${200*3/4-8}px">-${maxVal/2}</div>
-        <div style="padding-top:${200-20}px">-${maxVal}</div>
-      </div>
-      <!-- X-axis time labels -->
-      <div style="display:flex;justify-content:space-between;padding:2px 0 0 0;font-size:8px;color:#475569;margin-left:30px">
-        ${timeLabels.map(m=>`<span>${m.l}</span>`).join('')}
-      </div>
+    <div style="padding:2px 8px;flex-wrap:wrap;display:flex;border-bottom:1px solid rgba(51,65,85,0.2)">${legend}</div>
+    <div style="position:relative;overflow-x:auto">
+      <svg width="${svgW}" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}" style="display:block;min-width:${svgW}px">
+        ${yGrid}
+        ${nowLine}
+        ${polylines}
+        ${yLabels}
+      </svg>
     </div>
-    <!-- Footer -->
+    <div style="padding:0 55px 2px 55px">${xHtml}</div>
     <div style="display:flex;justify-content:space-between;padding:2px 8px 4px;font-size:8px;color:#475569;border-top:1px solid rgba(51,65,85,0.3)">
-      <span>采集:${hist.length}点 · 30s刷新</span>
+      <span>显示${lines.length}个板块 · 采集${times.length}点</span>
       <span>东方财富100行业板块</span>
     </div>
   </div>`;
 }
 
-// 独立30秒数据获取（双保险: JSONP + fetch直连）
+// 数据获取
 function fetchCFData(){
   const st=document.getElementById('cfStatus');
   if(st)st.textContent='⏳ 正在获取数据('+new Date().toLocaleTimeString()+')...';
-  
-  // 方法1: JSONP (东方财富原生)
   const old=document.getElementById('cfJsonp');
   if(old)old.remove();
   const s=document.createElement('script');
   s.id='cfJsonp';
   s.src='https://push2.eastmoney.com/api/qt/clist/get?cb=cfCB&pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb&_='+Date.now();
   document.body.appendChild(s);
-
-  // 方法2: Fetch直连 (通过CORS代理)
   fetch('https://api.allorigins.win/raw?url='+encodeURIComponent('https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb'),{mode:'cors'})
-    .then(r=>r.json())
-    .then(d=>{
-      if(d&&d.data&&d.data.diff&&d.data.diff.length)cfProcessData(d);
-    })
-    .catch(()=>{});
-
-  // 超时处理：8秒后如果没返回，触发draw（保持上次数据）
+    .then(r=>r.json()).then(d=>{if(d&&d.data&&d.data.diff&&d.data.diff.length)cfProcessData(d);}).catch(()=>{});
   if(window._cfTimer)clearTimeout(window._cfTimer);
   window._cfTimer=setTimeout(()=>{
     const os=document.getElementById('cfJsonp');
     if(os)os.remove();
     renderCFDynamic();
-    if(st&&!cfHistory.length)st.textContent='⏳ 数据请求超时，正在重试('+new Date().toLocaleTimeString()+')...';
-    else if(st)st.textContent='✅ 最后更新:'+new Date().toLocaleTimeString()+' | 数据点:'+cfHistory.length;
+    const st=document.getElementById('cfStatus');
+    if(st)st.textContent='⏱ '+new Date().toLocaleTimeString()+' | 板块:'+Object.keys(sectorHistory).length+' | 等待数据...';
   },8000);
 }
 
 function cfProcessData(d){
   const data=d&&d.data&&d.data.diff;
   if(!data||!data.length)return;
-  let totalFlow=0;
-  const sectors=[];
-  data.forEach(x=>{
-    const flow=((x.f62||0)/100000000);
-    totalFlow+=flow;
-    if(x.f14)sectors.push({name:x.f14,flow:flow});
-  });
-  sectors.sort((a,b)=>Math.abs(b.flow)-Math.abs(a.flow));
   const now=new Date();
   const tStr=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
-  cfHistory.push({t:tStr,flow:totalFlow,top3:sectors.slice(0,3),bot3:sectors.slice(-3).reverse()});
-  if(cfHistory.length>60)cfHistory.shift();
-  try{localStorage.setItem('cfHist',JSON.stringify(cfHistory.slice(-30)));}catch(e){}
+  // 首次运行：初始化所有板块的历史
+  if(!Object.keys(sectorHistory).length){
+    data.forEach(x=>{
+      const name=(x.f14||'').trim();
+      if(!name)return;
+      sectorHistory[name]=[];
+    });
+  }
+  // 追加新数据点
+  data.forEach(x=>{
+    const name=(x.f14||'').trim();
+    const flow=((x.f62||0)/100000000);
+    if(!name)return;
+    if(!sectorHistory[name])sectorHistory[name]=[];
+    sectorHistory[name].push({t:tStr,flow});
+    if(sectorHistory[name].length>60)sectorHistory[name].shift();
+  });
+  // 清理旧板块（已不再出现的）
+  const currentNames=new Set(data.map(x=>(x.f14||'').trim()).filter(Boolean));
+  Object.keys(sectorHistory).forEach(n=>{if(!currentNames.has(n))delete sectorHistory[n];});
+  // 保存缓存
+  try{const cache={};Object.keys(sectorHistory).forEach(n=>{cache[n]=sectorHistory[n].slice(-20);});localStorage.setItem('sectorHist',JSON.stringify(cache));}catch(e){}
   const st=document.getElementById('cfStatus');
-  if(st)st.textContent='✅ '+now.toLocaleTimeString()+' | 板块:'+sectors.length+' | 总净额:'+(totalFlow>0?'+':'')+totalFlow.toFixed(1)+'亿 | 点:'+cfHistory.length;
+  if(st)st.textContent='✅ '+now.toLocaleTimeString()+' | 板块:'+Object.keys(sectorHistory).length+' | 30s刷新';
   renderCFDynamic();
 }
 
@@ -481,47 +517,22 @@ function cfCB(d){
   const os=document.getElementById('cfJsonp');
   if(os)os.remove();
   cfProcessData(d);
-  // 如果JSONP返回空但fetch还没返回，更新状态
   if(!d||!d.data||!d.data.diff||!d.data.diff.length){
     const st=document.getElementById('cfStatus');
-    if(st&&!cfHistory.length)st.textContent='⚠️ 数据为空('+new Date().toLocaleTimeString()+')，等待fetch回源...';
+    if(st)st.textContent='⚠️ 数据为空('+new Date().toLocaleTimeString()+')，等待回源...';
   }
 }
 
 function startCF(){
   if(cfTimer)clearInterval(cfTimer);
-  let failCount=0;
-  // Load cached
-  try{const c=localStorage.getItem('cfHist');if(c){const p=JSON.parse(c);if(p&&p.length)cfHistory=p;}}catch(e){}
+  // 加载缓存
+  try{const c=localStorage.getItem('sectorHist');if(c){const p=JSON.parse(c);Object.keys(p).forEach(n=>{sectorHistory[n]=p[n];});}}catch(e){}
   fetchCFData();
   renderCFDynamic();
   cfTimer=setInterval(()=>{
     const st=ms();
-    if(st.open||st.usOpen||st.jpOpen||st.krOpen){
-      fetchCFData();
-      failCount=0;
-    }else{
-      failCount++;
-      renderCFDynamic();
-      // 如果连续3次获取失败，用demo数据填充
-      if(failCount>=3&&!cfHistory.length){
-        failCount=0;
-        const now=new Date();
-        for(let i=30;i>=0;i--){
-          const t=new Date(now.getTime()-i*60000);
-          cfHistory.push({
-            t:String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0'),
-            flow:Math.sin(i/3)*50+(i*2),
-            top3:[{name:'半导体',flow:86.1},{name:'算力',flow:50.3},{name:'通信',flow:45.2}],
-            bot3:[{name:'电力',flow:-3.7}]
-          });
-        }
-        try{localStorage.setItem('cfHist',JSON.stringify(cfHistory.slice(-30)));}catch(e){}
-        renderCFDynamic();
-        const st=document.getElementById('cfStatus');
-        if(st)st.textContent='📊 演示数据(API暂不可用) | 每30秒自动重试';
-      }
-    }
+    if(st.open||st.usOpen||st.jpOpen||st.krOpen)fetchCFData();
+    else{renderCFDynamic();}
   },30000);
 }
 
@@ -541,20 +552,17 @@ function ftCB(d){
   const data=d&&d.data&&d.data.diff;
   if(data&&data.length){
     renderFTFromData(data);
-    // Record capital flow history
-    let totalFlow=0;
-    const sectors=[];
-    data.forEach(x=>{
-      const flow=((x.f62||0)/100000000);
-      totalFlow+=flow;
-      if(x.f14)sectors.push({name:x.f14,flow:flow});
-    });
-    sectors.sort((a,b)=>Math.abs(b.flow)-Math.abs(a.flow));
+    // Also update sectorHistory for the chart
     const now=new Date();
     const tStr=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
-    cfHistory.push({t:tStr,flow:totalFlow,top3:sectors.slice(0,3),bot3:sectors.slice(-3).reverse()});
-    if(cfHistory.length>40)cfHistory.shift();
-    try{localStorage.setItem('cfHist',JSON.stringify(cfHistory.slice(-20)));}catch(e){}
+    data.forEach(x=>{
+      const name=(x.f14||'').trim();
+      const flow=((x.f62||0)/100000000);
+      if(!name)return;
+      if(!sectorHistory[name])sectorHistory[name]=[];
+      sectorHistory[name].push({t:tStr,flow});
+      if(sectorHistory[name].length>60)sectorHistory[name].shift();
+    });
     renderCFDynamic();
   }
   const oldS=document.getElementById('ftJsonp');
