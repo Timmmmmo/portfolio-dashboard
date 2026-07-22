@@ -485,55 +485,47 @@ function renderCFDynamic(){
   </div>`;
 }
 
-// 数据获取
+// 数据获取 - 多路并行重试
 function fetchCFData(){
   const st=document.getElementById('cfStatus');
   if(st)st.textContent='⏳ 正在获取数据('+new Date().toLocaleTimeString()+')...';
   const old=document.getElementById('cfJsonp');
   if(old)old.remove();
-  // JSONP
+  let loaded=false;
+  function onData(d){
+    if(loaded)return;
+    if(d&&d.data&&d.data.diff&&d.data.diff.length){
+      loaded=true;
+      cfProcessData(d);
+      if(st)st.textContent='✅ '+new Date().toLocaleTimeString()+' | 真实数据 | 板块:'+Object.keys(sectorHistory).length;
+    }
+  }
+  // 方法1: JSONP
   const s=document.createElement('script');
   s.id='cfJsonp';
   s.src='https://push2.eastmoney.com/api/qt/clist/get?cb=cfCB&pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb&_='+Date.now();
   document.body.appendChild(s);
-  // CORS proxy fallback
-  fetch('https://corsproxy.io/?url='+encodeURIComponent('https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb'))
-    .then(r=>r.json()).then(d=>{if(d&&d.data&&d.data.diff&&d.data.diff.length)cfProcessData(d);}).catch(()=>{});
-  // allorigins backup
-  fetch('https://api.allorigins.win/raw?url='+encodeURIComponent('https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb'))
-    .then(r=>r.json()).then(d=>{if(d&&d.data&&d.data.diff&&d.data.diff.length)cfProcessData(d);}).catch(()=>{});
+  // 方法2: corsproxy.io
+  fetch('https://corsproxy.io/?url='+encodeURIComponent('https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb'),{signal:AbortSignal.timeout(10000)})
+    .then(r=>r.json()).then(d=>onData(d)).catch(()=>{});
+  // 方法3: allorigins
+  fetch('https://api.allorigins.win/raw?url='+encodeURIComponent('https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb'),{signal:AbortSignal.timeout(10000)})
+    .then(r=>r.json()).then(d=>onData(d)).catch(()=>{});
+  // 超时 - 仍无数据则用演示数据
   if(window._cfTimer)clearTimeout(window._cfTimer);
   window._cfTimer=setTimeout(()=>{
     const os=document.getElementById('cfJsonp');
     if(os)os.remove();
+    if(loaded)return;
     const st=document.getElementById('cfStatus');
-    // If still no data after 15s, generate demo data
     if(!Object.keys(sectorHistory).length){
-      const now=new Date();
-      const demo=[{n:'半导体',b:86},{n:'有色金属',b:45},{n:'PCB',b:12},{n:'算力',b:38},{n:'通信',b:52},{n:'AI芯片',b:28},{n:'CPO',b:18},{n:'液冷',b:8},{n:'储能',b:-5},{n:'电力',b:-12},{n:'银行',b:-8},{n:'地产',b:-6}];
-      for(let i=30;i>=0;i--){
-        const t=new Date(now.getTime()-i*60000);
-        const ts=String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
-        // 每个板块在不同时间点的资金流入/流出大幅波动，模拟真实盘面
-        const wavePhase=i/3;
-        demo.forEach((d,di)=>{
-          // 每个板块有自己的波动特征：周期、振幅、趋势不同
-          const trend = d.b * (1 + i/60); // 随时间累计趋势
-          const cycle = Math.sin(wavePhase + di*1.5) * 25; // 不同板块不同周期
-          const spike = Math.sin(wavePhase*3 + di*2) * 12; // 短周期波动
-          const noise = (Math.random()-0.5)*15; // 随机噪声
-          const flow = trend + cycle + spike + noise;
-          if(!sectorHistory[d.n])sectorHistory[d.n]=[];
-          sectorHistory[d.n].push({t:ts,flow:flow});
-        });
-      }
-      renderCFDynamic();
-      if(st)st.textContent='📊 演示数据(API暂不可用) | 每30秒自动重试';
+      genDemoData();
+      if(st)st.textContent='📊 演示数据(API暂不可用) | 每30秒自动重试 | 真实数据到后自动切换';
     }else{
       renderCFDynamic();
-      if(st)st.textContent='⏱ '+new Date().toLocaleTimeString()+' | 板块:'+Object.keys(sectorHistory).length+' | 缓存数据';
+      if(st)st.textContent='⏱ '+new Date().toLocaleTimeString()+' | 缓存:'+Object.keys(sectorHistory).length+'板块 | 等待API恢复';
     }
-  },15000);
+  },20000);
 }
 
 function cfProcessData(d){
@@ -563,8 +555,6 @@ function cfProcessData(d){
   Object.keys(sectorHistory).forEach(n=>{if(!currentNames.has(n))delete sectorHistory[n];});
   // 保存缓存
   try{const cache={};Object.keys(sectorHistory).forEach(n=>{cache[n]=sectorHistory[n].slice(-20);});localStorage.setItem('sectorHist',JSON.stringify(cache));}catch(e){}
-  const st=document.getElementById('cfStatus');
-  if(st)st.textContent='✅ '+now.toLocaleTimeString()+' | 板块:'+Object.keys(sectorHistory).length+' | 30s刷新';
   renderCFDynamic();
 }
 
@@ -576,6 +566,31 @@ function cfCB(d){
     const st=document.getElementById('cfStatus');
     if(st)st.textContent='⚠️ 数据为空('+new Date().toLocaleTimeString()+')，等待回源...';
   }
+}
+
+// 生成演示数据 - 包含真实的流入流出双向波动
+function genDemoData(){
+  const now=new Date();
+  const demo=[
+    {n:'半导体',b:86},{n:'有色金属',b:45},{n:'PCB',b:12},{n:'算力',b:38},{n:'通信',b:52},
+    {n:'AI芯片',b:28},{n:'CPO',b:18},{n:'液冷',b:8},{n:'储能',b:-5},{n:'电力',b:-12},
+    {n:'银行',b:-18},{n:'地产',b:-6},{n:'白酒',b:-15},{n:'医药',b:-8},{n:'光伏',b:-10}
+  ];
+  for(let i=30;i>=0;i--){
+    const t=new Date(now.getTime()-i*60000);
+    const ts=String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
+    const wavePhase=i/2.5;
+    demo.forEach((d,di)=>{
+      const trend = d.b * (1 + i/80);
+      const cycle = Math.sin(wavePhase + di*1.2) * 30;
+      const spike = Math.sin(wavePhase*4 + di*3) * 15;
+      const noise = (Math.random()-0.5)*20;
+      const flow = trend + cycle + spike + noise;
+      if(!sectorHistory[d.n])sectorHistory[d.n]=[];
+      sectorHistory[d.n].push({t:ts,flow:flow});
+    });
+  }
+  renderCFDynamic();
 }
 
 function startCF(){
