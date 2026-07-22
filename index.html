@@ -488,8 +488,15 @@ function fetchCFData(){
       for(let i=30;i>=0;i--){
         const t=new Date(now.getTime()-i*60000);
         const ts=String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
-        demo.forEach(d=>{
-          const flow=d.b+Math.sin(i/2+d.b/20)*20+(Math.random()-0.5)*10;
+        // 每个板块在不同时间点的资金流入/流出大幅波动，模拟真实盘面
+        const wavePhase=i/3;
+        demo.forEach((d,di)=>{
+          // 每个板块有自己的波动特征：周期、振幅、趋势不同
+          const trend = d.b * (1 + i/60); // 随时间累计趋势
+          const cycle = Math.sin(wavePhase + di*1.5) * 25; // 不同板块不同周期
+          const spike = Math.sin(wavePhase*3 + di*2) * 12; // 短周期波动
+          const noise = (Math.random()-0.5)*15; // 随机噪声
+          const flow = trend + cycle + spike + noise;
           if(!sectorHistory[d.n])sectorHistory[d.n]=[];
           sectorHistory[d.n].push({t:ts,flow:flow});
         });
