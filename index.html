@@ -465,20 +465,42 @@ function fetchCFData(){
   if(st)st.textContent='⏳ 正在获取数据('+new Date().toLocaleTimeString()+')...';
   const old=document.getElementById('cfJsonp');
   if(old)old.remove();
+  // JSONP
   const s=document.createElement('script');
   s.id='cfJsonp';
   s.src='https://push2.eastmoney.com/api/qt/clist/get?cb=cfCB&pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb&_='+Date.now();
   document.body.appendChild(s);
-  fetch('https://api.allorigins.win/raw?url='+encodeURIComponent('https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb'),{mode:'cors'})
+  // CORS proxy fallback
+  fetch('https://corsproxy.io/?url='+encodeURIComponent('https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb'))
+    .then(r=>r.json()).then(d=>{if(d&&d.data&&d.data.diff&&d.data.diff.length)cfProcessData(d);}).catch(()=>{});
+  // allorigins backup
+  fetch('https://api.allorigins.win/raw?url='+encodeURIComponent('https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb'))
     .then(r=>r.json()).then(d=>{if(d&&d.data&&d.data.diff&&d.data.diff.length)cfProcessData(d);}).catch(()=>{});
   if(window._cfTimer)clearTimeout(window._cfTimer);
   window._cfTimer=setTimeout(()=>{
     const os=document.getElementById('cfJsonp');
     if(os)os.remove();
-    renderCFDynamic();
     const st=document.getElementById('cfStatus');
-    if(st)st.textContent='⏱ '+new Date().toLocaleTimeString()+' | 板块:'+Object.keys(sectorHistory).length+' | 等待数据...';
-  },8000);
+    // If still no data after 15s, generate demo data
+    if(!Object.keys(sectorHistory).length){
+      const now=new Date();
+      const demo=[{n:'半导体',b:86},{n:'有色金属',b:45},{n:'PCB',b:12},{n:'算力',b:38},{n:'通信',b:52},{n:'AI芯片',b:28},{n:'CPO',b:18},{n:'液冷',b:8},{n:'储能',b:-5},{n:'电力',b:-12},{n:'银行',b:-8},{n:'地产',b:-6}];
+      for(let i=30;i>=0;i--){
+        const t=new Date(now.getTime()-i*60000);
+        const ts=String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
+        demo.forEach(d=>{
+          const flow=d.b+Math.sin(i/2+d.b/20)*20+(Math.random()-0.5)*10;
+          if(!sectorHistory[d.n])sectorHistory[d.n]=[];
+          sectorHistory[d.n].push({t:ts,flow:flow});
+        });
+      }
+      renderCFDynamic();
+      if(st)st.textContent='📊 演示数据(API暂不可用) | 每30秒自动重试';
+    }else{
+      renderCFDynamic();
+      if(st)st.textContent='⏱ '+new Date().toLocaleTimeString()+' | 板块:'+Object.keys(sectorHistory).length+' | 缓存数据';
+    }
+  },15000);
 }
 
 function cfProcessData(d){
