@@ -70,12 +70,7 @@ h1{font-size:20px}
 .ft2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:8px}
 .fttag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;margin-left:4px}
 .ftinfo{font-size:10px;color:var(--sm);text-align:right;margin-top:6px;padding:2px 0}
-/* 资金流向图 */
-.cfBox{position:relative;background:var(--g1);border-radius:8px;padding:4px}
-.cfInfo{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;margin-top:8px;padding:4px 0;align-items:center}
-.cfTag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;margin-left:4px}
-.cfPos{background:rgba(239,68,68,0.15);color:#ef4444}
-.cfNeg{background:rgba(52,211,153,0.15);color:#34d399}
+/* 资金流向图 - 动态HTML */
 </style>
 </head>
 <body>
@@ -499,7 +494,7 @@ function startCF(){
   // Load cached
   try{const c=localStorage.getItem('cfHist');if(c){const p=JSON.parse(c);if(p&&p.length)cfHistory=p;}}catch(e){}
   fetchCFData();
-  drawCFChart();
+  renderCFDynamic();
   cfTimer=setInterval(()=>{
     const st=ms();
     if(st.open||st.usOpen||st.jpOpen||st.krOpen){
@@ -507,7 +502,7 @@ function startCF(){
       failCount=0;
     }else{
       failCount++;
-      drawCFChart();
+      renderCFDynamic();
       // 如果连续3次获取失败，用demo数据填充
       if(failCount>=3&&!cfHistory.length){
         failCount=0;
@@ -522,7 +517,7 @@ function startCF(){
           });
         }
         try{localStorage.setItem('cfHist',JSON.stringify(cfHistory.slice(-30)));}catch(e){}
-        drawCFChart();
+        renderCFDynamic();
         const st=document.getElementById('cfStatus');
         if(st)st.textContent='📊 演示数据(API暂不可用) | 每30秒自动重试';
       }
@@ -560,7 +555,7 @@ function ftCB(d){
     cfHistory.push({t:tStr,flow:totalFlow,top3:sectors.slice(0,3),bot3:sectors.slice(-3).reverse()});
     if(cfHistory.length>40)cfHistory.shift();
     try{localStorage.setItem('cfHist',JSON.stringify(cfHistory.slice(-20)));}catch(e){}
-    drawCFChart();
+    renderCFDynamic();
   }
   const oldS=document.getElementById('ftJsonp');
   if(oldS)oldS.remove();
