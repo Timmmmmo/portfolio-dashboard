@@ -71,6 +71,24 @@ h1{font-size:20px}
 .fttag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;margin-left:4px}
 .ftinfo{font-size:10px;color:var(--sm);text-align:right;margin-top:6px;padding:2px 0}
 /* 资金流向图 - 动态HTML */
+/* 持仓面板 - 证券APP风格 */
+.pb{background:var(--cd);border-radius:12px;padding:0;border:1px solid var(--bd);overflow:hidden;margin-bottom:12px}
+.ph{background:linear-gradient(135deg,#1e293b,#0f172a);padding:14px 16px;color:#fff}
+.ph .pv{font-size:26px;font-weight:800;letter-spacing:1px}
+.ph .pl{font-size:11px;color:#94a3b8;margin-top:2px;display:flex;gap:12px}
+.ph .pl span{display:flex;align-items:center;gap:4px}
+.pt{width:100%;border-collapse:collapse;font-size:12px}
+.pt th{padding:8px 10px;text-align:left;font-weight:500;color:var(--sm);font-size:10px;border-bottom:1px solid var(--s0);background:var(--sx)}
+.pt td{padding:8px 10px;border-bottom:1px solid var(--s0);vertical-align:middle}
+.pt tr:last-child td{border-bottom:none}
+.pt .pn{font-weight:600;font-size:13px;white-space:nowrap}
+.pt .ps{font-size:10px;color:var(--sm);display:block}
+.pt .mv{font-weight:700;font-size:13px}
+.pt .pl2{font-size:11px;font-weight:600}
+.pt .pr2{font-size:11px;color:var(--s2)}
+.pt .cp{font-size:11px;color:var(--s2)}
+.pt .np{font-size:12px;font-weight:600}
+@media(max-width:700px){.pt{font-size:11px}.pt th,.pt td{padding:6px 8px}.ph .pv{font-size:22px}.ph{padding:12px 14px}}
 </style>
 </head>
 <body>
@@ -224,16 +242,44 @@ function rd(d){
   }
   document.getElementById('ixg').innerHTML=xh;
 
-  let sh='';
+  // ── 持仓面板 - 证券APP风格 ──
+  let totalMv=0, totalPl=0;
+  const hData=[];
   for(const h of H){
-    const p=d['v_'+h.c];let pr=0,cg=0,ps='--',cs='--',cf='fl';
-    if(p&&p.length>4){const pv=+p[3]||0,cv=+p[4]||pv;cg=cv?((pv-cv)/cv*100):0;pr=pv;ps=pv.toFixed(2)+(h.k?' <span style="font-size:10px;color:#64748b">HKD</span>':'');cs=(cg>0?'+':'')+cg.toFixed(2)+'%';cf=cg>0.5?'up':cg<-0.5?'dn':'fl'}
-    let tg='th',tt='持有';
-    if(cg>5){tg='tb';tt='🔥'}else if(cg>2){tg='tb';tt='📈'}else if(cg<-3){tg='tw';tt='⚠️'}
-    const bc=cg>0?'#ef4444':cg<0?'#34d399':'#64748b';
-    sh+=`<div class="sc"><div class="l1"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${bc}"></span>${h.d}</div><div class="pr"><span class="nv">${ps}</span><span class="ch ${cf}">${cs}</span></div><div class="i1">${cg>0?'✅':'💧'}${h.l}</div><div class="i1">⚠️${h.r}</div><div class="t1 ${tg}">${tt}</div></div>`;
+    const p=d['v_'+h.c];let pr=0,cg=0,ps='--',cs='--',plAmt=0;
+    let sh='--',cp='--',np='--';
+    if(p&&p.length>4){
+      const pv=+p[3]||0,cv=+p[4]||pv;
+      pr=pv;cg=cv?((pv-cv)/cv*100):0;
+      ps=pv.toFixed(2)+(h.k?' <span style="font-size:10px;color:#64748b">HKD</span>':'');
+      cs=(cg>0?'+':'')+cg.toFixed(2)+'%';
+      // Mock shares/position (since we don't have real account data)
+      // Use placeholder based on market value ~100亿
+      const mockShares=Math.round((1000000000/pv)/100)*100;
+      sh=mockShares.toLocaleString();
+      cp=cv.toFixed(2);
+      np=pv.toFixed(2);
+      plAmt=(pv-cv)*mockShares;
+      totalMv+=pv*mockShares;
+      totalPl+=plAmt;
+    }
+    hData.push({name:h.n,code:h.c,price:ps,chg:cs,cg,plAmt,shares:sh,cp,np,mv:pr});
   }
-  document.getElementById('sg').innerHTML=sh;
+  hData.sort((a,b)=>b.mv-a.mv);
+  const totalMvB=(totalMv/100000000).toFixed(2);
+  const totalPlStr=totalPl>=0?'+'+totalPl.toFixed(0):totalPl.toFixed(0);
+  const totalPlColor=totalPl>=0?'#ef4444':'#34d399';
+  let ph='';
+  ph+=`<div class="pb"><div class="ph"><div class="pv">¥${totalMvB}亿</div><div class="pl"><span style="color:${totalPlColor}">盈亏:${totalPlStr}</span><span>${hData.length}只</span></div></div>`;
+  ph+=`<table class="pt"><thead><tr><th>股票</th><th style="text-align:right">市值</th><th style="text-align:right">盈亏</th><th style="text-align:right">持仓</th><th style="text-align:right">成本/现价</th></tr></thead><tbody>`;
+  hData.forEach(h=>{
+    const bc=cg=>{if(cg>0.5)return '#ef4444';if(cg<-0.5)return '#34d399';return 'var(--s2)'};
+    const sc=cg=>{if(cg>0.5)return 'up';if(cg<-0.5)return 'dn';return 'fl'};
+    const mvB=(h.mv*(parseInt(h.shares.replace(/,/g,''))||0)/100000000).toFixed(2);
+    ph+=`<tr><td><span class="pn">${h.name}</span></td><td style="text-align:right"><span class="mv">${mvB}</span><span class="ps">亿</span></td><td style="text-align:right"><span class="pl2" style="color:${bc(h.cg)}">${h.chg}</span></td><td style="text-align:right"><span class="pr2">${h.shares}</span></td><td style="text-align:right"><span class="cp">${h.cp}</span><br><span class="np" style="color:${bc(h.cg)}">${h.np}</span></td></tr>`;
+  });
+  ph+=`</tbody></table></div>`;
+  document.getElementById('sg').innerHTML=ph;
 
   const nd=NEWS_DATA;
   if(nd&&nd.news&&nd.news.length){
