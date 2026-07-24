@@ -396,10 +396,18 @@ function renderCFDynamic(){
   const latest={};
   names.forEach(n=>{const h=sectorHistory[n];if(h.length)latest[n]=h[h.length-1].flow;});
   const topNames=Object.keys(latest).sort((a,b)=>Math.abs(latest[b])-Math.abs(latest[a])).slice(0,14);
-  if(!topNames.length)return;
+  // 确保同时展示流入和流出: 至少各3个
+  const posNames=topNames.filter(n=>latest[n]>=0);
+  const negNames=topNames.filter(n=>latest[n]<0);
+  const allNames=Object.keys(latest).sort((a,b)=>Math.abs(latest[b])-Math.abs(latest[a]));
+  let finalNames=[...posNames];
+  if(posNames.length<3){const more=allNames.filter(n=>latest[n]>=0&&!finalNames.includes(n));finalNames=finalNames.concat(more.slice(0,3-posNames.length));}
+  finalNames=finalNames.concat(negNames);
+  if(negNames.length<3){const more=allNames.filter(n=>latest[n]<0&&!finalNames.includes(n));finalNames=finalNames.concat(more.slice(0,3-negNames.length));}
+  const displayNames=finalNames.slice(0,14);
 
   let maxVal=10;
-  topNames.forEach(n=>{sectorHistory[n].forEach(h=>{const a=Math.abs(h.flow);if(a>maxVal)maxVal=a;});});
+  displayNames.forEach(n=>{sectorHistory[n].forEach(h=>{const a=Math.abs(h.flow);if(a>maxVal)maxVal=a;});});
   maxVal=Math.ceil(maxVal*1.2/10)*10;
 
   // Colors: red/orange for inflow, green for outflow
@@ -420,11 +428,11 @@ function renderCFDynamic(){
   function toY(v){return midY-(v/maxVal)*(chartH/2);}
 
   const allTimes=new Set();
-  topNames.forEach(n=>{sectorHistory[n].forEach(h=>allTimes.add(h.t));});
+  displayNames.forEach(n=>{sectorHistory[n].forEach(h=>allTimes.add(h.t));});
   const times=Array.from(allTimes).sort();
   if(times.length<1)return;
 
-  const lines=topNames.map((n,ci)=>{
+  const lines=displayNames.map((n,ci)=>{
     const pts=sectorHistory[n].filter(h=>times.includes(h.t));
     if(pts.length<1)return null;
     const points=pts.map(h=>`${toX(h.t).toFixed(1)},${toY(h.flow).toFixed(1)}`).join(' ');
@@ -583,13 +591,16 @@ function fetchCFData(){
   // 方法1: JSONP
   const s=document.createElement('script');
   s.id='cfJsonp';
-  s.src='https://push2.eastmoney.com/api/qt/clist/get?cb=cfCB&pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb&_='+Date.now();
+  s.src='https://push2.eastmoney.com/api/qt/clist/get?cb=cfCB&pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62&fid=f62&fs=m:90+t:2+f:!50&ut=fa5fd1943c7b386f1725622f7d9f5fcf&_='+Date.now();
   document.body.appendChild(s);
   // 方法2: corsproxy.io
+  fetch('https://corsproxy.io/?url='+encodeURIComponent('https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62&fid=f62&fs=m:90+t:2+f:!50&ut=fa5fd1943c7b386f1725622f7d9f5fcf'),{signal:AbortSignal.timeout(10000)})
+    .then(r=>r.json()).then(d=>onData(d)).catch(()=>{});
+  // 方法3: 备用token
   fetch('https://corsproxy.io/?url='+encodeURIComponent('https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb'),{signal:AbortSignal.timeout(10000)})
     .then(r=>r.json()).then(d=>onData(d)).catch(()=>{});
-  // 方法3: allorigins
-  fetch('https://api.allorigins.win/raw?url='+encodeURIComponent('https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb'),{signal:AbortSignal.timeout(10000)})
+  // 方法4: allorigins
+  fetch('https://api.allorigins.win/raw?url='+encodeURIComponent('https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62&fid=f62&fs=m:90+t:2+f:!50&ut=fa5fd1943c7b386f1725622f7d9f5fcf'),{signal:AbortSignal.timeout(10000)})
     .then(r=>r.json()).then(d=>onData(d)).catch(()=>{});
   // 超时 - 仍无数据则用演示数据
   if(window._cfTimer)clearTimeout(window._cfTimer);
@@ -699,7 +710,7 @@ function renderFT(){
   if(old)old.remove();
   const s=document.createElement('script');
   s.id='ftJsonp';
-  s.src='https://push2.eastmoney.com/api/qt/clist/get?cb=ftCB&pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62,f184,f66,f69&fid=f62&fs=m:90+t:2+f:!50&ut=b2884a393a59ad64002292a3ca90d2cb&_='+Date.now();
+  s.src='https://push2.eastmoney.com/api/qt/clist/get?cb=ftCB&pn=1&pz=100&po=1&np=1&fields=f12,f14,f3,f62,f184,f66,f69&fid=f62&fs=m:90+t:2+f:!50&ut=fa5fd1943c7b386f1725622f7d9f5fcf&_='+Date.now();
   document.body.appendChild(s);
 }
 
