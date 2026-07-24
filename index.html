@@ -395,20 +395,20 @@ function renderCFDynamic(){
 
   const latest={};
   names.forEach(n=>{const h=sectorHistory[n];if(h.length)latest[n]=h[h.length-1].flow;});
-  const topNames=Object.keys(latest).sort((a,b)=>Math.abs(latest[b])-Math.abs(latest[a])).slice(0,10);
+  const topNames=Object.keys(latest).sort((a,b)=>Math.abs(latest[b])-Math.abs(latest[a])).slice(0,14);
   if(!topNames.length)return;
 
   let maxVal=10;
   topNames.forEach(n=>{sectorHistory[n].forEach(h=>{const a=Math.abs(h.flow);if(a>maxVal)maxVal=a;});});
   maxVal=Math.ceil(maxVal*1.2/10)*10;
 
-  // Colors: warm for positive, cool for negative
-  const warmColors=['#ef4444','#f97316','#eab308','#d97706','#f59e0b','#dc2626','#ea580c','#ca8a04'];
-  const coolColors=['#10b981','#06b6d4','#3b82f6','#6366f1','#14b8a6','#059669','#0284c7','#4f46e5'];
+  // Colors: red/orange for inflow, green for outflow
+  const warmColors=['#ef4444','#f97316','#eab308','#d97706','#f59e0b','#dc2626','#ea580c','#ca8a04','#f87171','#fb923c','#fbbf24','#b45309','#be123c','#c2410c'];
+  const greenColors=['#16a34a','#059669','#22c55e','#10b981','#34d399','#15803d','#047857','#4ade80','#65a30d','#84cc16','#0d9488','#14b8a6','#6ee7b7','#a7f3d0'];
   function getColor(n,idx){
     const f=latest[n]||0;
     if(f>0)return warmColors[idx%warmColors.length];
-    return coolColors[idx%coolColors.length];
+    return greenColors[idx%greenColors.length];
   }
 
   // SVG dimensions
@@ -504,7 +504,7 @@ function renderCFDynamic(){
     const sign=l.flow>=0?'+':'';
     const labelX=l.x+10;
     const labelY=l.y;
-    const txtColor=l.flow>=0?'#dc2626':'#10b981';
+    const txtColor=l.flow>=0?'#dc2626':'#16a34a';
     rightLabels+=`
       <g>
         <rect x="${labelX}" y="${labelY-12}" width="100" height="24" rx="4" fill="white" stroke="${l.color}" stroke-width="1.5" filter="url(#shadow)"/>
@@ -535,7 +535,7 @@ function renderCFDynamic(){
         </div>
         <div style="text-align:right">
           <div style="font-size:11px;color:#ef4444;font-weight:700">+${totalIn.toFixed(0)}亿</div>
-          <div style="font-size:11px;color:#10b981;font-weight:700">${totalOut.toFixed(0)}亿</div>
+          <div style="font-size:11px;color:#16a34a;font-weight:700">${totalOut.toFixed(0)}亿</div>
         </div>
       </div>
     </div>
@@ -650,7 +650,8 @@ function genDemoData(){
   const demo=[
     {n:'半导体',b:86},{n:'有色金属',b:45},{n:'PCB',b:12},{n:'算力',b:38},{n:'通信',b:52},
     {n:'AI芯片',b:28},{n:'CPO',b:18},{n:'液冷',b:8},{n:'储能',b:-5},{n:'电力',b:-12},
-    {n:'银行',b:-18},{n:'地产',b:-6},{n:'白酒',b:-15},{n:'医药',b:-8},{n:'光伏',b:-10}
+    {n:'银行',b:-18},{n:'地产',b:-6},{n:'白酒',b:-15},{n:'医药',b:-8},{n:'光伏',b:-10},
+    {n:'煤炭',b:-22},{n:'钢铁',b:-14},{n:'房地产',b:-9},{n:'农业',b:-7},{n:'食品',b:-11}
   ];
   // 首次：先加一个初始点（30秒前），让折线有起点
   if(!Object.keys(sectorHistory).length){
