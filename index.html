@@ -412,8 +412,8 @@ function renderCFDynamic(){
   maxVal=Math.ceil(maxVal*1.2/10)*10;
 
   // Colors: red/orange for inflow, green for outflow
-  const warmColors=['#ef4444','#f97316','#eab308','#d97706','#f59e0b','#dc2626','#ea580c','#ca8a04','#f87171','#fb923c','#fbbf24','#b45309','#be123c','#c2410c'];
-  const greenColors=['#16a34a','#059669','#22c55e','#10b981','#34d399','#15803d','#047857','#4ade80','#65a30d','#84cc16','#0d9488','#14b8a6','#6ee7b7','#a7f3d0'];
+  const warmColors=['#dc2626','#ea580c','#d97706','#ca8a04','#b45309','#be123c','#c2410c'];
+  const greenColors=['#16a34a','#059669','#22c55e','#10b981','#15803d','#047857','#0d9488'];
   function getColor(n,idx){
     const f=latest[n]||0;
     if(f>0)return warmColors[idx%warmColors.length];
@@ -474,7 +474,7 @@ function renderCFDynamic(){
       // Glow
       polylines+=`<polyline points="${l.points}" fill="none" stroke="${l.color}" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" opacity="0.08"/>`;
       // Main line
-      polylines+=`<polyline points="${l.points}" fill="none" stroke="${l.color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.85"/>`;
+      polylines+=`<polyline points="${l.points}" fill="none" stroke="${l.color}" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.85"/>`;
     }
     // End dot (always draw even for single point)
     const lastPt=pts[pts.length-1];
