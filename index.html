@@ -416,7 +416,7 @@ function renderCFDynamic(){
   const chartW=svgW-padL-padR, chartH=svgH-padT-padB;
   const midY=padT+chartH/2;
 
-  function toX(i,total){return padL+(i/(total-1||1))*chartW;}
+  function toX(tStr){const [h,m]=tStr.split(':').map(Number);const mins=h*60+m;const pos=Math.max(0,Math.min(1,(mins-570)/(900-570)));return padL+pos*chartW;}
   function toY(v){return midY-(v/maxVal)*(chartH/2);}
 
   const allTimes=new Set();
@@ -427,7 +427,7 @@ function renderCFDynamic(){
   const lines=topNames.map((n,ci)=>{
     const pts=sectorHistory[n].filter(h=>times.includes(h.t));
     if(pts.length<1)return null;
-    const points=pts.map((h,i)=>`${toX(i,pts.length).toFixed(1)},${toY(h.flow).toFixed(1)}`).join(' ');
+    const points=pts.map(h=>`${toX(h.t).toFixed(1)},${toY(h.flow).toFixed(1)}`).join(' ');
     const color=getColor(n,ci);
     return {name:n,points,color,flow:latest[n]};
   }).filter(Boolean);
