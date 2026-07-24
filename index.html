@@ -412,7 +412,7 @@ function renderCFDynamic(){
   }
 
   // SVG dimensions
-  const svgW=880, svgH=460, padL=52, padR=130, padT=20, padB=32;
+  const svgW=880, svgH=460, padL=52, padR=20, padT=20, padB=32;
   const chartW=svgW-padL-padR, chartH=svgH-padT-padB;
   const midY=padT+chartH/2;
 
@@ -480,22 +480,36 @@ function renderCFDynamic(){
   let totalIn=0, totalOut=0;
   lines.forEach(l=>{if(l.flow>0)totalIn+=l.flow;else totalOut+=l.flow;});
 
-  let rightLabels='';
+  // Collect all last-point positions for overlap detection
+  const labelPositions=[];
   lines.forEach(l=>{
     const pts=l.points.split(' ');
     const lastPt=pts[pts.length-1];
     if(!lastPt)return;
     const [lx,ly]=lastPt.split(',');
+    const x=parseFloat(lx), y=parseFloat(ly);
+    labelPositions.push({name:l.name,color:l.color,flow:l.flow,x,y});
+  });
+
+  // Sort by Y to detect overlaps, then adjust
+  labelPositions.sort((a,b)=>a.y-b.y);
+  for(let i=1;i<labelPositions.length;i++){
+    if(labelPositions[i].y-labelPositions[i-1].y<28){
+      labelPositions[i].y=labelPositions[i-1].y+28;
+    }
+  }
+
+  let rightLabels='';
+  labelPositions.forEach(l=>{
     const sign=l.flow>=0?'+':'';
-    const labelX=padL+chartW+8;
-    const labelY=parseFloat(ly);
+    const labelX=l.x+10;
+    const labelY=l.y;
     const txtColor=l.flow>=0?'#dc2626':'#10b981';
-    // Background pill
     rightLabels+=`
       <g>
-        <rect x="${labelX}" y="${labelY-14}" width="115" height="28" rx="6" fill="white" stroke="${l.color}" stroke-width="1.5" filter="url(#shadow)"/>
-        <text x="${labelX+8}" y="${labelY-1}" fill="#1f2937" font-size="11" font-weight="700" font-family="sans-serif">${l.name}</text>
-        <text x="${labelX+8}" y="${labelY+13}" fill="${txtColor}" font-size="14" font-weight="800" font-family="sans-serif">${sign}${l.flow.toFixed(2)}</text>
+        <rect x="${labelX}" y="${labelY-12}" width="100" height="24" rx="4" fill="white" stroke="${l.color}" stroke-width="1.5" filter="url(#shadow)"/>
+        <text x="${labelX+6}" y="${labelY+1}" fill="#1f2937" font-size="10" font-weight="700" font-family="sans-serif">${l.name}</text>
+        <text x="${labelX+6}" y="${labelY+12}" fill="${txtColor}" font-size="12" font-weight="800" font-family="sans-serif">${sign}${l.flow.toFixed(2)}</text>
       </g>`;
   });
 
