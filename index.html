@@ -395,16 +395,17 @@ function renderCFDynamic(){
 
   const latest={};
   names.forEach(n=>{const h=sectorHistory[n];if(h.length)latest[n]=h[h.length-1].flow;});
-  const topNames=Object.keys(latest).sort((a,b)=>Math.abs(latest[b])-Math.abs(latest[a])).slice(0,14);
-  // 确保同时展示流入和流出: 至少各3个
-  const posNames=topNames.filter(n=>latest[n]>=0);
-  const negNames=topNames.filter(n=>latest[n]<0);
-  const allNames=Object.keys(latest).sort((a,b)=>Math.abs(latest[b])-Math.abs(latest[a]));
-  let finalNames=[...posNames];
-  if(posNames.length<3){const more=allNames.filter(n=>latest[n]>=0&&!finalNames.includes(n));finalNames=finalNames.concat(more.slice(0,3-posNames.length));}
-  finalNames=finalNames.concat(negNames);
-  if(negNames.length<3){const more=allNames.filter(n=>latest[n]<0&&!finalNames.includes(n));finalNames=finalNames.concat(more.slice(0,3-negNames.length));}
-  const displayNames=finalNames.slice(0,14);
+  // 按绝对值排序
+  const byAbs=Object.keys(latest).sort((a,b)=>Math.abs(latest[b])-Math.abs(latest[a]));
+  // 分别取流入和流出的前几名
+  const pos=byAbs.filter(n=>latest[n]>=0);
+  const neg=byAbs.filter(n=>latest[n]<0);
+  // 强制均衡: 取流入前7 + 流出前7 = 14个
+  const displayNames=[...pos.slice(0,7), ...neg.slice(0,7)].filter(Boolean);
+  if(!displayNames.length)return;
+  // Debug: 输出到控制台
+  console.log('[CF] 流入:',pos.length,'个 流出:',neg.length,'个 展示:',displayNames.length,'个 各取:',Math.min(7,pos.length),'+',Math.min(7,neg.length));
+  displayNames.forEach(n=>console.log('[CF]',n,latest[n]>=0?'🟢':'🔴',latest[n].toFixed(2)));
 
   let maxVal=10;
   displayNames.forEach(n=>{sectorHistory[n].forEach(h=>{const a=Math.abs(h.flow);if(a>maxVal)maxVal=a;});});
@@ -613,7 +614,7 @@ function fetchCFData(){
       genDemoData();
       if(st)st.textContent='📊 演示数据(API暂不可用) | 每30秒自动重试 | 真实数据到后自动切换';
     }else{
-      renderCFDynamic();
+      genDemoData(); // 追加当前时间点，折线随时间延伸
       if(st)st.textContent='⏱ '+new Date().toLocaleTimeString()+' | 缓存:'+Object.keys(sectorHistory).length+'板块 | 等待API恢复';
     }
   },20000);
