@@ -422,11 +422,11 @@ function renderCFDynamic(){
   const allTimes=new Set();
   topNames.forEach(n=>{sectorHistory[n].forEach(h=>allTimes.add(h.t));});
   const times=Array.from(allTimes).sort();
-  if(times.length<2)return;
+  if(times.length<1)return;
 
   const lines=topNames.map((n,ci)=>{
     const pts=sectorHistory[n].filter(h=>times.includes(h.t));
-    if(pts.length<2)return null;
+    if(pts.length<1)return null;
     const points=pts.map((h,i)=>`${toX(i,pts.length).toFixed(1)},${toY(h.flow).toFixed(1)}`).join(' ');
     const color=getColor(n,ci);
     return {name:n,points,color,flow:latest[n]};
@@ -460,12 +460,14 @@ function renderCFDynamic(){
   // ── Polylines ──
   let polylines='';
   lines.forEach(l=>{
-    // Glow
-    polylines+=`<polyline points="${l.points}" fill="none" stroke="${l.color}" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" opacity="0.08"/>`;
-    // Main line
-    polylines+=`<polyline points="${l.points}" fill="none" stroke="${l.color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.85"/>`;
-    // End dot
     const pts=l.points.split(' ');
+    if(pts.length>=2){
+      // Glow
+      polylines+=`<polyline points="${l.points}" fill="none" stroke="${l.color}" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" opacity="0.08"/>`;
+      // Main line
+      polylines+=`<polyline points="${l.points}" fill="none" stroke="${l.color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.85"/>`;
+    }
+    // End dot (always draw even for single point)
     const lastPt=pts[pts.length-1];
     if(lastPt){
       const [lx,ly]=lastPt.split(',');
@@ -627,28 +629,32 @@ function cfCB(d){
   }
 }
 
-// 生成演示数据 - 包含真实的流入流出双向波动
+// 生成演示数据 - 每次只加一个时间点，随时间累积
 function genDemoData(){
   const now=new Date();
+  const ts=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
   const demo=[
     {n:'半导体',b:86},{n:'有色金属',b:45},{n:'PCB',b:12},{n:'算力',b:38},{n:'通信',b:52},
     {n:'AI芯片',b:28},{n:'CPO',b:18},{n:'液冷',b:8},{n:'储能',b:-5},{n:'电力',b:-12},
     {n:'银行',b:-18},{n:'地产',b:-6},{n:'白酒',b:-15},{n:'医药',b:-8},{n:'光伏',b:-10}
   ];
-  for(let i=30;i>=0;i--){
-    const t=new Date(now.getTime()-i*60000);
-    const ts=String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
-    const wavePhase=i/2.5;
+  // 首次：先加一个初始点（30秒前），让折线有起点
+  if(!Object.keys(sectorHistory).length){
+    const t0=new Date(now.getTime()-30000);
+    const ts0=String(t0.getHours()).padStart(2,'0')+':'+String(t0.getMinutes()).padStart(2,'0');
     demo.forEach((d,di)=>{
-      const trend = d.b * (1 + i/80);
-      const cycle = Math.sin(wavePhase + di*1.2) * 30;
-      const spike = Math.sin(wavePhase*4 + di*3) * 15;
-      const noise = (Math.random()-0.5)*20;
-      const flow = trend + cycle + spike + noise;
+      const flow=d.b+(Math.random()-0.5)*30;
       if(!sectorHistory[d.n])sectorHistory[d.n]=[];
-      sectorHistory[d.n].push({t:ts,flow:flow});
+      sectorHistory[d.n].push({t:ts0,flow:flow});
     });
   }
+  // 加当前时间点
+  demo.forEach((d,di)=>{
+    const flow=d.b+(Math.random()-0.5)*30;
+    if(!sectorHistory[d.n])sectorHistory[d.n]=[];
+    sectorHistory[d.n].push({t:ts,flow:flow});
+    if(sectorHistory[d.n].length>60)sectorHistory[d.n].shift();
+  });
   renderCFDynamic();
 }
 
