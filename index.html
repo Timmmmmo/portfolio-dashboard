@@ -138,6 +138,11 @@ h1{font-size:20px}
   <div id="cfStatus" style="text-align:center;padding:3px;font-size:9px;color:#9ca3af;background:#fff;border-radius:0 0 8px 8px;margin-top:0;border:1px solid #e5e7eb;border-top:none">⏳ 首次加载中...</div>
 </div>
 
+<div class="cd" style="border-color:#818cf8;background:var(--g2)">
+  <div class="ct" style="color:#818cf8;font-size:14px">📋 持仓深度分析（五步框架）</div>
+  <div id="analysisContainer" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px"></div>
+</div>
+
 <div class="cd"><div class="ct">📰 新闻</div><div id="nc"></div></div>
 <div class="ft"><span id="ntm"></span>资金流向图30s | 持仓30s</div>
 
@@ -754,6 +759,104 @@ function rf(){
 function nh(){const n=new Date();return Math.max(60,Math.floor((new Date(n.getFullYear(),n.getMonth(),n.getDate(),n.getHours()+1,0,0,0)-n)/1000))}
 function cd(s){if(window._t)clearInterval(window._t);let r=s;
   window._t=setInterval(()=>{r--;const st=ms();document.getElementById('cd').textContent=st.open?r+'s':st.jpOpen||st.krOpen?r+'s🌏':st.usOpen?r+'s🌙':new Date(Date.now()+r*1000).getHours().toString().padStart(2,'0')+':00('+Math.floor(r/60)+'分)';if(r<=0){clearInterval(window._t);rf()}},1000)}
+
+// 持仓深度分析数据
+const ANALYSIS_DATA = {
+  '金宏气体': {
+    role: '半导体制造的"冷却剂+保护气"，芯片制造中不可替代的消耗品',
+    metaphor: '冷却液之于赛车引擎——没人因为冷却液好去买赛车，但没冷却液赛车分分钟爆缸',
+    whyNow: '美国氦气储备耗尽+国产替代+AI扩产需求暴增',
+    valueChain: '上游天然气巨头赚暴利（ExxonMobil），中游特气公司赚技术钱（毛利率30-40%），下游客户只能接受价格',
+    aiFocus: '氦气回收技术是国产企业最可能突破的利润增长点'
+  },
+  '华大智造': {
+    role: '基因测序仪制造商，全球唯二能批量生产高通量测序仪的公司',
+    metaphor: '基因测序界的"华为海思"——打破Illumina垄断，让中国有选择权',
+    whyNow: 'Illumina被限制对华出口+基因数据安全法+国产替代从可选变必选',
+    valueChain: '仪器毛利率30-50%，但试剂耗材毛利率60-80%是真正利润来源（刀片+刀架模式）',
+    aiFocus: 'AI加速基因测序数据分析→测序成本下降→应用场景爆发→试剂收入指数级增长'
+  },
+  '深科技': {
+    role: '存储芯片封测服务商，长鑫存储核心封测伙伴',
+    metaphor: '精酿啤酒的"装瓶厂"——酿了好酒（晶圆），但装瓶贴标（封测）后才能卖',
+    whyNow: '存储超级周期+HBM需求爆发+长鑫扩产+国产替代',
+    valueChain: '封测毛利率15-25%，赚规模+良率的钱，不是暴利但确定性高',
+    aiFocus: 'HBM封测是最大弹性，长鑫扩产是确定性增长'
+  },
+  '比亚迪': {
+    role: '新能源汽车全球销量第一，垂直整合产业链',
+    metaphor: '汽车界的"全能选手"——电池、电机、电控全自研，不靠别人',
+    whyNow: '全球新能源车渗透率持续提升+高端化（仰望/腾势）+海外市场突破',
+    valueChain: '整车毛利率15-20%，但电池+半导体垂直整合可提升利润空间',
+    aiFocus: '智能驾驶+AI座舱是下一阶段竞争焦点，比亚迪自研智驾芯片'
+  },
+  '中芯国际(H)': {
+    role: '中国大陆最先进制程晶圆代工厂',
+    metaphor: '中国芯片制造的"独苗"——虽然技术落后台积电3代，但已经是国内最先进的了',
+    whyNow: 'AI芯片需求爆发+国产替代+美国制裁下国内设计公司被迫转单中芯',
+    valueChain: '代工毛利率20-30%，不如台积电（50%+），但胜在无可替代',
+    aiFocus: 'AI芯片对先进制程的需求是长期增长动力，但受限于设备制裁'
+  },
+  '索辰科技': {
+    role: '国产CAE仿真软件龙头，工业设计核心工具',
+    metaphor: '工业设计的"数字风洞"——造飞机前先电脑模拟，不用真造一架去吹风',
+    whyNow: '中美科技脱钩+Ansys被限制对华出口+国产CAE从0到1',
+    valueChain: '软件毛利率60-70%，但客户拓展慢，营收规模小',
+    aiFocus: 'AI+仿真（AI增强CAE）是下一代技术方向，索辰有先发优势'
+  },
+  '抚顺特钢': {
+    role: '军工高温合金/特钢龙头，航空航天材料的核心供应商',
+    metaphor: '军工材料的"老字号"——特种钢材不是谁都能做的，配方积累了几十年',
+    whyNow: '国防预算增长+航空航天放量+高温合金不可替代',
+    valueChain: '特钢毛利率20-30%，但军工客户粘性极高，定价权稳定',
+    aiFocus: 'AI加速航空航天设计，但对上游特钢需求是间接拉动'
+  },
+  '华钰矿业': {
+    role: '有色金属/锑矿龙头，锑是军工/阻燃剂关键材料',
+    metaphor: '锑的"矿主"——锑不像铜那么出名，但没锑子弹打不响，电线烧得快',
+    whyNow: '锑价上涨周期+有色金属板块整体走强+供给端受限',
+    valueChain: '矿业毛利率30-50%，但资源品价格波动大，周期性强',
+    aiFocus: 'AI数据中心对阻燃材料的需求增加，利好锑的长期需求'
+  },
+  '曙光数创': {
+    role: '液冷/数据中心散热技术龙头，AI算力基建的"散热器"',
+    metaphor: 'AI数据中心的"空调师傅"——GPU跑得越热，散热需求越大',
+    whyNow: 'AI算力爆发→GPU功耗飙升→风冷不够用→液冷成刚需',
+    valueChain: '液冷系统毛利率25-35%，但竞争加剧，技术壁垒在下降',
+    aiFocus: 'AI算力直接拉动液冷需求，但市场竞争激烈，龙头不一定最赚钱'
+  },
+  '西藏矿业': {
+    role: '盐湖提锂矿企，锂矿资源储备',
+    metaphor: '锂矿的"赌石"——盐湖里有锂，但提锂技术和成本决定能不能赚钱',
+    whyNow: '锂价周期底部+新能源车长期需求+盐湖提锂成本优势',
+    valueChain: '锂矿毛利率随锂价波动极大（从负到60%+），周期属性强',
+    aiFocus: 'AI驱动新能源车和储能需求，锂是长期受益方向，但短期锂价低迷'
+  }
+};
+
+function renderAnalysis() {
+  const el = document.getElementById('analysisContainer');
+  if (!el) return;
+  let html = '';
+  H.forEach(h => {
+    const a = ANALYSIS_DATA[h.n];
+    if (!a) return;
+    html += `<div class="sc" style="border-left:3px solid #818cf8">
+      <div class="l1" style="color:#818cf8">📋 ${h.n} <span style="font-size:9px;color:#64748b">${h.d}</span></div>
+      <div style="font-size:10px;color:#94a3b8;line-height:1.5;padding:4px 0">
+        <div style="margin-bottom:3px"><span style="color:#818cf8;font-weight:600">①角色：</span>${a.role}</div>
+        <div style="margin-bottom:3px"><span style="color:#fbbf24;font-weight:600">②比喻：</span>${a.metaphor}</div>
+        <div style="margin-bottom:3px"><span style="color:#34d399;font-weight:600">③催化：</span>${a.whyNow}</div>
+        <div style="margin-bottom:3px"><span style="color:#f97316;font-weight:600">④价值：</span>${a.valueChain}</div>
+        <div style="margin-bottom:3px"><span style="color:#ef4444;font-weight:600">⑤AI：</span>${a.aiFocus}</div>
+      </div>
+    </div>`;
+  });
+  el.innerHTML = html || '<div style="text-align:center;padding:20px;color:#64748b">暂无分析数据</div>';
+}
+
+// 在页面加载完成后渲染分析
+document.addEventListener('DOMContentLoaded', renderAnalysis);
 
 rf();
 startFT();
