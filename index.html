@@ -477,16 +477,19 @@ function renderCFDynamic(){
   lines.forEach(l=>{
     const pts=l.points.split(' ');
     if(pts.length>=2){
-      // Glow
-      polylines+=`<polyline points="${l.points}" fill="none" stroke="${l.color}" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" opacity="0.08"/>`;
-      // Main line
-      polylines+=`<polyline points="${l.points}" fill="none" stroke="${l.color}" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.85"/>`;
-    }
-    // End dot (always draw even for single point)
-    const lastPt=pts[pts.length-1];
-    if(lastPt){
-      const [lx,ly]=lastPt.split(',');
-      polylines+=`<circle cx="${lx}" cy="${ly}" r="4.5" fill="${l.color}" stroke="#fff" stroke-width="2"/>`;
+      // Main line - clean straight segments, no glow blur
+      polylines+=`<polyline points="${l.points}" fill="none" stroke="${l.color}" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt" opacity="0.9"/>`;
+      // Dots at EVERY data point (not just the last one)
+      pts.forEach((pt, pi)=>{
+        if(!pt)return;
+        const [px,py]=pt.split(',');
+        // First and last points get bigger dots, inner points get smaller dots
+        const isEdge = (pi===0 || pi===pts.length-1);
+        const r = isEdge ? 4 : 3;
+        const fill = isEdge ? l.color : '#fff';
+        const strokeW = isEdge ? 2 : 1.5;
+        polylines+=`<circle cx="${px}" cy="${py}" r="${r}" fill="${fill}" stroke="${l.color}" stroke-width="${strokeW}"/>`;
+      });
     }
   });
 
@@ -547,15 +550,15 @@ function renderCFDynamic(){
 
   el.innerHTML=`<div style="background:#fff;border-radius:12px;overflow:visible;box-shadow:0 2px 8px rgba(0,0,0,0.06);font-family:sans-serif;border:1px solid #f3f4f6">
     <!-- Header -->
-    <div style="background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);padding:14px 16px 12px">
+    <div style="background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);padding:14px 16px 12px;border-radius:12px 12px 0 0">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div>
-          <div style="font-size:16px;font-weight:800;color:#fbbf24;letter-spacing:1px">${dateStr} 收盘资金流向</div>
-          <div style="font-size:10px;color:#64748b;margin-top:2px">板块主力净流入/流出 · 基于东方财富100行业板块</div>
+          <div style="font-size:16px;font-weight:800;color:#fbbf24;letter-spacing:1px;text-shadow:0 1px 2px rgba(0,0,0,0.3)">${dateStr} 收盘资金流向</div>
+          <div style="font-size:10px;color:#64748b;margin-top:2px">板块主力净流入/流出 · 折线图每点=每次采集</div>
         </div>
-        <div style="text-align:right">
-          <div style="font-size:11px;color:#ef4444;font-weight:700">+${totalIn.toFixed(0)}亿</div>
-          <div style="font-size:11px;color:#16a34a;font-weight:700">${totalOut.toFixed(0)}亿</div>
+        <div style="text-align:right;display:flex;gap:16px">
+          <div><span style="font-size:10px;color:#ef4444;opacity:0.8">流入</span><div style="font-size:13px;color:#ef4444;font-weight:700">+${totalIn.toFixed(0)}亿</div></div>
+          <div><span style="font-size:10px;color:#16a34a;opacity:0.8">流出</span><div style="font-size:13px;color:#16a34a;font-weight:700">${totalOut.toFixed(0)}亿</div></div>
         </div>
       </div>
     </div>
@@ -573,9 +576,14 @@ function renderCFDynamic(){
       </svg>
     </div>
     <!-- Footer -->
-    <div style="display:flex;justify-content:space-between;padding:6px 14px 8px;font-size:9px;color:#d1d5db;background:#f8fafc;border-top:1px solid #f1f5f9">
+    <div style="display:flex;justify-content:space-between;padding:6px 14px 8px;font-size:9px;color:#d1d5db;background:#f8fafc;border-top:1px solid #f1f5f9;border-radius:0 0 12px 12px">
       <span>📊 ${lines.length}个板块 · ${times.length}个采集点 · 每30秒刷新</span>
-      <span>东方财富数据</span>
+      <span style="display:flex;gap:8px;align-items:center">
+        <span style="display:inline-flex;align-items:center;gap:3px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#dc2626"></span>流入</span>
+        <span style="display:inline-flex;align-items:center;gap:3px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#16a34a"></span>流出</span>
+        <span style="color:#9ca3af">|</span>
+        <span>东方财富数据</span>
+      </span>
     </div>
   </div>`;
 }
