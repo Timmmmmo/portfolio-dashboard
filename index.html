@@ -406,11 +406,11 @@ function renderCFDynamic(){
   // 分别取流入和流出的前几名
   const pos=byAbs.filter(n=>latest[n]>=0);
   const neg=byAbs.filter(n=>latest[n]<0);
-  // 强制均衡: 取流入前7 + 流出前7 = 14个
-  const displayNames=[...pos.slice(0,7), ...neg.slice(0,7)].filter(Boolean);
+  // 强制均衡: 取流入前5 + 流出前5 = 10个，保持清晰
+  const displayNames=[...pos.slice(0,5), ...neg.slice(0,5)].filter(Boolean);
   if(!displayNames.length)return;
   // Debug: 输出到控制台
-  console.log('[CF] 流入:',pos.length,'个 流出:',neg.length,'个 展示:',displayNames.length,'个 各取:',Math.min(7,pos.length),'+',Math.min(7,neg.length));
+  console.log('[CF] 流入:',pos.length,'个 流出:',neg.length,'个 展示:',displayNames.length,'个 各取:',Math.min(5,pos.length),'+',Math.min(5,neg.length));
   displayNames.forEach(n=>console.log('[CF]',n,latest[n]>=0?'🟢':'🔴',latest[n].toFixed(2)));
 
   let maxVal=10;
@@ -418,16 +418,16 @@ function renderCFDynamic(){
   maxVal=Math.ceil(maxVal*1.2/10)*10;
 
   // Colors: red/orange for inflow, green for outflow
-  const warmColors=['#dc2626','#ea580c','#d97706','#ca8a04','#b45309','#be123c','#c2410c'];
-  const greenColors=['#16a34a','#059669','#22c55e','#10b981','#15803d','#047857','#0d9488'];
+  const warmColors=['#dc2626','#d97706','#c2410c','#be123c','#ca8a04'];
+  const greenColors=['#16a34a','#059669','#15803d','#0d9488','#22c55e'];
   function getColor(n,idx){
     const f=latest[n]||0;
     if(f>0)return warmColors[idx%warmColors.length];
     return greenColors[idx%greenColors.length];
   }
 
-  // SVG dimensions
-  const svgW=880, svgH=460, padL=52, padR=20, padT=20, padB=32;
+  // SVG dimensions - narrower for better readability
+  const svgW=600, svgH=400, padL=48, padR=10, padT=16, padB=28;
   const chartW=svgW-padL-padR, chartH=svgH-padT-padB;
   const midY=padT+chartH/2;
 
@@ -512,8 +512,8 @@ function renderCFDynamic(){
   // Sort by Y to detect overlaps, then adjust
   labelPositions.sort((a,b)=>a.y-b.y);
   for(let i=1;i<labelPositions.length;i++){
-    if(labelPositions[i].y-labelPositions[i-1].y<28){
-      labelPositions[i].y=labelPositions[i-1].y+28;
+    if(labelPositions[i].y-labelPositions[i-1].y<22){
+      labelPositions[i].y=labelPositions[i-1].y+22;
     }
   }
 
@@ -525,14 +525,14 @@ function renderCFDynamic(){
   let rightLabels='';
   labelPositions.forEach(l=>{
     const sign=l.flow>=0?'+':'';
-    const labelX=l.x+10;
+    const labelX=l.x+8;
     const labelY=l.y;
     const txtColor=l.flow>=0?'#dc2626':'#16a34a';
     rightLabels+=`
       <g>
-        <rect x="${labelX}" y="${labelY-12}" width="100" height="24" rx="4" fill="white" stroke="${l.color}" stroke-width="1.5" filter="url(#shadow)"/>
-        <text x="${labelX+6}" y="${labelY+1}" fill="#1f2937" font-size="10" font-weight="700" font-family="sans-serif">${l.name}</text>
-        <text x="${labelX+6}" y="${labelY+12}" fill="${txtColor}" font-size="12" font-weight="800" font-family="sans-serif">${sign}${l.flow.toFixed(2)}</text>
+        <rect x="${labelX}" y="${labelY-10}" width="80" height="20" rx="3" fill="white" stroke="${l.color}" stroke-width="1.2" filter="url(#shadow)"/>
+        <text x="${labelX+4}" y="${labelY+1}" fill="#1f2937" font-size="9" font-weight="700" font-family="sans-serif">${l.name}</text>
+        <text x="${labelX+4}" y="${labelY+10}" fill="${txtColor}" font-size="10" font-weight="800" font-family="sans-serif">${sign}${l.flow.toFixed(1)}</text>
       </g>`;
   });
 
@@ -548,22 +548,21 @@ function renderCFDynamic(){
   const d=new Date();
   const dateStr=`${d.getMonth()+1}月${d.getDate()}日`;
 
-  el.innerHTML=`<div style="background:#fff;border-radius:12px;overflow:visible;box-shadow:0 2px 8px rgba(0,0,0,0.06);font-family:sans-serif;border:1px solid #f3f4f6">
+  el.innerHTML=`<div style="background:#fff;border-radius:12px;overflow:visible;box-shadow:0 2px 8px rgba(0,0,0,0.06);font-family:sans-serif;border:1px solid #f3f4f6;max-width:650px;margin:0 auto">
     <!-- Header -->
-    <div style="background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);padding:14px 16px 12px;border-radius:12px 12px 0 0">
+    <div style="background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);padding:10px 14px 10px;border-radius:12px 12px 0 0">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div>
-          <div style="font-size:16px;font-weight:800;color:#fbbf24;letter-spacing:1px;text-shadow:0 1px 2px rgba(0,0,0,0.3)">${dateStr} 收盘资金流向</div>
-          <div style="font-size:10px;color:#64748b;margin-top:2px">板块主力净流入/流出 · 折线图每点=每次采集</div>
+          <div style="font-size:14px;font-weight:800;color:#fbbf24;letter-spacing:1px;text-shadow:0 1px 2px rgba(0,0,0,0.3)">${dateStr} 盘中资金流向 <span style="font-size:10px;color:#64748b;font-weight:400;letter-spacing:0">09:30→15:00</span></div>
         </div>
-        <div style="text-align:right;display:flex;gap:16px">
-          <div><span style="font-size:10px;color:#ef4444;opacity:0.8">流入</span><div style="font-size:13px;color:#ef4444;font-weight:700">+${totalIn.toFixed(0)}亿</div></div>
-          <div><span style="font-size:10px;color:#16a34a;opacity:0.8">流出</span><div style="font-size:13px;color:#16a34a;font-weight:700">${totalOut.toFixed(0)}亿</div></div>
+        <div style="text-align:right;display:flex;gap:12px">
+          <div><span style="font-size:9px;color:#ef4444;opacity:0.8">流入</span><div style="font-size:12px;color:#ef4444;font-weight:700">+${totalIn.toFixed(0)}亿</div></div>
+          <div><span style="font-size:9px;color:#16a34a;opacity:0.8">流出</span><div style="font-size:12px;color:#16a34a;font-weight:700">${totalOut.toFixed(0)}亿</div></div>
         </div>
       </div>
     </div>
     <!-- Chart -->
-    <div style="position:relative;padding:4px 0 0 0">
+    <div style="position:relative;padding:2px 0 0 0">
       <svg width="${svgW}" height="${dynamicSvgH}" viewBox="0 0 ${svgW} ${dynamicSvgH}" style="display:block;width:100%;height:auto">
         <defs>
           <filter id="shadow"><feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.1"/></filter>
@@ -576,13 +575,13 @@ function renderCFDynamic(){
       </svg>
     </div>
     <!-- Footer -->
-    <div style="display:flex;justify-content:space-between;padding:6px 14px 8px;font-size:9px;color:#d1d5db;background:#f8fafc;border-top:1px solid #f1f5f9;border-radius:0 0 12px 12px">
-      <span>📊 ${lines.length}个板块 · ${times.length}个采集点 · 每30秒刷新</span>
-      <span style="display:flex;gap:8px;align-items:center">
-        <span style="display:inline-flex;align-items:center;gap:3px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#dc2626"></span>流入</span>
-        <span style="display:inline-flex;align-items:center;gap:3px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#16a34a"></span>流出</span>
+    <div style="display:flex;justify-content:space-between;padding:4px 12px 6px;font-size:9px;color:#d1d5db;background:#f8fafc;border-top:1px solid #f1f5f9;border-radius:0 0 12px 12px">
+      <span>📊 ${lines.length}个板块 · ${times.length}个采集点</span>
+      <span style="display:flex;gap:6px;align-items:center">
+        <span style="display:inline-flex;align-items:center;gap:2px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#dc2626"></span>流入</span>
+        <span style="display:inline-flex;align-items:center;gap:2px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#16a34a"></span>流出</span>
         <span style="color:#9ca3af">|</span>
-        <span>东方财富数据</span>
+        <span>30s刷新</span>
       </span>
     </div>
   </div>`;
