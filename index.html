@@ -431,8 +431,8 @@ function renderCFDynamic(){
     return greenColors[idx%greenColors.length];
   }
 
-  // SVG dimensions - narrower for better readability
-  const svgW=600, svgH=400, padL=48, padR=10, padT=16, padB=28;
+  // SVG dimensions - wider to accommodate labels
+  const svgW=700, svgH=400, padL=48, padR=100, padT=16, padB=28;
   const chartW=svgW-padL-padR, chartH=svgH-padT-padB;
   const midY=padT+chartH/2;
 
@@ -529,15 +529,15 @@ function renderCFDynamic(){
   // Sort by Y to detect overlaps, then adjust
   labelPositions.sort((a,b)=>a.y-b.y);
   for(let i=1;i<labelPositions.length;i++){
-    if(labelPositions[i].y-labelPositions[i-1].y<22){
-      labelPositions[i].y=labelPositions[i-1].y+22;
+    if(labelPositions[i].y-labelPositions[i-1].y<24){
+      labelPositions[i].y=labelPositions[i-1].y+24;
     }
   }
 
   // Dynamic SVG height: fit all labels
   let maxLabelY=midY;
   labelPositions.forEach(l=>{if(l.y>maxLabelY)maxLabelY=l.y;});
-  const dynamicSvgH=Math.max(svgH, maxLabelY+40);
+  const dynamicSvgH=Math.max(svgH, maxLabelY+50);
 
   let rightLabels='';
   labelPositions.forEach(l=>{
@@ -547,9 +547,9 @@ function renderCFDynamic(){
     const txtColor=l.flow>=0?'#dc2626':'#16a34a';
     rightLabels+=`
       <g>
-        <rect x="${labelX}" y="${labelY-10}" width="80" height="20" rx="3" fill="white" stroke="${l.color}" stroke-width="1.2" filter="url(#shadow)"/>
-        <text x="${labelX+4}" y="${labelY+1}" fill="#1f2937" font-size="9" font-weight="700" font-family="sans-serif">${l.name}</text>
-        <text x="${labelX+4}" y="${labelY+10}" fill="${txtColor}" font-size="10" font-weight="800" font-family="sans-serif">${sign}${l.flow.toFixed(1)}</text>
+        <rect x="${labelX}" y="${labelY-12}" width="90" height="22" rx="4" fill="white" stroke="${l.color}" stroke-width="1.2" filter="url(#shadow)"/>
+        <text x="${labelX+5}" y="${labelY+1}" fill="#1f2937" font-size="10" font-weight="700" font-family="sans-serif">${l.name}</text>
+        <text x="${labelX+5}" y="${labelY+12}" fill="${txtColor}" font-size="11" font-weight="800" font-family="sans-serif">${sign}${l.flow.toFixed(1)}</text>
       </g>`;
   });
 
@@ -567,7 +567,7 @@ function renderCFDynamic(){
   const isOpen = nowMins >= 570 && nowMins <= 900;
   const titleSuffix = isOpen ? '盘中' : '收盘';
 
-  el.innerHTML=`<div style="background:#fff;border-radius:12px;overflow:visible;box-shadow:0 2px 8px rgba(0,0,0,0.06);font-family:sans-serif;border:1px solid #f3f4f6;max-width:650px;margin:0 auto">
+  el.innerHTML=`<div style="background:#fff;border-radius:12px;overflow:visible;box-shadow:0 2px 8px rgba(0,0,0,0.06);font-family:sans-serif;border:1px solid #f3f4f6;max-width:750px;margin:0 auto">
     <!-- Header -->
     <div style="background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);padding:10px 14px 10px;border-radius:12px 12px 0 0">
       <div style="display:flex;justify-content:space-between;align-items:center">
@@ -582,7 +582,7 @@ function renderCFDynamic(){
     </div>
     <!-- Chart -->
     <div style="position:relative;padding:2px 0 0 0">
-      <svg width="${svgW}" height="${dynamicSvgH}" viewBox="0 0 ${svgW} ${dynamicSvgH}" style="display:block;width:100%;height:auto">
+      <svg width="${svgW}" height="${dynamicSvgH}" viewBox="0 0 ${svgW} ${dynamicSvgH}" style="display:block;width:100%;height:auto;overflow:visible">
         <defs>
           <filter id="shadow"><feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.1"/></filter>
         </defs>
