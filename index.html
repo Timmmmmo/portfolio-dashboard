@@ -873,7 +873,7 @@ function render6GResearch() {
   if (!el) return;
   el.innerHTML = `<!-- 6G信息图 - 以SVG图片格式呈现 -->
 <div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);border:1px solid #e2e8f0;font-family:sans-serif">
-  <svg viewBox="0 0 700 920" style="width:100%;height:auto;display:block" xmlns="http://www.w3.org/2000/svg">
+  <svg viewBox="0 0 700 990" style="width:100%;height:auto;display:block" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="g6g" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0%" stop-color="#0c4a6e"/>
@@ -1011,21 +1011,32 @@ function render6GResearch() {
     <rect x="590" y="672" width="44" height="20" rx="4" fill="#e2e8f0"/>
     <text x="612" y="686" text-anchor="middle" fill="#64748b" font-size="11" font-weight="700">~773亿</text>
 
+    <!-- Card 5 - 通宇通讯 -->
+    <rect x="20" y="728" width="660" height="60" rx="6" fill="url(#gcard)" filter="url(#sh6g)"/>
+    <rect x="20" y="728" width="6" height="60" rx="3" fill="#f59e0b"/>
+    <text x="40" y="750" fill="#92400e" font-size="15" font-weight="800">📡 通宇通讯</text>
+    <text x="40" y="770" fill="#64748b" font-size="10">传参与NVIDIA 6G AI基站  |  PE 1145 ❌ 极贵  |  今日涨停</text>
+    <text x="40" y="782" fill="#94a3b8" font-size="9">基站天线 · 8/7已发澄清公告 · 一字板 · 9/8限售解禁125万股</text>
+    <rect x="540" y="738" width="44" height="20" rx="4" fill="#f59e0b"/>
+    <text x="562" y="752" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">观望</text>
+    <rect x="590" y="738" width="44" height="20" rx="4" fill="#e2e8f0"/>
+    <text x="612" y="752" text-anchor="middle" fill="#64748b" font-size="11" font-weight="700">~195亿</text>
+
     <!-- Key Insights -->
-    <rect x="20" y="736" width="660" height="85" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
-    <text x="36" y="758" fill="#0c4a6e" font-size="12" font-weight="700">💡 核心观点</text>
-    <text x="36" y="780" fill="#64748b" font-size="10">• 6G还在标准制定阶段（2027-2028），真正的业绩爆发要等2028年后</text>
-    <text x="36" y="795" fill="#64748b" font-size="10">• 当前确定性：卫星互联网（Starlink验证）> 射频/太赫兹 > 光模块（AI已拉动）</text>
-    <text x="36" y="810" fill="#64748b" font-size="10">• 中兴通讯（PE 37）是确定性最高的防御标的，信维通信是弹性最大的进攻标的</text>
+    <rect x="20" y="802" width="660" height="85" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="36" y="824" fill="#0c4a6e" font-size="12" font-weight="700">💡 核心观点</text>
+    <text x="36" y="846" fill="#64748b" font-size="10">• 6G还在标准制定阶段（2027-2028），真正的业绩爆发要等2028年后</text>
+    <text x="36" y="861" fill="#64748b" font-size="10">• 当前确定性：卫星互联网（Starlink验证）> 射频/太赫兹 > 光模块（AI已拉动）</text>
+    <text x="36" y="876" fill="#64748b" font-size="10">• 中兴通讯（PE 37）是确定性最高的防御标的，信维通信是弹性最大的进攻标的</text>
 
     <!-- Footer -->
-    <rect x="0" y="835" width="700" height="85" fill="#f1f5f9"/>
-    <text x="350" y="858" text-anchor="middle" fill="#64748b" font-size="10">⚠️ 风险提示：6G商用时间遥远（2030），当前以概念和预期炒作主导</text>
-    <text x="350" y="875" text-anchor="middle" fill="#94a3b8" font-size="9">美国光模块禁令 · 卫星互联网盈利不确定 · 标准制定可能延迟</text>
-    <text x="350" y="895" text-anchor="middle" fill="#cbd5e1" font-size="8">数据来源：腾讯gtimg · 更新于2026-08-07</text>
+    <rect x="0" y="901" width="700" height="85" fill="#f1f5f9"/>
+    <text x="350" y="924" text-anchor="middle" fill="#64748b" font-size="10">⚠️ 风险提示：6G商用时间遥远（2030），当前以概念和预期炒作主导</text>
+    <text x="350" y="941" text-anchor="middle" fill="#94a3b8" font-size="9">通宇通讯已发澄清公告 · 美国光模块禁令 · 卫星互联网盈利不确定</text>
+    <text x="350" y="961" text-anchor="middle" fill="#cbd5e1" font-size="8">数据来源：腾讯gtimg · 更新于2026-08-07</text>
 
     <!-- Watermark -->
-    <text x="350" y="910" text-anchor="middle" fill="#e2e8f0" font-size="9">portfolio-dashboard · 6G Research</text>
+    <text x="350" y="976" text-anchor="middle" fill="#e2e8f0" font-size="9">portfolio-dashboard · 6G Research</text>
   </svg>
 </div>`;
 }
