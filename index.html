@@ -178,7 +178,7 @@ label{font-size:12px;color:var(--label);display:block;margin-bottom:3px}
     <div class="form-row three">
       <div><label>股票代码</label><input id="aiCode" placeholder="如 sh600378" onkeydown="if(event.key==='Enter')runAIAnalysis()"></div>
       <div><label>模型</label><select id="aiModel"><option value="deepseek-v4-flash">deepseek-v4-flash</option><option value="glm-5.2">glm-5.2</option></select></div>
-      <div><label>Temperature</label><input id="aiTemp" type="number" step="0.1" min="0" max="2" value="0.7"></div>
+      <div><label>Temperature（强制0.25）</label><input id="aiTemp" type="number" step="0.1" min="0" max="2" value="0.25" readonly style="opacity:0.6;cursor:not-allowed" title="金融分析模式强制0.25，不可修改"></div>
     </div>
     <div class="form-row three">
       <div><label>API地址</label><input id="aiUrl" placeholder="https://api.openai.com/v1"></div>
@@ -507,20 +507,27 @@ async function refreshStocks(){
 // ═══════════════════════════════════════════════
 const AI_PROMPT=`你是一位专业的A股产业链分析师。请对{code}（{name}）进行深度分析，遵循以下7步框架：
 
-① 角色：这家公司在产业链里扮演什么角色？解决什么问题？画出产业链位置。
-② 通俗比喻：用一个简单生动的比喻解释这家公司的业务。
-③ 核心催化：为什么最近受关注？用表格对比"过去vs现在"。
-④ 盈利概况：毛利率、净利率、PE估值、市值、收入利润趋势（用数据说话）。
-⑤ 赛道拉动逻辑：AI需求、国产替代、周期景气等外部因素如何拉动这家公司。
-⑥ 核心风险清单：列出至少3-5个具体风险（估值、筹码、政策、竞争等）。
-⑦ 置信标记：给出你的信心度评级（🟢高/🟡中/🟠低）并说明理由。
+【金融分析模式】
+- temperature=0.25，减少幻觉
+- 凡是财务、估值、市值、业绩数据，如果没有提供原始财报文本，全部标记为「AI推演·未核验财报」
+- 区分客观事实和未来推演内容，不要混合在一起
+- 不要输出任何投资建议（禁止目标价、买入/卖出/持有建议）
+
+① 角色：这家公司在产业链里面是什么角色，一句话定位
+② 通俗比喻：用生活化比喻形容这家公司生意模式
+③ 核心催化：未来1~3年业绩潜在驱动（政策、产能、产品、价格、需求）【AI推演范畴】
+④ 盈利概况：毛利率、净利率大致区间，盈利波动特点，标注【AI推演·未核验财报】
+⑤ 赛道拉动逻辑：所属行业景气度，板块带来的利好&利空
+⑥ 核心风险清单：3‑5条真实可落地风险（行业、竞争、原材料、政策、业绩）
+⑦ 置信标记：区分哪些是公开事实、哪些属于AI推演猜测
 
 要求：
 - 如果PE>100，在风险清单第一行标注⚠️估值极高，PE超过100倍
 - 如果PE为负数，在风险清单标注⚠️业绩亏损
 - 用数据说话，给出具体数字
-- 保持客观，同时列明正面和反面因素
-- 输出格式清晰，用Markdown风格`;
+- 客观事实和AI推演分开放，不要混在一起
+- 输出格式清晰，每段简短，适合卡片展示
+- 严禁目标价、买卖建议`;
 
 function loadConfig(){
   try{return JSON.parse(localStorage.getItem(CFG_KEY))||{};}
@@ -571,7 +578,7 @@ async function callAI(prompt,url,key,model,temp,timeout=25000){
     const resp=await fetch(baseUrl.replace(/\/+$/,'')+'/chat/completions',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
-      body:JSON.stringify({model:model||'deepseek-v4-flash',messages:[{role:'user',content:prompt}],temperature:temp||0.7,max_tokens:4096}),
+      body:JSON.stringify({model:model||'deepseek-v4-flash',messages:[{role:'user',content:prompt}],temperature:0.25,max_tokens:4096}),
       signal:ctrl.signal
     });
     clearTimeout(timer);
@@ -617,12 +624,20 @@ function renderAIResult(text,code,name,md){
 // ═══════════════════════════════════════════════
 // SECTOR ANALYSIS
 // ═══════════════════════════════════════════════
-const SECTOR_PROMPT=`你是一位A股产业链分析师。请分析"{name}"赛道，输出以下内容：
+const SECTOR_PROMPT=`你是一位A股产业链分析师。请分析"{name}"赛道。
+
+【金融分析模式】
+- temperature=0.25，减少幻觉
+- 区分客观事实和未来推演，不要混合
+- 不要输出任何投资建议
+
+输出以下内容：
 1. 产业链角色：这个赛道解决什么问题？在产业链中位置。
 2. 比喻：用一个通俗比喻解释。
-3. 价值分配：产业链各环节利润率、议价权分析。
+3. 价值分配：产业链各环节利润率、议价权分析。【AI推演·未核验财报】
 4. 核心标的：列出A股相关标的及简要逻辑。
-5. 投资建议：给出赛道投资建议和风险提示。`;
+5. 赛道展望：行业景气度判断，未来1-2年趋势。【AI推演】
+6. 风险提示：主要的行业风险。`;
 
 async function runSectorAnalysis(){
   const name=document.getElementById('secName').value.trim();
