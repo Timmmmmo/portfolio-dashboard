@@ -456,11 +456,12 @@ async function viewDailyReport(date){
 }
 
 /* 简单markdown→HTML渲染（标题/表格/列表/粗体/引用） */
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function inlineMd(s){return escHtml(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\*(.+?)\*/g,'<i>$1</i>').replace(/`(.+?)`/g,'<code>$1</code>');}
+
 function mdToHtml(md){
   let lines=md.replace(/\r/g,'').split('\n');
   let html='',inTable=false,tableRows=[];
-  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const inline=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\*(.+?)\*/g,'<i>$1</i>').replace(/`(.+?)`/g,'<code>$1</code>');
   lines.forEach(line=>{
     const t=line.trim();
     if(t.startsWith('|')&&t.endsWith('|')){
@@ -473,13 +474,13 @@ function mdToHtml(md){
       html+=renderTable(tableRows);
     }
     if(!t){html+='\n';return;}
-    if(t.startsWith('### ')){html+='<h4 style="margin:10px 0 4px;color:var(--s4)">'+inline(t.slice(4))+'</h4>';return;}
-    if(t.startsWith('## ')){html+='<h3 style="margin:12px 0 6px;font-size:14px">'+inline(t.slice(3))+'</h3>';return;}
-    if(t.startsWith('# ')){html+='<h2 style="margin:8px 0 6px;font-size:16px">'+inline(t.slice(2))+'</h2>';return;}
-    if(t.startsWith('> ')){html+='<div style="border-left:3px solid var(--s4);padding:2px 8px;margin:4px 0;color:var(--label)">'+inline(t.slice(2))+'</div>';return;}
-    if(/^[-*] /.test(t)){html+='<div style="padding:1px 0 1px 14px;position:relative">· '+inline(t.slice(2))+'</div>';return;}
-    if(/^\d+\. /.test(t)){html+='<div style="padding:1px 0 1px 14px">'+inline(t)+'</div>';return;}
-    html+='<div style="padding:1px 0">'+inline(t)+'</div>';
+    if(t.startsWith('### ')){html+='<h4 style="margin:10px 0 4px;color:var(--s4)">'+inlineMd(t.slice(4))+'</h4>';return;}
+    if(t.startsWith('## ')){html+='<h3 style="margin:12px 0 6px;font-size:14px">'+inlineMd(t.slice(3))+'</h3>';return;}
+    if(t.startsWith('# ')){html+='<h2 style="margin:8px 0 6px;font-size:16px">'+inlineMd(t.slice(2))+'</h2>';return;}
+    if(t.startsWith('> ')){html+='<div style="border-left:3px solid var(--s4);padding:2px 8px;margin:4px 0;color:var(--label)">'+inlineMd(t.slice(2))+'</div>';return;}
+    if(/^[-*] /.test(t)){html+='<div style="padding:1px 0 1px 14px;position:relative">· '+inlineMd(t.slice(2))+'</div>';return;}
+    if(/^\d+\. /.test(t)){html+='<div style="padding:1px 0 1px 14px">'+inlineMd(t)+'</div>';return;}
+    html+='<div style="padding:1px 0">'+inlineMd(t)+'</div>';
   });
   if(inTable)html+=renderTable(tableRows);
   return html;
@@ -487,11 +488,11 @@ function mdToHtml(md){
 function renderTable(rows){
   const cells=row=>row.replace(/^\||\|$/g,'').split('|').map(c=>c.trim());
   let h='<table style="width:100%;border-collapse:collapse;margin:6px 0;font-size:12px"><thead><tr>';
-  cells(rows[0]).forEach(c=>{h+='<th style="border:1px solid var(--border);padding:4px 6px;background:var(--input)">'+inline(c)+'</th>';});
+  cells(rows[0]).forEach(c=>{h+='<th style="border:1px solid var(--border);padding:4px 6px;background:var(--input)">'+inlineMd(c)+'</th>';});
   h+='</tr></thead><tbody>';
   for(let i=1;i<rows.length&&i<20;i++){
     h+='<tr>';
-    cells(rows[i]).forEach(c=>{h+='<td style="border:1px solid var(--border);padding:4px 6px">'+inline(c)+'</td>';});
+    cells(rows[i]).forEach(c=>{h+='<td style="border:1px solid var(--border);padding:4px 6px">'+inlineMd(c)+'</td>';});
     h+='</tr>';
   }
   return h+'</tbody></table>';
