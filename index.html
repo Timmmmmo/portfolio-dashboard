@@ -257,8 +257,13 @@ function renderPortfolio(){
       </div>`;
   });
   grid.innerHTML=html;
-  document.getElementById('pfTotal').textContent='总市值 '+Math.round(totalMv).toLocaleString();
-  document.getElementById('pfDayPL').innerHTML='<span class="tag '+(totalDayPl>=0?'up':'dn')+'">当日 '+(totalDayPl>=0?'+':'')+Math.round(totalDayPl).toLocaleString()+'</span>';
+  if(totalMv>0){
+    document.getElementById('pfTotal').textContent='总市值 '+Math.round(totalMv).toLocaleString();
+    document.getElementById('pfDayPL').innerHTML='<span class="tag '+(totalDayPl>=0?'up':'dn')+'">当日 '+(totalDayPl>=0?'+':'')+Math.round(totalDayPl).toLocaleString()+'</span>';
+  }else{
+    document.getElementById('pfTotal').textContent='录入股数后显示市值';
+    document.getElementById('pfDayPL').innerHTML='';
+  }
   document.getElementById('pfUpdateTime').textContent='更新 '+new Date().toLocaleTimeString('zh-CN',{hour12:false});
   renderIndustryDist();
 }
