@@ -446,7 +446,7 @@ async function viewDailyReport(date){
     b.classList.toggle('btn-p',b.dataset.date===date);
   });
   try{
-    const resp=await fetchWithTimeout('reports/'+date+'.md',8000);
+    const resp=await fetchWithTimeout('reports/'+date+'.json',8000);
     if(!resp.ok)throw new Error('HTTP '+resp.status);
     const md=await resp.text();
     contentEl.innerHTML='<div class="ai-body" style="max-height:none">'+mdToHtml(md)+'</div>';
