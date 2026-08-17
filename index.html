@@ -487,10 +487,13 @@ function mdToHtml(md){
 }
 function renderTable(rows){
   const cells=row=>row.replace(/^\||\|$/g,'').split('|').map(c=>c.trim());
+  // 检查第二行是否是分隔行（:----:），是则跳过
+  let dataStart=1;
+  if(rows.length>1&&/^[:|\s\-]+$/.test(rows[1].replace(/^\||\|$/g,'')))dataStart=2;
   let h='<table style="width:100%;border-collapse:collapse;margin:6px 0;font-size:12px"><thead><tr>';
   cells(rows[0]).forEach(c=>{h+='<th style="border:1px solid var(--border);padding:4px 6px;background:var(--input)">'+inlineMd(c)+'</th>';});
   h+='</tr></thead><tbody>';
-  for(let i=1;i<rows.length&&i<20;i++){
+  for(let i=dataStart;i<rows.length&&i<20;i++){
     h+='<tr>';
     cells(rows[i]).forEach(c=>{h+='<td style="border:1px solid var(--border);padding:4px 6px">'+inlineMd(c)+'</td>';});
     h+='</tr>';
