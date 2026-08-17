@@ -62,7 +62,8 @@ label{font-size:11px;color:var(--label);display:block;margin-bottom:3px}
 
 <div class="header">
   <h1>📊 我的持仓</h1>
-  <div>
+  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+    <span id="clock2" style="font-size:11px;color:var(--label)"></span>
     <span class="btn btn-sm" onclick="toggleTheme()" id="themeBtn">☀️ 浅色</span>
     <span class="btn btn-sm" onclick="refreshAll()" id="refreshBtn">🔄 刷新</span>
   </div>
@@ -123,9 +124,6 @@ label{font-size:11px;color:var(--label);display:block;margin-bottom:3px}
 const PF_KEY='pd_portfolio';
 const SNAP_KEY='pd_snapshots';
 const DS_KEY='pd_disclaimer2';
-let portfolio=loadPortfolio();
-let snapshots=loadSnapshots();
-let marketData={};
 
 const DEFAULT_PF=[
   {code:'sh688106',name:'金宏气体',cost:30.27,shares:0,logic:'半导体特气',tags:'特气'},
@@ -139,6 +137,10 @@ const DEFAULT_PF=[
   {code:'bj872808',name:'曙光数创',cost:83.18,shares:0,logic:'液冷',tags:'液冷'},
   {code:'sh600338',name:'西藏珠峰',cost:18.75,shares:0,logic:'铅锌锂矿',tags:'锂矿'},
 ];
+
+let portfolio=loadPortfolio();
+let snapshots=loadSnapshots();
+let marketData={};
 
 /* ═══════════ Init ═══════════ */
 document.addEventListener('DOMContentLoaded',()=>{
