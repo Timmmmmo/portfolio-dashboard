@@ -233,15 +233,16 @@ let marketData = {};
 
 // ── Default Portfolio ──
 const DEFAULT_PF = [
-  {code:'sh600378',name:'金宏气体',cost:0,shares:0,logic:'',profit:0,stop:0,tags:'特气'},
-  {code:'sh688114',name:'华大智造',cost:0,shares:0,logic:'',profit:0,stop:0,tags:'AI医疗'},
-  {code:'sz002594',name:'比亚迪',cost:0,shares:0,logic:'',profit:0,stop:0,tags:'新能源'},
-  {code:'sh600399',name:'抚顺特钢',cost:0,shares:0,logic:'',profit:0,stop:0,tags:'特钢'},
-  {code:'sh601069',name:'西部黄金',cost:0,shares:0,logic:'',profit:0,stop:0,tags:'黄金'},
-  {code:'bj872808',name:'曙光数创',cost:0,shares:0,logic:'',profit:0,stop:0,tags:'液冷'},
-  {code:'sz000762',name:'西藏矿业',cost:0,shares:0,logic:'',profit:0,stop:0,tags:'锂矿'},
-  {code:'sz000021',name:'深科技',cost:0,shares:0,logic:'',profit:0,stop:0,tags:'存储'},
-  {code:'hk00981',name:'中芯国际(H)',cost:0,shares:0,logic:'',profit:0,stop:0,tags:'芯片'},
+  {code:'sh688106',name:'金宏气体',cost:30.27,shares:0,logic:'半导体特气',profit:0,stop:0,tags:'特气'},
+  {code:'sh688114',name:'华大智造',cost:68.15,shares:0,logic:'AI医疗',profit:0,stop:0,tags:'AI医疗'},
+  {code:'sz002594',name:'比亚迪',cost:90.74,shares:0,logic:'新能源车',profit:0,stop:0,tags:'新能源'},
+  {code:'sz000021',name:'深科技',cost:46.75,shares:0,logic:'存储封测',profit:0,stop:0,tags:'存储'},
+  {code:'hk00981',name:'中芯国际(H)',cost:58.68,shares:0,logic:'芯片代工',profit:0,stop:0,tags:'芯片'},
+  {code:'sh600399',name:'抚顺特钢',cost:6.63,shares:0,logic:'特钢',profit:0,stop:0,tags:'特钢'},
+  {code:'sh601069',name:'华钰矿业',cost:69.83,shares:0,logic:'黄金锑矿',profit:0,stop:0,tags:'黄金'},
+  {code:'sz300346',name:'南大光电',cost:53.22,shares:0,logic:'光刻胶MO源',profit:0,stop:0,tags:'光刻胶'},
+  {code:'bj872808',name:'曙光数创',cost:83.18,shares:0,logic:'液冷',profit:0,stop:0,tags:'液冷'},
+  {code:'sh600338',name:'西藏珠峰',cost:18.75,shares:0,logic:'铅锌锂矿',profit:0,stop:0,tags:'锂矿'},
 ];
 
 // ── Init ──
@@ -271,9 +272,24 @@ function startApp(){
   document.getElementById('aiUrl').value=cfg.url||'';
   document.getElementById('aiKey').value=cfg.key||'';
   document.getElementById('aiModel').value=cfg.model||'deepseek-v4-flash';
-  document.getElementById('aiTemp').value=cfg.temp||0.7;
+  document.getElementById('aiTemp').value=0.25;
+  // Seed initial analysis snapshots
+  seedInitialSnapshots();
   renderPortfolio();
   refreshAll();
+}
+
+function seedInitialSnapshots(){
+  if(snapshots.length>0)return; // only seed once
+  const initialSnapshots=[
+    {code:'sz300346',name:'南大光电',time:'2026-08-17T19:30:00.000Z',md:{pe:121.41},
+     result:'①角色：国内半导体光刻胶+MO源双主业供应商，卡位半导体材料国产替代核心环节\n\n②通俗比喻：相当于芯片制造的"墨水+颜料"供应商——芯片光刻需要光刻胶（墨水），LED/显示需要MO源（颜料），没有这些材料芯片造不出来\n\n③核心催化：光刻胶国产替代加速（ArF光刻胶已通过部分客户验证）；国内晶圆厂扩产带动MO源需求；AI算力芯片制造对先进光刻胶需求增加【AI推演·未来驱动因素】\n\n④盈利概况：PE 121.41 ⚠️估值极高；毛利率约35-45%，净利率约10-15%【AI推演·未核验财报】\n\n⑤赛道拉动逻辑：利好——半导体国产替代是国家战略，光刻胶是卡脖子环节；利空——光刻胶验证周期长（1-3年），短期业绩释放慢，估值已大幅透支预期\n\n⑥核心风险清单：⚠️PE 121倍估值极高，已透支未来2-3年增长预期；⚠️光刻胶客户验证进度不及预期；⚠️MO源业务受LED行业周期影响；⚠️光刻胶赛道竞争加剧；⚠️换手率7.54%偏高\n\n⑦置信标记：公开事实——主营业务为MO源+光刻胶，PE 121.41，市值423亿；AI推演——光刻胶验证进度、未来业绩驱动、竞争格局判断'},
+    {code:'sh601069',name:'华钰矿业',time:'2026-08-17T19:31:00.000Z',md:{pe:26.65},
+     result:'①角色：国内黄金+锑矿开采企业，锑资源储量在国内有优势\n\n②通俗比喻：相当于"地下挖金+挖锑的矿工"——黄金是避险硬通货，锑是军工新材料，两种矿都有人抢着要\n\n③核心催化：国际金价走势（地缘政治紧张+美元降息预期）；锑价上涨（全球供应紧张+中国出口管制）；新矿投产/产能释放【AI推演】\n\n④盈利概况：PE 26.65估值合理；黄金开采毛利率约30-50%，锑矿毛利率约40-60%【AI推演·未核验财报】\n\n⑤赛道拉动逻辑：利好——全球地缘政治紧张，黄金避险需求持续；锑作为战略金属受出口管制政策支撑；利空——金价波动大，锑价已在高位\n\n⑥核心风险清单：⚠️金价下跌风险；⚠️锑价高位回调风险；⚠️矿山开采成本上升；⚠️单一矿山依赖风险\n\n⑦置信标记：公开事实——黄金+锑矿开采，PE 26.65，市值259亿；AI推演——金价走势判断、锑价趋势'},
+    {code:'sh600338',name:'西藏珠峰',time:'2026-08-17T19:32:00.000Z',md:{pe:22.42},
+     result:'①角色：铅锌矿开采+盐湖提锂资源布局，国内有色金属上游企业\n\n②通俗比喻：相当于"高原矿工+盐湖晒盐"——铅锌矿是传统主业（稳），盐湖提锂是新业务（梦），一个养家一个赌未来\n\n③核心催化：铅锌价格走势；盐湖提锂产能释放进度（阿根廷盐湖项目）；锂价反弹【AI推演】\n\n④盈利概况：PE 22.42估值合理偏低；铅锌开采毛利率约20-30%，盐湖提锂若投产毛利率可达50-60%但尚未贡献【AI推演·未核验财报】\n\n⑤赛道拉动逻辑：利好——铅锌下游需求有韧性；锂价若触底反弹弹性大；利空——锂行业产能过剩，盐湖项目多次延期\n\n⑥核心风险清单：⚠️盐湖提锂项目进度多次延期；⚠️铅锌价格受宏观经济影响；⚠️锂供需格局仍偏宽松；⚠️高原矿山运营成本高；⚠️市值127亿流动性偏弱\n\n⑦置信标记：公开事实——铅锌开采+盐湖锂布局，PE 22.42，市值127亿；AI推演——盐湖项目投产节奏、锂价走势'}];
+  snapshots.push(...initialSnapshots);
+  saveSnapshots();
 }
 
 // ── Clock ──
