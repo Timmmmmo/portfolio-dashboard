@@ -409,8 +409,9 @@ function delSnap(i){
   saveSnapshots();
 }
 
-/* ═══════════ Daily Reports (GitHub Pages) ═══════════ */
-const REPO_BASE='https://raw.githubusercontent.com/Timmmmmo/portfolio-dashboard/main/';
+/* ═══════════ Daily Reports (GitHub Pages 同源) ═══════════ */
+// 使用相对路径——dashboard与reports/同属一个GitHub Pages站点，同源fetch无CORS问题
+const REPO_BASE='';
 let dailyReports=[];
 
 async function loadDailyReports(){
@@ -418,7 +419,8 @@ async function loadDailyReports(){
   const contentEl=document.getElementById('dailyContent');
   const tagEl=document.getElementById('dailyTag');
   try{
-    const resp=await fetchWithTimeout(REPO_BASE+'reports/index.json',8000);
+    const resp=await fetchWithTimeout('reports/index.json',8000);
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
     const data=await resp.json();
     dailyReports=data.reports||[];
     if(!dailyReports.length){throw new Error('empty');}
@@ -432,7 +434,7 @@ async function loadDailyReports(){
     viewDailyReport(dailyReports[0].date);
   }catch(e){
     tagEl.textContent='暂无报告';
-    contentEl.innerHTML='<div class="state-box">每日分析尚未生成<br><span style="font-size:11px">首次报告将在下一个工作日17:30自动生成</span></div>';
+    contentEl.innerHTML='<div class="state-box">每日分析尚未生成<br><span style="font-size:11px">首次报告将在下一个工作日17:30自动生成<br>（若刚部署请等待1-2分钟CDN刷新）</span></div>';
   }
 }
 
@@ -444,7 +446,8 @@ async function viewDailyReport(date){
     b.classList.toggle('btn-p',b.dataset.date===date);
   });
   try{
-    const resp=await fetchWithTimeout(REPO_BASE+'reports/'+date+'.md',8000);
+    const resp=await fetchWithTimeout('reports/'+date+'.md',8000);
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
     const md=await resp.text();
     contentEl.innerHTML='<div class="ai-body" style="max-height:none">'+mdToHtml(md)+'</div>';
   }catch(e){
