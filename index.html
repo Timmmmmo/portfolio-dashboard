@@ -110,6 +110,18 @@ label{font-size:11px;color:var(--label);display:block;margin-bottom:3px}
   <div id="stockGrid" class="sg"></div>
 </div>
 
+<!-- 每日分析 -->
+<div class="cd" style="border-color:var(--s9)">
+  <div class="ct">
+    📰 每日持仓分析 <span class="tag" id="dailyTag">加载中...</span>
+    <span style="font-size:10px;color:var(--label);font-weight:400">每日17:30自动更新</span>
+  </div>
+  <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px" id="dailyDates"></div>
+  <div id="dailyContent">
+    <div class="state-box"><span class="sp"></span>加载每日分析...</div>
+  </div>
+</div>
+
 <!-- 快照 -->
 <div class="cd" style="border-color:#818cf8">
   <div class="ct">📸 分析快照 <span class="tag" id="snapCount">0条</span></div>
@@ -161,6 +173,7 @@ function acceptDisclaimer(){
 function startApp(){
   seedSnapshots();
   renderPortfolio();
+  loadDailyReports();
   refreshAll();
 }
 
@@ -394,6 +407,103 @@ function delSnap(i){
   if(!confirm('删除此快照？'))return;
   snapshots.splice(i,1);
   saveSnapshots();
+}
+
+/* ═══════════ Daily Reports (GitHub Pages) ═══════════ */
+const REPO_BASE='https://raw.githubusercontent.com/Timmmmmo/portfolio-dashboard/main/';
+let dailyReports=[];
+
+async function loadDailyReports(){
+  const datesEl=document.getElementById('dailyDates');
+  const contentEl=document.getElementById('dailyContent');
+  const tagEl=document.getElementById('dailyTag');
+  try{
+    const resp=await fetchWithTimeout(REPO_BASE+'reports/index.json',8000);
+    const data=await resp.json();
+    dailyReports=data.reports||[];
+    if(!dailyReports.length){throw new Error('empty');}
+    tagEl.textContent=dailyReports.length+'天';
+    // 渲染日期标签
+    datesEl.innerHTML=dailyReports.map((r,i)=>{
+      const d=r.date.replace(/-/g,'.');
+      return '<button class="btn btn-sm'+(i===0?' btn-p':'')+'" data-date="'+r.date+'" onclick="viewDailyReport(\''+r.date+'\')">'+d+'</button>';
+    }).join('');
+    // 默认显示最新报告
+    viewDailyReport(dailyReports[0].date);
+  }catch(e){
+    tagEl.textContent='暂无报告';
+    contentEl.innerHTML='<div class="state-box">每日分析尚未生成<br><span style="font-size:11px">首次报告将在下一个工作日17:30自动生成</span></div>';
+  }
+}
+
+async function viewDailyReport(date){
+  const contentEl=document.getElementById('dailyContent');
+  contentEl.innerHTML='<div class="state-box"><span class="sp"></span>加载 '+date+' 报告...</div>';
+  // 高亮选中日期
+  document.querySelectorAll('#dailyDates .btn').forEach(b=>{
+    b.classList.toggle('btn-p',b.dataset.date===date);
+  });
+  try{
+    const resp=await fetchWithTimeout(REPO_BASE+'reports/'+date+'.md',8000);
+    const md=await resp.text();
+    contentEl.innerHTML='<div class="ai-body" style="max-height:none">'+mdToHtml(md)+'</div>';
+  }catch(e){
+    contentEl.innerHTML='<div class="state-box">报告加载失败，请稍后重试</div>';
+  }
+}
+
+/* 简单markdown→HTML渲染（标题/表格/列表/粗体/引用） */
+function mdToHtml(md){
+  let lines=md.replace(/\r/g,'').split('\n');
+  let html='',inTable=false,tableRows=[];
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const inline=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\*(.+?)\*/g,'<i>$1</i>').replace(/`(.+?)`/g,'<code>$1</code>');
+  lines.forEach(line=>{
+    const t=line.trim();
+    if(t.startsWith('|')&&t.endsWith('|')){
+      if(!inTable){inTable=true;tableRows=[];}
+      tableRows.push(t);
+      return;
+    }
+    if(inTable){
+      inTable=false;
+      html+=renderTable(tableRows);
+    }
+    if(!t){html+='\n';return;}
+    if(t.startsWith('### ')){html+='<h4 style="margin:10px 0 4px;color:var(--s4)">'+inline(t.slice(4))+'</h4>';return;}
+    if(t.startsWith('## ')){html+='<h3 style="margin:12px 0 6px;font-size:14px">'+inline(t.slice(3))+'</h3>';return;}
+    if(t.startsWith('# ')){html+='<h2 style="margin:8px 0 6px;font-size:16px">'+inline(t.slice(2))+'</h2>';return;}
+    if(t.startsWith('> ')){html+='<div style="border-left:3px solid var(--s4);padding:2px 8px;margin:4px 0;color:var(--label)">'+inline(t.slice(2))+'</div>';return;}
+    if(/^[-*] /.test(t)){html+='<div style="padding:1px 0 1px 14px;position:relative">· '+inline(t.slice(2))+'</div>';return;}
+    if(/^\d+\. /.test(t)){html+='<div style="padding:1px 0 1px 14px">'+inline(t)+'</div>';return;}
+    html+='<div style="padding:1px 0">'+inline(t)+'</div>';
+  });
+  if(inTable)html+=renderTable(tableRows);
+  return html;
+}
+function renderTable(rows){
+  const cells=row=>row.replace(/^\||\|$/g,'').split('|').map(c=>c.trim());
+  let h='<table style="width:100%;border-collapse:collapse;margin:6px 0;font-size:12px"><thead><tr>';
+  cells(rows[0]).forEach(c=>{h+='<th style="border:1px solid var(--border);padding:4px 6px;background:var(--input)">'+inline(c)+'</th>';});
+  h+='</tr></thead><tbody>';
+  for(let i=1;i<rows.length&&i<20;i++){
+    h+='<tr>';
+    cells(rows[i]).forEach(c=>{h+='<td style="border:1px solid var(--border);padding:4px 6px">'+inline(c)+'</td>';});
+    h+='</tr>';
+  }
+  return h+'</tbody></table>';
+}
+async function fetchWithTimeout(url,ms){
+  const ctrl=new AbortController();
+  const t=setTimeout(()=>ctrl.abort(),ms);
+  try{
+    const r=await fetch(url,{signal:ctrl.signal});
+    clearTimeout(t);
+    return r;
+  }catch(e){
+    clearTimeout(t);
+    throw e;
+  }
 }
 
 /* ═══════════ Auto refresh (trading hours) ═══════════ */
