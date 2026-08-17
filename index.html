@@ -131,84 +131,51 @@ label{font-size:12px;color:var(--label);display:block;margin-bottom:3px}
 <!-- ════════════ Main Content ════════════ -->
 <div id="mainContent" style="display:none">
 
-<!-- ① Portfolio Management -->
+<!-- ① Portfolio Cards (精简版) -->
 <div class="cd" style="border-color:var(--s4)">
   <div class="ct" onclick="toggleFold(this)">
-    <span class="fold open">▶</span> 📋 持仓管理 <span class="tag">${Object.keys(portfolio).length}只</span>
-    <span class="fav" onclick="event.stopPropagation()">☆</span>
+    <span class="fold open">▶</span> 📋 我的持仓 · <span id="pfCount">10只</span>
+    <span style="font-size:11px;color:var(--label);font-weight:400" id="pfTotal">总市值: --</span>
+    <span style="font-size:11px;font-weight:400" id="pfDayPL"></span>
   </div>
   <div class="card-body" id="portfolioBody">
-    <div class="form-row three">
-      <div><label>代码</label><input id="pCode" placeholder="如 sh600378 / sz000021" onkeydown="if(event.key==='Enter')addStock()"></div>
-      <div><label>成本价</label><input id="pCost" type="number" step="0.01" placeholder="0.00" onkeydown="if(event.key==='Enter')addStock()"></div>
-      <div><label>仓位(股)</label><input id="pShares" type="number" step="1" placeholder="0" onkeydown="if(event.key==='Enter')addStock()"></div>
-    </div>
-    <div class="form-row full">
-      <div><label>买入逻辑</label><input id="pLogic" placeholder="简要描述买入逻辑" onkeydown="if(event.key==='Enter')addStock()"></div>
-    </div>
-    <div class="form-row three">
-      <div><label>止盈价</label><input id="pProfit" type="number" step="0.01" placeholder="可选"></div>
-      <div><label>止损价</label><input id="pStop" type="number" step="0.01" placeholder="可选"></div>
-      <div><label>行业标签</label><input id="pTag" placeholder="如 存储/AI/黄金" onkeydown="if(event.key==='Enter')addStock()"></div>
-    </div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
-      <button class="btn btn-p" onclick="addStock()">➕ 添加持仓</button>
-      <button class="btn" onclick="exportCSV()">📤 导出CSV</button>
-      <button class="btn" onclick="document.getElementById('csvFile').click()">📥 导入CSV</button>
+    <!-- 快捷操作栏 -->
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center">
+      <button class="btn btn-sm" onclick="document.getElementById('pfForm').style.display=document.getElementById('pfForm').style.display==='none'?'grid':'none'">✏️ 编辑</button>
+      <button class="btn btn-sm" onclick="exportCSV()">📤 导出</button>
+      <button class="btn btn-sm" onclick="document.getElementById('csvFile').click()">📥 导入</button>
       <input type="file" id="csvFile" accept=".csv" style="display:none" onchange="importCSV(event)">
-      <button class="btn" onclick="clearPortfolio()">🗑️ 清空</button>
+      <span style="font-size:11px;color:var(--label)" id="pfUpdateTime"></span>
     </div>
-    <div id="industryDist" style="font-size:11px;color:var(--label);margin-bottom:6px;display:flex;gap:8px;flex-wrap:wrap"></div>
+    <!-- 编辑表单（默认隐藏） -->
+    <div id="pfForm" style="display:none;margin-bottom:8px">
+      <div class="form-row three">
+        <div><label>代码</label><input id="pCode" placeholder="如 sh688106" onkeydown="if(event.key==='Enter')addStock()"></div>
+        <div><label>成本价</label><input id="pCost" type="number" step="0.01" placeholder="0.00" onkeydown="if(event.key==='Enter')addStock()"></div>
+        <div><label>仓位(股)</label><input id="pShares" type="number" step="1" placeholder="0" onkeydown="if(event.key==='Enter')addStock()"></div>
+      </div>
+      <div class="form-row three">
+        <div><label>买入逻辑</label><input id="pLogic" placeholder="简要描述" onkeydown="if(event.key==='Enter')addStock()"></div>
+        <div><label>行业标签</label><input id="pTag" placeholder="如 存储/AI" onkeydown="if(event.key==='Enter')addStock()"></div>
+        <div style="display:flex;align-items:flex-end;gap:4px">
+          <button class="btn btn-p btn-sm" onclick="addStock()">➕ 添加</button>
+          <button class="btn btn-sm btn-d" onclick="delLastStock()">✕ 删末</button>
+        </div>
+      </div>
+    </div>
+    <!-- 行业分布 -->
+    <div id="industryDist" style="font-size:11px;color:var(--label);margin-bottom:6px;display:flex;gap:6px;flex-wrap:wrap"></div>
+    <!-- 持仓卡片网格 -->
     <div id="stockGrid" class="sg"></div>
   </div>
 </div>
 
-<!-- ② Market Overview -->
-<div class="cd" style="border-color:var(--s9)">
-  <div class="ct" onclick="toggleFold(this)"><span class="fold open">▶</span> 📈 大盘指数</div>
-  <div class="card-body" id="marketBody">
-    <div id="marketGrid" class="ix"></div>
-  </div>
-</div>
-
-<!-- ③ AI Analysis -->
+<!-- ② AI分析快照（仅保留快照，方便查看） -->
 <div class="cd" style="border-color:#818cf8">
-  <div class="ct" onclick="toggleFold(this)"><span class="fold open">▶</span> 🤖 AI 深度分析 <span class="tag">7步框架</span></div>
-  <div class="card-body" id="aiBody">
-    <div class="form-row three">
-      <div><label>股票代码</label><input id="aiCode" placeholder="如 sh600378" onkeydown="if(event.key==='Enter')runAIAnalysis()"></div>
-      <div><label>模型</label><select id="aiModel"><option value="deepseek-v4-flash">deepseek-v4-flash</option><option value="glm-5.2">glm-5.2</option></select></div>
-      <div><label>Temperature（强制0.25）</label><input id="aiTemp" type="number" step="0.1" min="0" max="2" value="0.25" readonly style="opacity:0.6;cursor:not-allowed" title="金融分析模式强制0.25，不可修改"></div>
-    </div>
-    <div class="form-row three">
-      <div><label>API地址</label><input id="aiUrl" placeholder="https://api.openai.com/v1"></div>
-      <div><label>API Key</label><input id="aiKey" type="password" placeholder="sk-..."></div>
-      <div style="display:flex;align-items:flex-end;gap:6px">
-        <button class="btn btn-p" onclick="runAIAnalysis()" id="aiBtn" style="flex:1">🔍 分析</button>
-        <button class="btn btn-sm" onclick="showAISnapshots()" title="历史快照">📜</button>
-      </div>
-    </div>
-    <div id="aiResult"></div>
+  <div class="ct" onclick="toggleFold(this)">
+    <span class="fold open">▶</span> 📸 分析快照 <span class="tag" id="snapCount">0条</span>
+    <span style="font-size:10px;color:var(--label);font-weight:400">点击查看历史分析</span>
   </div>
-</div>
-
-<!-- ④ Sector Analysis -->
-<div class="cd" style="border-color:#34d399">
-  <div class="ct" onclick="toggleFold(this)"><span class="fold open">▶</span> 🏭 赛道分析 <span class="tag">自定义</span></div>
-  <div class="card-body" id="sectorBody">
-    <div class="form-row">
-      <div><label>赛道名称</label><input id="secName" placeholder="如 6G / 存储 / AI医疗" onkeydown="if(event.key==='Enter')runSectorAnalysis()"></div>
-    </div>
-    <div style="display:flex;gap:6px;margin-bottom:8px">
-      <button class="btn btn-p" onclick="runSectorAnalysis()" id="secBtn">🔍 分析赛道</button>
-    </div>
-    <div id="sectorResult"></div>
-  </div>
-</div>
-
-<!-- ⑤ Snapshots -->
-<div class="cd" style="border-color:var(--warn)">
-  <div class="ct" onclick="toggleFold(this)"><span class="fold open">▶</span> 📸 分析快照 <span class="tag" id="snapCount">0条</span></div>
   <div class="card-body" id="snapBody">
     <div id="snapList"></div>
   </div>
@@ -345,6 +312,11 @@ function delStock(code){
   portfolio=portfolio.filter(s=>s.code!==code);
   savePortfolio();
 }
+function delLastStock(){
+  if(!portfolio.length)return;
+  portfolio.pop();
+  savePortfolio();
+}
 
 function clearPortfolio(){
   if(!confirm('确认清空所有持仓？'))return;
@@ -367,10 +339,11 @@ function renderPortfolio(){
   if(!portfolio.length){
     grid.innerHTML='<div class="state-box">暂无持仓数据，请添加</div>';
     document.getElementById('industryDist').innerHTML='';
-    document.querySelector('.ct .tag').textContent='0只';
+    document.getElementById('pfCount').textContent='0只';
     return;
   }
-  document.querySelector('.ct .tag').textContent=portfolio.length+'只';
+  document.getElementById('pfCount').textContent=portfolio.length+'只';
+  let totalMv=0,totalPl=0,totalDayPl=0;
   let html='';
   portfolio.forEach(s=>{
     const md=marketData[s.code]||{};
@@ -381,29 +354,44 @@ function renderPortfolio(){
     const chgStr=chg!==0?`${chg>0?'+':''}${chg.toFixed(2)}%`:'--';
     const profitLoss=s.cost>0&&price>0?((price-s.cost)/s.cost*100):0;
     const plStr=profitLoss!==0?`${profitLoss>0?'+':''}${profitLoss.toFixed(1)}%`:'--';
-    const peWarn=pe>100?'risk-high':pe>0&&pe<0?'risk-warn':'';
+    const mv=s.shares>0?price*s.shares:0;
+    const dayPl=mv*(chg/100);
+    const totalPlAmt=s.shares>0&&s.cost>0?(price-s.cost)*s.shares:0;
+    totalMv+=mv; totalPl+=totalPlAmt; totalDayPl+=dayPl;
+    // PE风险标记
+    let peTag='';
+    if(pe>100)peTag='<span class="tag" style="background:var(--s6);color:var(--danger)">⚠️ PE'+pe.toFixed(0)+'极高</span>';
+    else if(pe<0)peTag='<span class="tag" style="background:var(--s6);color:var(--warn)">⚠️ 亏损PE</span>';
+    else if(pe>0)peTag=`<span class="tag" style="background:var(--input-bg);color:var(--label)">PE${pe.toFixed(0)}</span>`;
+    // 盈亏颜色
+    const plCls=totalPlAmt>=0?'up':'dn';
     html+=`
       <div class="sc">
         <button class="del-btn" onclick="delStock('${s.code}')">✕</button>
         <div class="l1">
-          ${s.name||s.code}
-          <span style="font-size:10px;color:var(--label)">${s.code}</span>
+          <strong>${s.name||s.code}</strong>
+          <span style="font-size:10px;color:var(--label)">${s.code.replace(/^(sh|sz|hk|bj)/,'')}</span>
           ${s.tags?`<span class="tag">${s.tags}</span>`:''}
-          ${peWarn?`<span class="tag ${peWarn}">${pe>100?'⚠️PE'+pe.toFixed(0):'⚠️亏损'}</span>`:''}
+          ${peTag}
         </div>
         <div class="pr">
           <span class="nv">${price?price.toFixed(2):'--'}</span>
           <span class="ch ${chgCls}">${chgStr}</span>
         </div>
-        <div class="i1">
-          ${s.cost>0?`成本:${s.cost.toFixed(2)} 盈亏:${plStr}`:''}
-          ${s.shares>0?` 仓位:${s.shares}股 ${s.cost>0&&price>0?'市值:'+(s.shares*price).toFixed(0):''}`:''}
-          ${s.profit>0?` 止盈:${s.profit}`:''}${s.stop>0?` 止损:${s.stop}`:''}
-          ${s.logic?`<br>📝 ${s.logic}`:''}
+        <div class="i1" style="display:grid;grid-template-columns:1fr 1fr;gap:2px">
+          ${s.cost>0?`<span>成本 ${s.cost.toFixed(2)}</span><span>盈亏 <span class="${plCls}" style="font-weight:600">${plStr}</span></span>`:''}
+          ${s.shares>0?`<span>仓位 ${s.shares}股</span><span>${mv>0?'市值 '+mv.toFixed(0):''}</span>`:''}
+          ${totalPlAmt!==0?`<span style="grid-column:1/3;padding-top:2px;border-top:1px solid var(--border)">累计盈亏: <span class="${plCls}" style="font-weight:600">${totalPlAmt>0?'+':''}${totalPlAmt.toFixed(0)}</span></span>`:''}
+          ${s.logic?`<span style="grid-column:1/3;font-size:10px;color:var(--sm)">📝 ${s.logic}</span>`:''}
         </div>
       </div>`;
   });
   grid.innerHTML=html;
+  // 更新头部汇总
+  document.getElementById('pfTotal').textContent='总市值 '+totalMv.toFixed(0);
+  const dayCls=totalDayPl>=0?'up':'dn';
+  document.getElementById('pfDayPL').innerHTML=`<span class="${dayCls}" style="padding:1px 6px;border-radius:4px;font-size:11px">当日 ${totalDayPl>0?'+':''}${totalDayPl.toFixed(0)}</span>`;
+  document.getElementById('pfUpdateTime').textContent='更新 '+new Date().toLocaleTimeString('zh-CN',{hour12:false});
   renderIndustryDist();
 }
 
@@ -486,8 +474,8 @@ async function fetchMarket(code,timeout=15000){
 
 async function refreshAll(){
   document.getElementById('refreshBtn').disabled=true;
-  document.getElementById('refreshBtn').textContent='⏳ 加载中...';
-  await Promise.all([refreshMarket(),refreshStocks()]);
+  document.getElementById('refreshBtn').textContent='⏳ 更新中...';
+  await refreshStocks();
   document.getElementById('refreshBtn').textContent='🔄 刷新';
   document.getElementById('refreshBtn').disabled=false;
 }
