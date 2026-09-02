@@ -110,6 +110,21 @@ label{font-size:11px;color:var(--label);display:block;margin-bottom:3px}
   <div id="stockGrid" class="sg"></div>
 </div>
 
+<!-- 板块资金流向（动态图） -->
+<div class="cd" style="border-color:#fbbf24;background:#fff">
+  <div id="cfHeader" style="background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);border-radius:8px;padding:10px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+    <div style="font-size:15px;font-weight:800;color:#fbbf24;letter-spacing:1px;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000" id="cfTitle">板块资金流向</div>
+    <div style="font-size:11px;font-weight:700" id="cfSummary"><span style="color:#94a3b8">加载中…</span></div>
+  </div>
+  <div style="max-width:750px;margin:0 auto;overflow:visible">
+    <div id="cfDynamic" style="min-height:0"></div>
+  </div>
+  <div style="background:#f8fafc;border-top:1px solid #f1f5f9;border-radius:0 0 8px 8px;padding:6px 10px;font-size:10px;color:#64748b;display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px">
+    <span id="cfSource">数据源: 东方财富板块资金流(主力净流入)</span>
+    <span id="cfUpdate"></span>
+  </div>
+</div>
+
 <!-- 每日分析 -->
 <div class="cd" style="border-color:var(--s9)">
   <div class="ct">
@@ -512,6 +527,209 @@ async function fetchWithTimeout(url,ms){
     throw e;
   }
 }
+
+/* ═══════════ 板块资金流向动态图（SVG） ═══════════ */
+let cfHistory={}; // {name:[{t,flow},...]}
+let cfLoaded=false;
+const CF_WARM=['#dc2626','#ea580c','#d97706','#ca8a04','#b45309'];
+const CF_GREEN=['#16a34a','#059669','#15803d','#047857','#0d9488'];
+
+function cfTimeStr(d){const p=n=>String(n).padStart(2,'0');return p(d.getHours())+':'+p(d.getMinutes());}
+function cfNowStr(){return cfTimeStr(new Date());}
+function cfIsTrading(){const n=new Date(),h=n.getHours(),m=n.getMinutes();const mins=h*60+m;return (mins>=555&&mins<=690)||(mins>=780&&mins<=900);}
+
+// 东财板块资金流 API
+const CF_UT1='fa5fd1943c7b386f1725622f7d9f5fcf';
+const CF_UT2='b2884a393a59ad64002292a3ca90d2cb';
+function cfApiUrl(ut){
+  return 'https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=60&po=1&np=1&fltt=2&invt=2&fields=f12,f14,f62&fid=f62&fs=m:90+t:2+f:!50&ut='+ut;
+}
+
+function cfOnData(d,src){
+  if(cfLoaded)return;
+  if(d&&d.data&&d.data.diff&&d.data.diff.length){
+    cfLoaded=true;
+    cfProcessData(d.data.diff,src);
+  }
+}
+
+function cfFetch(){
+  // 三路并发：corsproxy.io + allorigins + codetabs，先返回者胜出
+  const url=cfApiUrl(CF_UT1);
+  const enc=encodeURIComponent(url);
+  const tryFetch=u=>fetch(u,{signal:AbortSignal.timeout(12000)}).then(r=>r.json()).then(d=>cfOnData(d,'东财实时')).catch(()=>{});
+  tryFetch('https://corsproxy.io/?url='+enc);
+  tryFetch('https://api.allorigins.win/raw?url='+enc);
+  tryFetch('https://api.codetabs.com/v1/proxy?quest='+enc);
+  // 旧token兜底
+  const enc2=encodeURIComponent(cfApiUrl(CF_UT2));
+  tryFetch('https://api.allorigins.win/raw?url='+enc2);
+  // 20s 超时 → demo
+  setTimeout(()=>{if(!cfLoaded){cfGenDemo();}},20000);
+}
+
+function cfProcessData(diff,src){
+  const ts=cfNowStr();
+  diff.forEach(x=>{
+    const name=(x.f14||'').trim();
+    if(!name)return;
+    const flow=(x.f62||0)/1e8; // 元→亿
+    if(!cfHistory[name])cfHistory[name]=[];
+    cfHistory[name].push({t:ts,flow});
+    if(cfHistory[name].length>60)cfHistory[name].shift();
+  });
+  // 清理不在本次数据里的板块
+  const cur=new Set(diff.map(x=>(x.f14||'').trim()));
+  Object.keys(cfHistory).forEach(n=>{if(!cur.has(n))delete cfHistory[n];});
+  document.getElementById('cfSource').textContent='数据源: '+src+' · 主力净流入(亿)';
+  cfRender();
+}
+
+// Demo 兜底数据（含流入+流出）
+const CF_DEMO=[
+  {n:'半导体',b:36},{n:'通信设备',b:22},{n:'算力',b:18},{n:'AI芯片',b:12},{n:'有色金属',b:9},
+  {n:'电力',b:-8},{n:'银行',b:-15},{n:'白酒',b:-11},{n:'房地产',b:-6},{n:'煤炭',b:-19}
+];
+function cfGenDemo(){
+  if(Object.keys(cfHistory).length){cfRender();return;}
+  const now=new Date();
+  const t0=cfTimeStr(new Date(now.getTime()-30000));
+  const ts=cfNowStr();
+  CF_DEMO.forEach(d=>{
+    const v1=d.b+(Math.random()-0.5)*6;
+    const v2=v1+(Math.random()-0.5)*5;
+    cfHistory[d.n]=[{t:t0,flow:v1},{t:ts,flow:v2}];
+  });
+  document.getElementById('cfSource').textContent='数据源: 演示数据(接口暂不可用)';
+  cfRender();
+}
+
+// 选5流入+5流出
+function cfPick(){
+  const latest={};
+  Object.keys(cfHistory).forEach(n=>{
+    const arr=cfHistory[n];
+    if(arr.length)latest[n]=arr[arr.length-1].flow;
+  });
+  const names=Object.keys(latest);
+  const pos=names.filter(n=>latest[n]>=0).sort((a,b)=>latest[b]-latest[a]);
+  const neg=names.filter(n=>latest[n]<0).sort((a,b)=>latest[a]-latest[b]);
+  return {pos:pos.slice(0,5),neg:neg.slice(0,5),latest};
+}
+
+function cfToX(tStr,padL,chartW){
+  const [h,m]=tStr.split(':').map(Number);
+  let mins=h*60+m;
+  // 午休段压缩：把13:00前的点限制在上午段
+  if(mins>690&&mins<780)mins=690;
+  const pos=Math.max(0,Math.min(1,(mins-570)/(900-570)));
+  return padL+pos*chartW;
+}
+
+function cfRender(){
+  const el=document.getElementById('cfDynamic');
+  const {pos,neg,latest}=cfPick();
+  const names=[...pos,...neg];
+  if(!names.length){el.innerHTML='<div class="state-box" style="color:#64748b"><span class="sp"></span>加载资金流向…</div>';return;}
+
+  const svgW=700,baseH=400,padL=48,padR=100,padT=16,padB=28;
+  const chartW=svgW-padL-padR,chartH=baseH-padT-padB;
+
+  // 收集所有点（过滤未来时间）
+  const now=cfNowStr();
+  const allSeries=names.map((n,i)=>{
+    const raw=cfHistory[n].filter(p=>p.t<=now);
+    return {name:n,flow:raw.length?raw[raw.length-1].flow:0,pts:raw,color:null,idx:i};
+  });
+  allSeries.forEach((s,i)=>{
+    s.color=s.flow>=0?CF_WARM[pos.indexOf(s.name)%CF_WARM.length]:CF_GREEN[neg.indexOf(s.name)%CF_GREEN.length];
+  });
+
+  // Y 范围
+  let mn=0,mx=0;
+  allSeries.forEach(s=>s.pts.forEach(p=>{if(p.flow<mn)mn=p.flow;if(p.flow>mx)mx=p.flow;}));
+  const span=(mx-mn)||1;
+  mn-=span*0.22;mx+=span*0.22;
+  const toY=v=>padT+(mx-v)/(mx-mn)*chartH;
+  const zeroY=toY(0);
+
+  // 标题+汇总
+  const d=new Date();
+  document.getElementById('cfTitle').textContent=(d.getMonth()+1)+'月'+d.getDate()+'日 板块资金流向';
+  const totIn=pos.reduce((a,n)=>a+(latest[n]||0),0);
+  const totOut=neg.reduce((a,n)=>a+(latest[n]||0),0);
+  document.getElementById('cfSummary').innerHTML=
+    '<span style="color:#dc2626">流入 +'+totIn.toFixed(1)+'亿</span> · <span style="color:#16a34a">流出 '+totOut.toFixed(1)+'亿</span>';
+  document.getElementById('cfUpdate').textContent='更新 '+now;
+
+  // X轴刻度
+  const xticks=['09:30','10:30','11:30','14:00','15:00'];
+
+  let svg='<svg width="'+svgW+'" height="'+baseH+'" viewBox="0 0 '+svgW+' '+baseH+'" style="display:block;width:100%;height:auto;overflow:visible">';
+  svg+='<defs><filter id="cfShadow"><feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.12"/></filter></defs>';
+  // 网格
+  for(let i=0;i<=4;i++){
+    const y=padT+chartH*i/4;
+    const val=mx-(mx-mn)*i/4;
+    svg+='<line x1="'+padL+'" y1="'+y+'" x2="'+(padL+chartW)+'" y2="'+y+'" stroke="#f3f4f6" stroke-width="0.5"/>';
+    svg+='<text x="'+(padL-6)+'" y="'+(y+3)+'" text-anchor="end" font-size="10" fill="#9ca3af">'+val.toFixed(0)+'</text>';
+  }
+  // 零轴
+  svg+='<line x1="'+padL+'" y1="'+zeroY+'" x2="'+(padL+chartW)+'" y2="'+zeroY+'" stroke="#e5e7eb" stroke-width="1.5"/>';
+  // X轴
+  xticks.forEach(t=>{
+    const x=cfToX(t,padL,chartW);
+    svg+='<line x1="'+x+'" y1="'+padT+'" x2="'+x+'" y2="'+(padT+chartH)+'" stroke="#f9fafb" stroke-width="1"/>';
+    svg+='<text x="'+x+'" y="'+(baseH-8)+'" text-anchor="middle" font-size="10" fill="#9ca3af">'+t+'</text>';
+  });
+  svg+='<text x="'+(padL-6)+'" y="'+(padT-4)+'" text-anchor="end" font-size="10" fill="#9ca3af">亿</text>';
+
+  // 画线（流入在上，先画流出）
+  const ordered=[...allSeries].sort((a,b)=>a.flow-b.flow);
+  const labelPos=[];
+  ordered.forEach(s=>{
+    if(!s.pts.length)return;
+    const ptsStr=s.pts.map(p=>cfToX(p.t,padL,chartW).toFixed(1)+','+toY(p.flow).toFixed(1)).join(' ');
+    if(s.pts.length>=2){
+      svg+='<polyline points="'+ptsStr+'" fill="none" stroke="'+s.color+'" stroke-width="3.5" stroke-linejoin="miter" stroke-linecap="butt" opacity="0.9"/>';
+    }
+    // 点：首末大点+中间小点
+    s.pts.forEach((p,pi)=>{
+      const x=cfToX(p.t,padL,chartW),y=toY(p.flow);
+      const last=pi===s.pts.length-1;
+      if(last){
+        svg+='<circle cx="'+x+'" cy="'+y+'" r="4.5" fill="'+s.color+'" stroke="#fff" stroke-width="2"/>';
+      }else if(pi===0){
+        svg+='<circle cx="'+x+'" cy="'+y+'" r="3.5" fill="'+s.color+'" stroke="'+s.color+'" stroke-width="1.5"/>';
+      }else{
+        svg+='<circle cx="'+x+'" cy="'+y+'" r="2.5" fill="#fff" stroke="'+s.color+'" stroke-width="1.5"/>';
+      }
+    });
+    const lastPt=s.pts[s.pts.length-1];
+    labelPos.push({name:s.name,color:s.color,flow:s.flow,x:cfToX(lastPt.t,padL,chartW),y:toY(s.flow)});
+  });
+
+  // 标签防重叠
+  labelPos.sort((a,b)=>a.y-b.y);
+  for(let i=1;i<labelPos.length;i++){
+    if(labelPos[i].y-labelPos[i-1].y<24)labelPos[i].y=labelPos[i-1].y+24;
+  }
+  labelPos.forEach(l=>{
+    const lx=Math.min(l.x+10,svgW-92);
+    const ly=l.y;
+    const valStr=(l.flow>=0?'+':'')+l.flow.toFixed(1);
+    svg+='<g filter="url(#cfShadow)"><rect x="'+lx+'" y="'+(ly-11)+'" width="90" height="22" rx="4" fill="#fff" stroke="'+l.color+'" stroke-width="1.5"/></g>';
+    svg+='<text x="'+(lx+5)+'" y="'+(ly-1)+'" font-size="10" font-weight="700" fill="#1f2937">'+l.name+'</text>';
+    svg+='<text x="'+(lx+5)+'" y="'+(ly+9)+'" font-size="10" font-weight="700" fill="'+(l.flow>=0?'#dc2626':'#16a34a')+'">'+valStr+'亿</text>';
+  });
+
+  svg+='</svg>';
+  el.innerHTML=svg;
+}
+
+// 启动 + 30秒刷新
+cfFetch();
+setInterval(()=>{if(cfIsTrading()){cfLoaded=false;cfFetch();}else{cfRender();}},30000);
 
 /* ═══════════ Auto refresh (trading hours) ═══════════ */
 setInterval(()=>{
