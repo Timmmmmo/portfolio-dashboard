@@ -538,53 +538,72 @@ function cfTimeStr(d){const p=n=>String(n).padStart(2,'0');return p(d.getHours()
 function cfNowStr(){return cfTimeStr(new Date());}
 function cfIsTrading(){const n=new Date(),h=n.getHours(),m=n.getMinutes();const mins=h*60+m;return (mins>=555&&mins<=690)||(mins>=780&&mins<=900);}
 
-// 数据源：腾讯中证行业指数（access-control-allow-origin:* 浏览器直连，无需代理）
-// 用行业指数的 涨跌幅×成交额 估算资金强弱（proxy for 主力资金偏好）
+// 数据源：腾讯分钟K线（web.ifzq.gtimg.cn）—— 全天分时数据，CORS开放
+// 用行业指数每分钟 (距开盘涨跌幅 × 累计成交额权重) 估算资金强弱，画出全天连续折线
 const CF_INDICES=[
   {c:'sh000935',n:'信息技术'},{c:'sh000936',n:'通信'},{c:'sh000930',n:'工业'},
   {c:'sh000929',n:'材料'},{c:'sh000933',n:'医药'},{c:'sh000934',n:'金融'},
   {c:'sh000932',n:'消费'},{c:'sh000931',n:'可选消费'},{c:'sh000928',n:'能源'},{c:'sh000937',n:'公用'}
 ];
+let cfDone=0; // 已完成请求计数
 
 function cfFetch(){
-  const codes=CF_INDICES.map(x=>x.c).join(',');
-  fetch('https://qt.gtimg.cn/q='+codes,{signal:AbortSignal.timeout(10000)})
-    .then(r=>r.arrayBuffer())
-    .then(buf=>{
-      // 腾讯返回GBK编码，手动解码
-      const txt=new TextDecoder('gbk').decode(buf);
-      cfProcessData(txt,'腾讯行业指数');
-    })
-    .catch(()=>{cfGenDemo();});
-  // 12s 超时兜底
-  setTimeout(()=>{if(!cfLoaded){cfGenDemo();}},12000);
+  cfDone=0;
+  let anyOk=false;
+  CF_INDICES.forEach(idx=>{
+    fetch('https://web.ifzq.gtimg.cn/appstock/app/minute/query?code='+idx.c,{signal:AbortSignal.timeout(10000)})
+      .then(r=>r.json())
+      .then(d=>{
+        const rows=(((d||{}).data||{})[idx.c]||{}).data;
+        const arr=rows&&rows.data;
+        if(!arr||!arr.length)return;
+        cfProcessMinute(idx.n,arr);
+        anyOk=true;
+      })
+      .catch(()=>{})
+      .finally(()=>{
+        cfDone++;
+        if(cfDone>=CF_INDICES.length){
+          if(anyOk||Object.keys(cfHistory).length){
+            cfLoaded=true;
+            document.getElementById('cfSource').textContent='数据源: 腾讯分钟K线 · 行业资金强弱(全天)';
+            cfRender();
+          }else{
+            cfGenDemo();
+          }
+        }
+      });
+  });
+  // 15s 全局超时兜底
+  setTimeout(()=>{if(!cfLoaded){cfGenDemo();}},15000);
 }
 
-function cfProcessData(txt,src){
-  const ts=cfNowStr();
-  const lines=txt.split(';');
-  let got=0;
-  lines.forEach(l=>{
-    const m=l.match(/v_([a-z0-9]+)="([^"]+)"/);
-    if(!m)return;
-    const code=m[1],p=m[2].split('~');
-    if(p.length<45)return;
-    const idx=CF_INDICES.find(x=>x.c===code);
-    if(!idx)return;
-    const pct=parseFloat(p[32])||0;      // 涨跌幅%
-    const amt=parseFloat(p[37])||0;      // 成交额(万)
-    // 资金强弱估算：涨跌幅 × 成交额权重（标准化到±50亿区间便于展示）
-    const flow=pct*Math.sqrt(amt/1e6)*2;
-    if(!cfHistory[idx.n])cfHistory[idx.n]=[];
-    cfHistory[idx.n].push({t:ts,flow:parseFloat(flow.toFixed(2))});
-    if(cfHistory[idx.n].length>60)cfHistory[idx.n].shift();
-    got++;
-  });
-  if(got>0){
-    cfLoaded=true;
-    document.getElementById('cfSource').textContent='数据源: '+src+' · 行业资金强弱(估算)';
-    cfRender();
+function cfProcessMinute(name,arr){
+  // arr: ["0930 7731.64 473868 2175339063.50", ...]  时间 价格 成交量 累计成交额(元)
+  const first=arr[0].split(/\s+/);
+  const open=parseFloat(first[1]);
+  if(!open)return;
+  const series=[];
+  // 每3分钟取一个点，降低SVG点数（全天~70点/线）
+  for(let i=0;i<arr.length;i+=3){
+    const p=arr[i].split(/\s+/);
+    const t=p[0].slice(0,2)+':'+p[0].slice(2);
+    const price=parseFloat(p[1]);
+    const amt=parseFloat(p[3])||0;
+    const pct=(price-open)/open*100;
+    // 资金强弱 = 距开盘涨跌幅 × 累计成交额权重
+    const flow=pct*Math.sqrt(amt/1e8);
+    series.push({t:t,flow:parseFloat(flow.toFixed(2))});
   }
+  // 始终包含最后一个点（最新时刻）
+  const lastRow=arr[arr.length-1].split(/\s+/);
+  const lt=lastRow[0].slice(0,2)+':'+lastRow[0].slice(2);
+  const lp=parseFloat(lastRow[1]),la=parseFloat(lastRow[3])||0;
+  const lf=((lp-open)/open*100)*Math.sqrt(la/1e8);
+  if(series.length&&series[series.length-1].t!==lt){
+    series.push({t:lt,flow:parseFloat(lf.toFixed(2))});
+  }
+  cfHistory[name]=series;
 }
 
 // Demo 兜底数据（含流入+流出）
@@ -693,19 +712,14 @@ function cfRender(){
     if(!s.pts.length)return;
     const ptsStr=s.pts.map(p=>cfToX(p.t,padL,chartW).toFixed(1)+','+toY(p.flow).toFixed(1)).join(' ');
     if(s.pts.length>=2){
-      svg+='<polyline points="'+ptsStr+'" fill="none" stroke="'+s.color+'" stroke-width="3.5" stroke-linejoin="miter" stroke-linecap="butt" opacity="0.9"/>';
+      svg+='<polyline points="'+ptsStr+'" fill="none" stroke="'+s.color+'" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt" opacity="0.9"/>';
     }
-    // 点：首末大点+中间小点
+    // 点：全天分时数据点多，只画最新点（避免密集圆点糊成一团）
     s.pts.forEach((p,pi)=>{
-      const x=cfToX(p.t,padL,chartW),y=toY(p.flow);
       const last=pi===s.pts.length-1;
-      if(last){
-        svg+='<circle cx="'+x+'" cy="'+y+'" r="4.5" fill="'+s.color+'" stroke="#fff" stroke-width="2"/>';
-      }else if(pi===0){
-        svg+='<circle cx="'+x+'" cy="'+y+'" r="3.5" fill="'+s.color+'" stroke="'+s.color+'" stroke-width="1.5"/>';
-      }else{
-        svg+='<circle cx="'+x+'" cy="'+y+'" r="2.5" fill="#fff" stroke="'+s.color+'" stroke-width="1.5"/>';
-      }
+      if(!last)return;
+      const x=cfToX(p.t,padL,chartW),y=toY(p.flow);
+      svg+='<circle cx="'+x+'" cy="'+y+'" r="4.5" fill="'+s.color+'" stroke="#fff" stroke-width="2"/>';
     });
     const lastPt=s.pts[s.pts.length-1];
     labelPos.push({name:s.name,color:s.color,flow:s.flow,x:cfToX(lastPt.t,padL,chartW),y:toY(s.flow)});
@@ -731,7 +745,8 @@ function cfRender(){
 
 // 启动 + 30秒刷新
 cfFetch();
-setInterval(()=>{if(cfIsTrading()){cfLoaded=false;cfFetch();}else{cfRender();}},30000);
+// 30秒刷新：分钟K线全量重拉（cfFetch内部会重建cfHistory），不清空cfLoaded避免误触demo
+setInterval(()=>{if(cfIsTrading()){cfFetch();}else{cfRender();}},30000);
 
 /* ═══════════ Auto refresh (trading hours) ═══════════ */
 setInterval(()=>{
