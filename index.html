@@ -538,51 +538,53 @@ function cfTimeStr(d){const p=n=>String(n).padStart(2,'0');return p(d.getHours()
 function cfNowStr(){return cfTimeStr(new Date());}
 function cfIsTrading(){const n=new Date(),h=n.getHours(),m=n.getMinutes();const mins=h*60+m;return (mins>=555&&mins<=690)||(mins>=780&&mins<=900);}
 
-// 东财板块资金流 API
-const CF_UT1='fa5fd1943c7b386f1725622f7d9f5fcf';
-const CF_UT2='b2884a393a59ad64002292a3ca90d2cb';
-function cfApiUrl(ut){
-  return 'https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=60&po=1&np=1&fltt=2&invt=2&fields=f12,f14,f62&fid=f62&fs=m:90+t:2+f:!50&ut='+ut;
-}
-
-function cfOnData(d,src){
-  if(cfLoaded)return;
-  if(d&&d.data&&d.data.diff&&d.data.diff.length){
-    cfLoaded=true;
-    cfProcessData(d.data.diff,src);
-  }
-}
+// 数据源：腾讯中证行业指数（access-control-allow-origin:* 浏览器直连，无需代理）
+// 用行业指数的 涨跌幅×成交额 估算资金强弱（proxy for 主力资金偏好）
+const CF_INDICES=[
+  {c:'sh000935',n:'信息技术'},{c:'sh000936',n:'通信'},{c:'sh000930',n:'工业'},
+  {c:'sh000929',n:'材料'},{c:'sh000933',n:'医药'},{c:'sh000934',n:'金融'},
+  {c:'sh000932',n:'消费'},{c:'sh000931',n:'可选消费'},{c:'sh000928',n:'能源'},{c:'sh000937',n:'公用'}
+];
 
 function cfFetch(){
-  // 三路并发：corsproxy.io + allorigins + codetabs，先返回者胜出
-  const url=cfApiUrl(CF_UT1);
-  const enc=encodeURIComponent(url);
-  const tryFetch=u=>fetch(u,{signal:AbortSignal.timeout(12000)}).then(r=>r.json()).then(d=>cfOnData(d,'东财实时')).catch(()=>{});
-  tryFetch('https://corsproxy.io/?url='+enc);
-  tryFetch('https://api.allorigins.win/raw?url='+enc);
-  tryFetch('https://api.codetabs.com/v1/proxy?quest='+enc);
-  // 旧token兜底
-  const enc2=encodeURIComponent(cfApiUrl(CF_UT2));
-  tryFetch('https://api.allorigins.win/raw?url='+enc2);
-  // 20s 超时 → demo
-  setTimeout(()=>{if(!cfLoaded){cfGenDemo();}},20000);
+  const codes=CF_INDICES.map(x=>x.c).join(',');
+  fetch('https://qt.gtimg.cn/q='+codes,{signal:AbortSignal.timeout(10000)})
+    .then(r=>r.arrayBuffer())
+    .then(buf=>{
+      // 腾讯返回GBK编码，手动解码
+      const txt=new TextDecoder('gbk').decode(buf);
+      cfProcessData(txt,'腾讯行业指数');
+    })
+    .catch(()=>{cfGenDemo();});
+  // 12s 超时兜底
+  setTimeout(()=>{if(!cfLoaded){cfGenDemo();}},12000);
 }
 
-function cfProcessData(diff,src){
+function cfProcessData(txt,src){
   const ts=cfNowStr();
-  diff.forEach(x=>{
-    const name=(x.f14||'').trim();
-    if(!name)return;
-    const flow=(x.f62||0)/1e8; // 元→亿
-    if(!cfHistory[name])cfHistory[name]=[];
-    cfHistory[name].push({t:ts,flow});
-    if(cfHistory[name].length>60)cfHistory[name].shift();
+  const lines=txt.split(';');
+  let got=0;
+  lines.forEach(l=>{
+    const m=l.match(/v_([a-z0-9]+)="([^"]+)"/);
+    if(!m)return;
+    const code=m[1],p=m[2].split('~');
+    if(p.length<45)return;
+    const idx=CF_INDICES.find(x=>x.c===code);
+    if(!idx)return;
+    const pct=parseFloat(p[32])||0;      // 涨跌幅%
+    const amt=parseFloat(p[37])||0;      // 成交额(万)
+    // 资金强弱估算：涨跌幅 × 成交额权重（标准化到±50亿区间便于展示）
+    const flow=pct*Math.sqrt(amt/1e6)*2;
+    if(!cfHistory[idx.n])cfHistory[idx.n]=[];
+    cfHistory[idx.n].push({t:ts,flow:parseFloat(flow.toFixed(2))});
+    if(cfHistory[idx.n].length>60)cfHistory[idx.n].shift();
+    got++;
   });
-  // 清理不在本次数据里的板块
-  const cur=new Set(diff.map(x=>(x.f14||'').trim()));
-  Object.keys(cfHistory).forEach(n=>{if(!cur.has(n))delete cfHistory[n];});
-  document.getElementById('cfSource').textContent='数据源: '+src+' · 主力净流入(亿)';
-  cfRender();
+  if(got>0){
+    cfLoaded=true;
+    document.getElementById('cfSource').textContent='数据源: '+src+' · 行业资金强弱(估算)';
+    cfRender();
+  }
 }
 
 // Demo 兜底数据（含流入+流出）
@@ -659,7 +661,7 @@ function cfRender(){
   const totIn=pos.reduce((a,n)=>a+(latest[n]||0),0);
   const totOut=neg.reduce((a,n)=>a+(latest[n]||0),0);
   document.getElementById('cfSummary').innerHTML=
-    '<span style="color:#dc2626">流入 +'+totIn.toFixed(1)+'亿</span> · <span style="color:#16a34a">流出 '+totOut.toFixed(1)+'亿</span>';
+    '<span style="color:#dc2626">强势 +'+totIn.toFixed(1)+'</span> · <span style="color:#16a34a">弱势 '+totOut.toFixed(1)+'</span>';
   document.getElementById('cfUpdate').textContent='更新 '+now;
 
   // X轴刻度
