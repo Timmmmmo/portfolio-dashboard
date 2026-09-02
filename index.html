@@ -538,35 +538,54 @@ function cfTimeStr(d){const p=n=>String(n).padStart(2,'0');return p(d.getHours()
 function cfNowStr(){return cfTimeStr(new Date());}
 function cfIsTrading(){const n=new Date(),h=n.getHours(),m=n.getMinutes();const mins=h*60+m;return (mins>=555&&mins<=690)||(mins>=780&&mins<=900);}
 
-// 数据源：腾讯分钟K线（web.ifzq.gtimg.cn）—— 全天分时数据，CORS开放
-// 用行业指数每分钟 (距开盘涨跌幅 × 累计成交额权重) 估算资金强弱，画出全天连续折线
-const CF_INDICES=[
-  {c:'sh000935',n:'信息技术'},{c:'sh000936',n:'通信'},{c:'sh000930',n:'工业'},
-  {c:'sh000929',n:'材料'},{c:'sh000933',n:'医药'},{c:'sh000934',n:'金融'},
-  {c:'sh000932',n:'消费'},{c:'sh000931',n:'可选消费'},{c:'sh000928',n:'能源'},{c:'sh000937',n:'公用'}
-];
-let cfDone=0; // 已完成请求计数
+// ═══ 数据源：东财 push2delay 真实主力净流入（CapitalPulse 项目） ═══
+// 步骤1: clist/get 拿流入+流出前N板块代码 → 步骤2: 对每个板块拉 fflow/kline/get 全天分时主力净流入
+const CF_UT='fa5fd1943c7b386f1725622f7d9f5fcf';
+const CF_EM='https://push2delay.eastmoney.com/api/qt';
+let cfSectorCodes=[]; // [{c:'BK1204',n:'国防军工'},...] 流入前5+流出前5
 
 function cfFetch(){
+  // 先拿板块排行（主力净流入排序）
+  const url=CF_EM+'/clist/get?pn=1&pz=100&po=1&np=1&fltt=2&invt=2&fields=f3,f12,f14,f62&fid=f62&fs=m:90+t:2+f:!50&ut='+CF_UT;
+  fetch(url,{signal:AbortSignal.timeout(10000)})
+    .then(r=>r.json())
+    .then(d=>{
+      const diff=((d||{}).data||{}).diff||[];
+      if(!diff.length)throw 0;
+      // 按主力净流入f62排序：取流入前5+流出前5
+      const sorted=diff.slice().sort((a,b)=>(b.f62||0)-(a.f62||0));
+      const pos=sorted.filter(x=>(x.f62||0)>0).slice(0,5);
+      const neg=sorted.filter(x=>(x.f62||0)<0).slice(-5).reverse();
+      cfSectorCodes=[...pos,...neg].map(x=>({c:x.f12,n:x.f14}));
+      return cfFetchFlows();
+    })
+    .catch(()=>{cfGenDemo();});
+  setTimeout(()=>{if(!cfLoaded){cfGenDemo();}},18000);
+}
+
+// 对每个板块拉全天分时主力净流入
+function cfFetchFlows(){
   cfDone=0;
   let anyOk=false;
-  CF_INDICES.forEach(idx=>{
-    fetch('https://web.ifzq.gtimg.cn/appstock/app/minute/query?code='+idx.c,{signal:AbortSignal.timeout(10000)})
+  const total=cfSectorCodes.length;
+  if(!total){cfGenDemo();return;}
+  cfSectorCodes.forEach(sec=>{
+    const url=CF_EM+'/stock/fflow/kline/get?lmt=0&klt=1&secid=90.'+sec.c+'&fields1=f1,f2,f3,f7&fields2=f51,f52,f53,f54,f55,f56&ut='+CF_UT;
+    fetch(url,{signal:AbortSignal.timeout(10000)})
       .then(r=>r.json())
       .then(d=>{
-        const rows=(((d||{}).data||{})[idx.c]||{}).data;
-        const arr=rows&&rows.data;
-        if(!arr||!arr.length)return;
-        cfProcessMinute(idx.n,arr);
+        const kl=(((d||{}).data||{}).klines)||[];
+        if(!kl.length)return;
+        cfHistory[sec.n]=cfParseFlow(kl);
         anyOk=true;
       })
       .catch(()=>{})
       .finally(()=>{
         cfDone++;
-        if(cfDone>=CF_INDICES.length){
+        if(cfDone>=total){
           if(anyOk||Object.keys(cfHistory).length){
             cfLoaded=true;
-            document.getElementById('cfSource').textContent='数据源: 腾讯分钟K线 · 行业资金强弱(全天)';
+            document.getElementById('cfSource').textContent='数据源: 东方财富 · 主力净流入(全天分时,真实大单)';
             cfRender();
           }else{
             cfGenDemo();
@@ -574,36 +593,25 @@ function cfFetch(){
         }
       });
   });
-  // 15s 全局超时兜底
-  setTimeout(()=>{if(!cfLoaded){cfGenDemo();}},15000);
 }
 
-function cfProcessMinute(name,arr){
-  // arr: ["0930 7731.64 473868 2175339063.50", ...]  时间 价格 成交量 累计成交额(元)
-  const first=arr[0].split(/\s+/);
-  const open=parseFloat(first[1]);
-  if(!open)return;
+// 解析分时资金流：每条 "时间,主力净流入,小单,中单,大单,超大单"（累计值，元）
+function cfParseFlow(kl){
   const series=[];
-  // 每3分钟取一个点，降低SVG点数（全天~70点/线）
-  for(let i=0;i<arr.length;i+=3){
-    const p=arr[i].split(/\s+/);
-    const t=p[0].slice(0,2)+':'+p[0].slice(2);
-    const price=parseFloat(p[1]);
-    const amt=parseFloat(p[3])||0;
-    const pct=(price-open)/open*100;
-    // 资金强弱 = 距开盘涨跌幅 × 累计成交额权重
-    const flow=pct*Math.sqrt(amt/1e8);
-    series.push({t:t,flow:parseFloat(flow.toFixed(2))});
+  const step=Math.max(1,Math.floor(kl.length/70)); // 降到~70点
+  for(let i=0;i<kl.length;i+=step){
+    const p=kl[i].split(',');
+    const t=p[0].slice(11,16); // "2026-09-02 09:31" → "09:31"
+    const mainIn=parseFloat(p[1])||0; // 主力净流入(元)
+    series.push({t:t,flow:parseFloat((mainIn/1e8).toFixed(2))}); // 转亿
   }
-  // 始终包含最后一个点（最新时刻）
-  const lastRow=arr[arr.length-1].split(/\s+/);
-  const lt=lastRow[0].slice(0,2)+':'+lastRow[0].slice(2);
-  const lp=parseFloat(lastRow[1]),la=parseFloat(lastRow[3])||0;
-  const lf=((lp-open)/open*100)*Math.sqrt(la/1e8);
+  // 必含最后点
+  const lp=kl[kl.length-1].split(',');
+  const lt=lp[0].slice(11,16);
   if(series.length&&series[series.length-1].t!==lt){
-    series.push({t:lt,flow:parseFloat(lf.toFixed(2))});
+    series.push({t:lt,flow:parseFloat(((parseFloat(lp[1])||0)/1e8).toFixed(2))});
   }
-  cfHistory[name]=series;
+  return series;
 }
 
 // Demo 兜底数据（含流入+流出）
@@ -704,6 +712,7 @@ function cfRender(){
     svg+='<text x="'+x+'" y="'+(baseH-8)+'" text-anchor="middle" font-size="10" fill="#9ca3af">'+t+'</text>';
   });
   svg+='<text x="'+(padL-6)+'" y="'+(padT-4)+'" text-anchor="end" font-size="10" fill="#9ca3af">亿</text>';
+
 
   // 画线（流入在上，先画流出）
   const ordered=[...allSeries].sort((a,b)=>a.flow-b.flow);
