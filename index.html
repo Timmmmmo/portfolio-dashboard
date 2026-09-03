@@ -117,7 +117,14 @@ label{font-size:11px;color:var(--label);display:block;margin-bottom:3px}
     <div style="font-size:11px;font-weight:700" id="cfSummary"><span style="color:#94a3b8">加载中…</span></div>
   </div>
   <div style="max-width:750px;margin:0 auto;overflow:visible">
-    <div id="cfDynamic" style="min-height:0"></div>
+    <div id="cfTabs" style="display:flex;gap:0;margin-bottom:6px;border-bottom:2px solid #e5e7eb;overflow-x:auto">
+      <div class="tab active" style="padding:6px 12px;cursor:pointer;font-size:11px;font-weight:700;border-bottom:2px solid #dc2626;margin-bottom:-2px;white-space:nowrap;color:#dc2626" onclick="cfSwitchTab('chart')">分时走势</div>
+      <div class="tab" style="padding:6px 12px;cursor:pointer;font-size:11px;font-weight:700;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;color:#64748b" onclick="cfSwitchTab('rank')">实时排行</div>
+      <div class="tab" style="padding:6px 12px;cursor:pointer;font-size:11px;font-weight:700;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;color:#64748b" onclick="cfSwitchTab('daily')">30日趋势</div>
+    </div>
+    <div id="cfTabChart" class="tab-content active" style="min-height:180px"></div>
+    <div id="cfTabRank" class="tab-content" style="display:none;max-height:400px;overflow-y:auto"></div>
+    <div id="cfTabDaily" class="tab-content" style="display:none;max-height:400px;overflow:auto"></div>
   </div>
   <div style="background:#f8fafc;border-top:1px solid #f1f5f9;border-radius:0 0 8px 8px;padding:6px 10px;font-size:10px;color:#64748b;display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px">
     <span id="cfSource">数据源: 东方财富板块资金流(主力净流入)</span>
@@ -148,6 +155,26 @@ label{font-size:11px;color:var(--label);display:block;margin-bottom:3px}
     <span id="hmSource">数据源: 东方财富板块历史资金流</span>
   </div>
 </div>
+
+<!-- 个股资金流搜索（CapitalPulse集成） -->
+<div class="cd" style="border-color:#3b82f6;background:#fff">
+  <div style="background:linear-gradient(135deg,#1e3a5f 0%,#0c1e3a 100%);border-radius:8px;padding:10px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+    <div style="font-size:15px;font-weight:800;color:#60a5fa;letter-spacing:1px;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000">🔍 个股资金流搜索</div>
+    <div style="font-size:11px;color:#94a3b8">输入股票名称/代码查询主力资金</div>
+  </div>
+  <div style="padding:8px">
+    <div style="display:flex;gap:6px;margin-bottom:8px">
+      <input id="ssInput" type="text" placeholder="输入股票名称或代码（如：贵州茅台/600519）" style="flex:1;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;outline:none" onkeydown="if(event.key==='Enter')ssSearch()">
+      <button onclick="ssSearch()" style="padding:8px 16px;background:#3b82f6;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer">搜索</button>
+    </div>
+    <div id="ssResults" style="margin-bottom:8px"></div>
+    <div id="ssDetail"></div>
+  </div>
+  <div style="background:#f8fafc;border-top:1px solid #f1f5f9;border-radius:0 0 8px 8px;padding:6px 10px;font-size:10px;color:#64748b">
+    <span>数据源: 东方财富搜索API + CapitalPulse资金流</span>
+  </div>
+</div>
+
 
 <!-- 北向资金 -->
 <div class="cd" style="border-color:#f59e0b;background:#fff">
@@ -623,7 +650,7 @@ function hmFetch(){
     const url=CF_EM+'/stock/fflow/kline/get?lmt=10&klt=101&secid=90.'+s.c+'&fields1=f1,f2,f3,f7&fields2=f51,f52,f53,f54,f55,f56&ut='+CF_UT;
     fetch(url,{signal:AbortSignal.timeout(9000)})
       .then(r=>r.json()).then(d=>{
-        const kl=(((d||{}).data||{}).klines)||[];
+        const kl=((d||{}).data||{}).klines||[];
         if(kl.length){hmData[s.n]=kl.map(row=>{const p=row.split(',');return {date:p[0].slice(5),flow:parseFloat(((parseFloat(p[1])||0)/1e8).toFixed(1))};});ok++;}
       }).catch(()=>{})
       .finally(()=>{hmDone++;if(hmDone>=HM_SECTORS.length){if(ok)hmRender();else document.getElementById('hmTable').innerHTML='<div class="state-box" style="color:#64748b">加载失败</div>';}});
@@ -691,9 +718,14 @@ function nbRender(data){
   document.getElementById('nbUpdate').textContent=(hk2s.date2||'')+' 更新 '+cfNowStr();
 }
 
-/* ═══════════ 板块资金流向动态图（SVG） ═══════════ */
+/* ═══════════════ 板块资金流向动态图（SVG） ═══════════════ */
 let cfHistory={}; // {name:[{t,flow},...]}
 let cfLoaded=false;
+let cfSectorCodes=[]; // [{c,n,mc},...] SW2021二级行业Top30
+let cfRankData=[]; // 实时排行数据
+let cfDailyData={}; // 30日历史数据
+let cfActiveTab='chart';
+let cfDone=0;
 const CF_WARM=['#dc2626','#ea580c','#d97706','#ca8a04','#b45309'];
 const CF_GREEN=['#16a34a','#059669','#15803d','#047857','#0d9488'];
 
@@ -701,83 +733,202 @@ function cfTimeStr(d){const p=n=>String(n).padStart(2,'0');return p(d.getHours()
 function cfNowStr(){return cfTimeStr(new Date());}
 function cfIsTrading(){const n=new Date(),h=n.getHours(),m=n.getMinutes();const mins=h*60+m;return (mins>=555&&mins<=690)||(mins>=780&&mins<=900);}
 
-// ═══ 数据源：东财 push2delay 真实主力净流入（CapitalPulse 项目） ═══
-// 步骤1: clist/get 拿流入+流出前N板块代码 → 步骤2: 对每个板块拉 fflow/kline/get 全天分时主力净流入
+// ═══ 东财API常量（来自CapitalPulse backend/config.py） ═══
 const CF_UT='fa5fd1943c7b386f1725622f7d9f5fcf';
 const CF_EM='https://push2delay.eastmoney.com/api/qt';
-let cfSectorCodes=[]; // [{c:'BK1204',n:'国防军工'},...] 流入前5+流出前5
+const CF_EM_PUSH='https://push2.eastmoney.com/api/qt';
+const CF_EM_HIS='https://push2his.eastmoney.com/api/qt';
 
-function cfFetch(){
-  // 先拿板块排行（主力净流入排序）
-  const url=CF_EM+'/clist/get?pn=1&pz=100&po=1&np=1&fltt=2&invt=2&fields=f3,f12,f14,f62&fid=f62&fs=m:90+t:2+f:!50&ut='+CF_UT;
-  fetch(url,{signal:AbortSignal.timeout(10000)})
-    .then(r=>r.json())
-    .then(d=>{
-      const diff=((d||{}).data||{}).diff||[];
-      if(!diff.length)throw 0;
-      // 按主力净流入f62排序：取流入前5+流出前5
-      const sorted=diff.slice().sort((a,b)=>(b.f62||0)-(a.f62||0));
-      const pos=sorted.filter(x=>(x.f62||0)>0).slice(0,5);
-      const neg=sorted.filter(x=>(x.f62||0)<0).slice(-5).reverse();
-      cfSectorCodes=[...pos,...neg].map(x=>({c:x.f12,n:x.f14}));
-      return cfFetchFlows();
-    })
-    .catch(()=>{cfGenDemo();});
-  setTimeout(()=>{if(!cfLoaded){cfGenDemo();}},18000);
-}
+/* --- SW2021二级行业名称集合（来自CapitalPulse sector_selection.py） --- */
+const SW2021_L2=new Set([
+  '种植业','渔业','林业Ⅱ','饲料','农产品加工','养殖业','动物保健Ⅱ','农业综合Ⅱ',
+  '化学原料','化学制品','化学纤维','塑料','橡胶','农化制品','非金属材料Ⅱ',
+  '冶钢原料','普钢','特钢Ⅱ','金属新材料','工业金属','贵金属','小金属','能源金属',
+  '半导体','元件','光学光电子','其他电子Ⅱ','消费电子','电子化学品Ⅱ',
+  '汽车零部件','汽车服务','摩托车及其他','乘用车','商用车',
+  '白色家电','黑色家电','小家电','厨卫电器','照明设备Ⅱ','家电零部件Ⅱ','其他家电Ⅱ',
+  '食品加工','白酒Ⅱ','非白酒','饮料乳品','休闲食品','调味发酵品Ⅱ',
+  '纺织制造','服装家纺','饰品','造纸','包装印刷','家居用品','文娱用品',
+  '化学制药','中药Ⅱ','生物制品','医药商业','医疗器械','医疗服务',
+  '电力','燃气Ⅱ','物流','铁路公路','航空机场','航运港口',
+  '房地产开发','房地产服务','贸易Ⅱ','一般零售','专业连锁Ⅱ','互联网电商','旅游零售Ⅱ',
+  '体育Ⅱ','本地生活服务Ⅱ','专业服务','酒店餐饮','旅游及景区','教育',
+  '国有大型银行Ⅱ','股份制银行Ⅱ','城商行Ⅱ','农商行Ⅱ','其他银行Ⅱ',
+  '证券Ⅱ','保险Ⅱ','多元金融','综合Ⅱ',
+  '水泥','玻璇玻纤','装修建材','房屋建设Ⅱ','装修装饰Ⅱ','基础建设','专业工程','工程咨询服务Ⅱ',
+  '电机Ⅱ','其他电源设备Ⅱ','光伏设备','风电设备','电池','电网设备',
+  '通用设备','专用设备','轨交设备Ⅱ','工程机械','自动化设备',
+  '航天装备Ⅱ','航空装备Ⅱ','地面兵装Ⅱ','航海装备Ⅱ','军工电子Ⅱ',
+  '计算机设备','IT服务Ⅱ','软件开发',
+  '游戏Ⅱ','广告营销','影视院线','数字媒体','社交Ⅱ','出版','电视广播Ⅱ',
+  '通信服务','通信设备',
+  '煤炭开采','焦炭Ⅱ','油气开采Ⅱ','油服工程','炒化及贸易',
+  '环境治理','环保设备Ⅱ','个护用品','化妆品','医疗美容'
+]);
 
-// 对每个板块拉全天分时主力净流入
-function cfFetchFlows(){
-  cfDone=0;
-  let anyOk=false;
-  const total=cfSectorCodes.length;
-  if(!total){cfGenDemo();return;}
-  cfSectorCodes.forEach(sec=>{
-    const url=CF_EM+'/stock/fflow/kline/get?lmt=0&klt=1&secid=90.'+sec.c+'&fields1=f1,f2,f3,f7&fields2=f51,f52,f53,f54,f55,f56&ut='+CF_UT;
-    fetch(url,{signal:AbortSignal.timeout(10000)})
-      .then(r=>r.json())
-      .then(d=>{
-        const kl=(((d||{}).data||{}).klines)||[];
-        if(!kl.length)return;
-        cfHistory[sec.n]=cfParseFlow(kl);
-        anyOk=true;
-      })
-      .catch(()=>{})
-      .finally(()=>{
-        cfDone++;
-        if(cfDone>=total){
-          if(anyOk||Object.keys(cfHistory).length){
-            cfLoaded=true;
-            document.getElementById('cfSource').textContent='数据源: 东方财富 · 主力净流入(全天分时,真实大单)';
-            cfRender();
-          }else{
-            cfGenDemo();
-          }
-        }
-      });
+/* --- Step 1: 获取所有行业板块并选出Top30 --- */
+async function cfFetchSectors(){
+  const params=new URLSearchParams({
+    dpt:'wz.zhyj',Ession:'',
+    fs:'m:90+t:2+f:!50',
+    fields:'f3,f12,f14,f20',
+    pn:'1',pz:'100',po:'1',fid:'f3',
+    np:'1',fltt:'2',invt:'2',
+    ut:CF_UT,_:String(Date.now())
   });
+  const url=CF_EM+'/clist/get?'+params.toString();
+  const resp=await fetch(url,{signal:AbortSignal.timeout(10000)});
+  const d=await resp.json();
+  const items=((d||{}).data||{}).diff||[];
+  if(!items.length)return null;
+  const filtered=items.filter(item=>SW2021_L2.has(String(item.f14||'').trim()));
+  const sorted=filtered.map(item=>({c:String(item.f12||'').toUpperCase(),n:String(item.f14||''),mc:parseFloat(item.f20||0)})).filter(s=>s.c).sort((a,b)=>b.mc-a.mc);
+  const seen=new Set(),top30=[];
+  for(const s of sorted){if(seen.has(s.c))continue;seen.add(s.c);top30.push(s);if(top30.length>=30)break;}
+  return top30;
 }
 
-// 解析分时资金流：每条 "时间,主力净流入,小单,中单,大单,超大单"（累计值，元）
-function cfParseFlow(kl){
-  const series=[];
-  const step=Math.max(1,Math.floor(kl.length/70)); // 降到~70点
-  for(let i=0;i<kl.length;i+=step){
-    const p=kl[i].split(',');
-    const t=p[0].slice(11,16); // "2026-09-02 09:31" → "09:31"
-    const mainIn=parseFloat(p[1])||0; // 主力净流入(元)
-    series.push({t:t,flow:parseFloat((mainIn/1e8).toFixed(2))}); // 转亿
-  }
-  // 必含最后点
-  const lp=kl[kl.length-1].split(',');
-  const lt=lp[0].slice(11,16);
-  if(series.length&&series[series.length-1].t!==lt){
-    series.push({t:lt,flow:parseFloat(((parseFloat(lp[1])||0)/1e8).toFixed(2))});
-  }
-  return series;
+/* --- Step 2: 获取板块实时资金快照 --- */
+async function cfFetchSnapshot(sectors){
+  const secids=sectors.map(s=>'90.'+s.c).join(',');
+  const params=new URLSearchParams({secids:secids,fields:'f12,f14,f62,f66,f72,f78,f84,f124',np:'1',fltt:'2',invt:'2',ut:CF_UT,_:String(Date.now())});
+  let text=null;
+  try{const resp=await fetch(CF_EM+'/ulist.np/get?'+params.toString(),{signal:AbortSignal.timeout(10000)});text=await resp.text();}catch(e){}
+  if(!text||text.indexOf('{')<0){try{const resp=await fetch(CF_EM_PUSH+'/ulist.np/get?'+params.toString(),{signal:AbortSignal.timeout(10000)});text=await resp.text();}catch(e){}}
+  if(!text)return null;
+  try{
+    const payload=JSON.parse(text);
+    const diff=((payload||{}).data||{}).diff||[];
+    return diff.map(item=>{
+      const code=String(item.f12||'').trim().toUpperCase();
+      const sourceTime=parseInt(item.f124||0);
+      if(!code||sourceTime<=0)return null;
+      return {sector_code:code,sector_name:String(item.f14||''),source_time:sourceTime,main_net:parseFloat(item.f62||0),super_large_net:parseFloat(item.f66||0),large_net:parseFloat(item.f72||0),mid_net:parseFloat(item.f78||0),small_net:parseFloat(item.f84||0)};
+    }).filter(Boolean);
+  }catch(e){return null;}
 }
 
-// Demo 兜底数据（含流入+流出）
+/* --- Step 3: 获取板块全天分时主力净流入 --- */
+async function cfFetchMinuteFlow(sectorCode){
+  const params=new URLSearchParams({lmt:'0',klt:'1',secid:'90.'+sectorCode,fields1:'f1,f2,f3,f7',fields2:'f51,f52,f53,f54,f55,f56',ut:CF_UT,_:String(Date.now())});
+  let text=null;
+  try{const resp=await fetch(CF_EM+'/stock/fflow/kline/get?'+params.toString(),{signal:AbortSignal.timeout(10000)});text=await resp.text();}catch(e){}
+  if(!text){try{const resp=await fetch(CF_EM_PUSH+'/stock/fflow/kline/get?'+params.toString(),{signal:AbortSignal.timeout(10000)});text=await resp.text();}catch(e){}}
+  if(!text)return null;
+  try{
+    const payload=JSON.parse(text);
+    const klines=((payload||{}).data||{}).klines||[];
+    const series=[];
+    const step=Math.max(1,Math.floor(klines.length/70));
+    for(let i=0;i<klines.length;i+=step){const p=klines[i].split(',');series.push({t:p[0].slice(11,16),flow:parseFloat(((parseFloat(p[1])||0)/1e8).toFixed(2))});}
+    if(klines.length){const lp=klines[klines.length-1].split(',');const lt=lp[0].slice(11,16);if(series.length&&series[series.length-1].t!==lt){series.push({t:lt,flow:parseFloat(((parseFloat(lp[1])||0)/1e8).toFixed(2))});}}
+    return series;
+  }catch(e){return null;}
+}
+
+/* --- Step 4: 获取板块30日日历史资金流 --- */
+async function cfFetchDailyFlow(sectorCode,days){
+  days=days||30;
+  const params=new URLSearchParams({lmt:String(days),klt:'101',secid:'90.'+sectorCode,fields1:'f1,f2,f3,f7',fields2:'f51,f52,f53,f54,f55,f56',ut:CF_UT,_:String(Date.now())});
+  try{
+    const resp=await fetch(CF_EM_HIS+'/stock/fflow/daykline/get?'+params.toString(),{signal:AbortSignal.timeout(10000)});
+    const payload=await resp.json();
+    const klines=((payload||{}).data||{}).klines||[];
+    return klines.map(kl=>{const p=kl.split(',');return {date:p[0].slice(5),main_net:parseFloat(((parseFloat(p[1])||0)/1e8).toFixed(1))};});
+  }catch(e){return null;}
+}
+
+/* --- 主流程 --- */
+async function cfInit(){
+  try{
+    const sectors=await cfFetchSectors();
+    if(!sectors||!sectors.length){cfGenDemo();return;}
+    cfSectorCodes=sectors;
+    document.getElementById('cfSource').textContent='数据源: 东方财富 · SW2021二级行业Top'+sectors.length;
+    await cfFetchRank();
+    await cfFetchChartFlows();
+    cfLoaded=true;
+    cfRender();
+  }catch(e){cfGenDemo();}
+}
+
+async function cfFetchRank(){
+  if(!cfSectorCodes.length)return;
+  const flows=await cfFetchSnapshot(cfSectorCodes);
+  if(!flows)return;
+  cfRankData=flows.map(f=>{
+    const sec=cfSectorCodes.find(s=>s.c===f.sector_code);
+    return {code:f.sector_code,name:f.sector_name||sec?.n||'',main_net:f.main_net/1e8,super_large_net:f.super_large_net/1e8,large_net:f.large_net/1e8,mid_net:f.mid_net/1e8,small_net:f.small_net/1e8,market_cap:sec?.mc||0};
+  }).sort((a,b)=>b.main_net-a.main_net);
+}
+
+async function cfFetchChartFlows(){
+  if(!cfRankData.length)return;
+  const pos=cfRankData.filter(x=>x.main_net>=0).slice(0,5);
+  const neg=cfRankData.filter(x=>x.main_net<0).slice(-5).reverse();
+  const picks=[...pos,...neg];
+  cfHistory={};
+  let anyOk=false;
+  await Promise.all(picks.map(async sec=>{
+    const series=await cfFetchMinuteFlow(sec.code);
+    if(series&&series.length){cfHistory[sec.name]=series;anyOk=true;}
+  }));
+  if(!anyOk){picks.forEach(sec=>{cfHistory[sec.name]=[{t:'09:30',flow:0},{t:cfNowStr(),flow:sec.main_net}];});}
+}
+
+function cfSwitchTab(tab){
+  cfActiveTab=tab;
+  document.querySelectorAll('#cfTabs .tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('#cfTabs .tab').forEach(t=>{if(t.textContent.indexOf(tab==='chart'?'分时':tab==='rank'?'排行':'趋势')>=0)t.classList.add('active');});
+  document.getElementById('cfTabChart').classList.toggle('active',tab==='chart');
+  document.getElementById('cfTabRank').classList.toggle('active',tab==='rank');
+  document.getElementById('cfTabDaily').classList.toggle('active',tab==='daily');
+  if(tab==='rank')cfRenderRank();
+  if(tab==='daily')cfRenderDaily();
+}
+
+function cfRenderRank(){
+  const el=document.getElementById('cfTabRank');
+  if(!cfRankData.length){el.innerHTML='<div class="state-box" style="color:#64748b">暂无数据</div>';return;}
+  const mx=Math.max(...cfRankData.map(x=>Math.abs(x.main_net)),1);
+  let h='<table class="sf-table"><thead><tr><th>板块</th><th>主力净流入</th><th>超大单</th><th>大单</th><th>中单</th><th>小单</th><th>分布</th></tr></thead><tbody>';
+  cfRankData.forEach(r=>{
+    const col=r.main_net>=0?'#dc2626':'#16a34a';
+    const bw=Math.abs(r.main_net)/mx*100;
+    h+='<tr><td>'+r.name+'</td><td style="color:'+col+';font-weight:700">'+(r.main_net>=0?'+':'')+r.main_net.toFixed(2)+'亿</td><td style="color:'+(r.super_large_net>=0?'#dc2626':'#16a34a')+'">'+(r.super_large_net>=0?'+':'')+r.super_large_net.toFixed(2)+'</td><td style="color:'+(r.large_net>=0?'#dc2626':'#16a34a')+'">'+(r.large_net>=0?'+':'')+r.large_net.toFixed(2)+'</td><td style="color:'+(r.mid_net>=0?'#dc2626':'#16a34a')+'">'+(r.mid_net>=0?'+':'')+r.mid_net.toFixed(2)+'</td><td style="color:'+(r.small_net>=0?'#dc2626':'#16a34a')+'">'+(r.small_net>=0?'+':'')+r.small_net.toFixed(2)+'</td><td><div style="height:8px;background:#f1f5f9;border-radius:4px;width:80px"><div class="bar-cell" style="width:'+bw+'%;background:'+col+';height:8px;border-radius:4px"></div></div></td></tr>';
+  });
+  h+='</tbody></table>';
+  el.innerHTML=h;
+}
+
+async function cfRenderDaily(){
+  const el=document.getElementById('cfTabDaily');
+  if(!cfSectorCodes.length){el.innerHTML='<div class="state-box" style="color:#64748b">请先加载板块数据</div>';return;}
+  el.innerHTML='<div class="state-box"><span class="sp"></span>加载30日历史数据...</div>';
+  const top10=cfSectorCodes.slice(0,10);
+  cfDailyData={};
+  let ok=0;
+  await Promise.all(top10.map(async sec=>{const data=await cfFetchDailyFlow(sec.c,30);if(data&&data.length){cfDailyData[sec.n]=data;ok++;}}));
+  if(!ok){el.innerHTML='<div class="state-box" style="color:#64748b">30日历史数据加载失败</div>';return;}
+  const dates=[...new Set(Object.values(cfDailyData).flat().map(x=>x.date))].sort();
+  const sorted=Object.entries(cfDailyData).sort((a,b)=>{const sa=a[1].reduce((s,x)=>s+x.main_net,0),sb=b[1].reduce((s,x)=>s+x.main_net,0);return sb-sa;});
+  let mx=1;Object.values(cfDailyData).flat().forEach(x=>{if(Math.abs(x.main_net)>mx)mx=Math.abs(x.main_net);});
+  function cell(v){if(v===null||v===undefined)return '<td style="padding:4px 3px;text-align:center;background:#f8fafc;color:#cbd5e1">-</td>';const a=Math.min(Math.abs(v)/mx,1);const bg=v>=0?('rgba(220,38,38,'+(0.1+a*0.7)+')'):('rgba(22,163,74,'+(0.1+a*0.7)+')');const fg=a>0.5?'#fff':'#1f2937';return '<td style="padding:4px 3px;text-align:center;background:'+bg+';color:'+fg+';font-weight:600;font-size:9px;white-space:nowrap">'+(v>=0?'+':'')+v+'</td>';}
+  let h='<div style="font-size:11px;color:#64748b;margin-bottom:4px">Top10板块近30日主力净流入(亿)</div><table style="border-collapse:collapse;font-size:10px;width:100%"><thead><tr><th style="padding:4px;text-align:left;position:sticky;left:0;background:#fff">板块</th>';
+  dates.forEach(d=>{h+='<th style="padding:3px 2px;font-size:8px;color:#64748b;font-weight:400;white-space:nowrap">'+d+'</th>';});
+  h+='<th style="padding:4px;font-size:9px;color:#64748b">合计</th></tr></thead><tbody>';
+  sorted.forEach(function(entry){
+    var name=entry[0],data=entry[1];
+    var map={};data.forEach(function(x){map[x.date]=x.main_net;});
+    var tot=data.reduce(function(s,x){return s+x.main_net;},0);
+    h+='<tr><td style="padding:4px;font-weight:600;white-space:nowrap;position:sticky;left:0;background:#fff;font-size:10px">'+name+'</td>';
+    dates.forEach(function(d){h+=cell(map[d]||null);});
+    h+=cell(parseFloat(tot.toFixed(1)))+'</tr>';
+  });
+  h+='</tbody></table>';
+  el.innerHTML=h;
+}
+
 const CF_DEMO=[
   {n:'半导体',b:36},{n:'通信设备',b:22},{n:'算力',b:18},{n:'AI芯片',b:12},{n:'有色金属',b:9},
   {n:'电力',b:-8},{n:'银行',b:-15},{n:'白酒',b:-11},{n:'房地产',b:-6},{n:'煤炭',b:-19}
@@ -787,22 +938,14 @@ function cfGenDemo(){
   const now=new Date();
   const t0=cfTimeStr(new Date(now.getTime()-30000));
   const ts=cfNowStr();
-  CF_DEMO.forEach(d=>{
-    const v1=d.b+(Math.random()-0.5)*6;
-    const v2=v1+(Math.random()-0.5)*5;
-    cfHistory[d.n]=[{t:t0,flow:v1},{t:ts,flow:v2}];
-  });
+  CF_DEMO.forEach(d=>{const v1=d.b+(Math.random()-0.5)*6;const v2=v1+(Math.random()-0.5)*5;cfHistory[d.n]=[{t:t0,flow:v1},{t:ts,flow:v2}];});
   document.getElementById('cfSource').textContent='数据源: 演示数据(接口暂不可用)';
   cfRender();
 }
 
-// 选5流入+5流出
 function cfPick(){
   const latest={};
-  Object.keys(cfHistory).forEach(n=>{
-    const arr=cfHistory[n];
-    if(arr.length)latest[n]=arr[arr.length-1].flow;
-  });
+  Object.keys(cfHistory).forEach(n=>{const arr=cfHistory[n];if(arr.length)latest[n]=arr[arr.length-1].flow;});
   const names=Object.keys(latest);
   const pos=names.filter(n=>latest[n]>=0).sort((a,b)=>latest[b]-latest[a]);
   const neg=names.filter(n=>latest[n]<0).sort((a,b)=>latest[a]-latest[b]);
@@ -812,14 +955,13 @@ function cfPick(){
 function cfToX(tStr,padL,chartW){
   const [h,m]=tStr.split(':').map(Number);
   let mins=h*60+m;
-  // 午休段压缩：把13:00前的点限制在上午段
   if(mins>690&&mins<780)mins=690;
-  const pos=Math.max(0,Math.min(1,(mins-570)/(900-570)));
-  return padL+pos*chartW;
+  return padL+Math.max(0,Math.min(1,(mins-570)/(900-570)))*chartW;
 }
 
 function cfRender(){
-  const el=document.getElementById('cfDynamic');
+  const el=document.getElementById('cfTabChart');
+  if(!el)return;
   const {pos,neg,latest}=cfPick();
   const names=[...pos,...neg];
   if(!names.length){el.innerHTML='<div class="state-box" style="color:#64748b"><span class="sp"></span>加载资金流向…</div>';return;}
@@ -915,10 +1057,76 @@ function cfRender(){
   el.innerHTML=svg;
 }
 
-// 启动 + 30秒刷新
-cfFetch();
-// 30秒刷新：分钟K线全量重拉（cfFetch内部会重建cfHistory），不清空cfLoaded避免误触demo
-setInterval(()=>{if(cfIsTrading()){cfFetch();}else{cfRender();}},30000);
+// 启动 + 30秒刷新（CapitalPulse增强版）
+cfInit();
+setInterval(()=>{if(cfIsTrading()){cfInit();}else{cfRender();}},30000);
+
+/* ═══════════════ 个股资金流搜索（CapitalPulse集成） ═══════════════ */
+const SS_SEARCH_URL='https://searchapi.eastmoney.com/api/suggest/get';
+const SS_SEARCH_TOKEN='D43BF722C8E33BDC906FB84D85E326E8';
+
+async function ssSearch(){
+  const kw=document.getElementById('ssInput').value.trim();
+  if(!kw)return;
+  const el=document.getElementById('ssResults');
+  el.innerHTML='<div class="state-box"><span class="sp"></span>搜索中...</div>';
+  try{
+    const params=new URLSearchParams({input:kw,type:'14',token:SS_SEARCH_TOKEN,count:'8'});
+    const resp=await fetch(SS_SEARCH_URL+'?'+params.toString(),{signal:AbortSignal.timeout(8000)});
+    const payload=await resp.json();
+    const items=((payload||{}).QuotationCodeTable||{}).Data||[];
+    const results=items.filter(item=>item.Classify==='AStock'&&/^[01]\.\d{6}$/.test(item.QuoteID||'')).map(item=>({quote_id:item.QuoteID,code:item.Code,name:item.Name,market_name:item.SecurityTypeName||'A股'}));
+    if(!results.length){el.innerHTML='<div class="state-box" style="color:#64748b">无匹配结果</div>';return;}
+    el.innerHTML=results.map(function(r){return '<div class="search-item" onclick="ssLoadFlow(\''+r.quote_id+'\',\''+r.code+'\',\''+r.name.replace(/'/g,"\\'")+'\')"><span><strong>'+r.name+'</strong> <span style="color:#64748b;font-size:10px">'+r.code+' '+r.market_name+'</span></span><span style="color:#3b82f6;font-size:10px">→</span></div>';}).join('');
+  }catch(e){el.innerHTML='<div class="state-box" style="color:#64748b">搜索失败</div>';}
+}
+
+async function ssLoadFlow(quoteId,code,name){
+  document.getElementById('ssResults').innerHTML='';
+  const el=document.getElementById('ssDetail');
+  el.innerHTML='<div class="state-box"><span class="sp"></span>加载 '+name+' 资金流...</div>';
+  try{
+    const params=new URLSearchParams({secids:quoteId,fields:'f12,f14,f62,f66,f72,f78,f84,f124',np:'1',fltt:'2',invt:'2',ut:CF_UT,_:String(Date.now())});
+    let resp=await fetch(CF_EM+'/ulist.np/get?'+params.toString(),{signal:AbortSignal.timeout(10000)});
+    let text=await resp.text();
+    if(!text||text.indexOf('{')<0){resp=await fetch(CF_EM_PUSH+'/ulist.np/get?'+params.toString(),{signal:AbortSignal.timeout(10000)});text=await resp.text();}
+    const payload=JSON.parse(text);
+    const diff=((payload||{}).data||{}).diff||[];
+    const d=diff[0]||{};
+    const mainNet=parseFloat(d.f62||0)/1e8;
+    const superNet=parseFloat(d.f66||0)/1e8;
+    const largeNet=parseFloat(d.f72||0)/1e8;
+    const midNet=parseFloat(d.f78||0)/1e8;
+    const smallNet=parseFloat(d.f84||0)/1e8;
+    const kparams=new URLSearchParams({lmt:'0',klt:'1',secid:quoteId,fields1:'f1,f2,f3,f7',fields2:'f51,f52,f53,f54,f55,f56',ut:CF_UT,_:String(Date.now())});
+    let ktext=null;
+    try{const kresp=await fetch(CF_EM+'/stock/fflow/kline/get?'+kparams.toString(),{signal:AbortSignal.timeout(10000)});ktext=await kresp.text();}catch(e){}
+    if(!ktext){try{const kresp=await fetch(CF_EM_PUSH+'/stock/fflow/kline/get?'+kparams.toString(),{signal:AbortSignal.timeout(10000)});ktext=await kresp.text();}catch(e){}}
+    let chartHtml='';
+    if(ktext){try{const kpayload=JSON.parse(ktext);const klines=((kpayload||{}).data||{}).klines||[];const series=[];const step=Math.max(1,Math.floor(klines.length/60));for(let i=0;i<klines.length;i+=step){const p=klines[i].split(',');series.push({t:p[0].slice(11,16),flow:parseFloat(((parseFloat(p[1])||0)/1e8).toFixed(2))});}if(klines.length){const lp=klines[klines.length-1].split(',');const lt=lp[0].slice(11,16);if(series.length&&series[series.length-1].t!==lt){series.push({t:lt,flow:parseFloat(((parseFloat(lp[1])||0)/1e8).toFixed(2))});}}if(series.length){chartHtml=ssRenderChart(name,series);}}catch(e){}}
+    const col=mainNet>=0?'#dc2626':'#16a34a';
+    el.innerHTML='<div style="background:#f8fafc;border-radius:8px;padding:10px"><div style="font-size:14px;font-weight:700;margin-bottom:6px">'+name+'（'+code+'）主力资金</div><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:8px">'+ssMetric('主力',mainNet,col)+ssMetric('超大单',superNet,superNet>=0?'#dc2626':'#16a34a')+ssMetric('大单',largeNet,largeNet>=0?'#dc2626':'#16a34a')+ssMetric('中单',midNet,midNet>=0?'#dc2626':'#16a34a')+ssMetric('小单',smallNet,smallNet>=0?'#dc2626':'#16a34a')+'</div>'+chartHtml+'<div style="font-size:10px;color:#64748b;margin-top:6px">数据源:东方财富 · 更新 '+cfNowStr()+'</div></div>';
+  }catch(e){el.innerHTML='<div class="state-box" style="color:#64748b">加载失败</div>';}
+}
+function ssMetric(label,val,col){return '<div style="text-align:center;background:#fff;border-radius:6px;padding:4px"><div style="font-size:9px;color:#64748b">'+label+'</div><div style="font-size:12px;font-weight:700;color:'+col+'">'+(val>=0?'+':'')+val.toFixed(2)+'亿</div></div>';}
+function ssRenderChart(name,series){
+  const svgW=700,baseH=250,padL=40,padR=10,padT=12,padB=24;
+  const chartW=svgW-padL-padR,chartH=baseH-padT-padB;
+  let mn=0,mx=0;series.forEach(p=>{if(p.flow<mn)mn=p.flow;if(p.flow>mx)mx=p.flow;});
+  const span=(mx-mn)||1;mn-=span*0.15;mx+=span*0.15;
+  const toY=function(v){return padT+(mx-v)/(mx-mn)*chartH;};
+  const zeroY=toY(0);
+  const col=series[series.length-1].flow>=0?'#dc2626':'#16a34a';
+  const ptsStr=series.map(function(p){return cfToX(p.t,padL,chartW).toFixed(1)+','+toY(p.flow).toFixed(1);}).join(' ');
+  var svg='<svg width="'+svgW+'" height="'+baseH+'" viewBox="0 0 '+svgW+' '+baseH+'" style="width:100%;height:auto">';
+  svg+='<line x1="'+padL+'" y1="'+zeroY+'" x2="'+(padL+chartW)+'" y2="'+zeroY+'" stroke="#e5e7eb" stroke-width="1"/>';
+  ['09:30','10:30','11:30','14:00','15:00'].forEach(function(t){var x=cfToX(t,padL,chartW);svg+='<text x="'+x+'" y="'+(baseH-6)+'" text-anchor="middle" font-size="9" fill="#9ca3af">'+t+'</text>';});
+  svg+='<polyline points="'+ptsStr+'" fill="none" stroke="'+col+'" stroke-width="2" opacity="0.9"/>';
+  var last=series[series.length-1];
+  svg+='<circle cx="'+cfToX(last.t,padL,chartW)+'" cy="'+toY(last.flow)+'" r="4" fill="'+col+'" stroke="#fff" stroke-width="1.5"/>';
+  svg+='</svg>';
+  return svg;
+}
 
 /* ═══════════ Auto refresh (trading hours) ═══════════ */
 setInterval(()=>{
