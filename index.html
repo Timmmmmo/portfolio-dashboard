@@ -125,6 +125,42 @@ label{font-size:11px;color:var(--label);display:block;margin-bottom:3px}
   </div>
 </div>
 
+<!-- 个股资金流（持仓主力净流入） -->
+<div class="cd" style="border-color:#10b981;background:#fff">
+  <div style="background:linear-gradient(135deg,#064e3b 0%,#022c22 100%);border-radius:8px;padding:10px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+    <div style="font-size:15px;font-weight:800;color:#34d399;letter-spacing:1px;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000">💰 持仓个股主力资金</div>
+    <div style="font-size:11px;font-weight:700" id="sfSummary"><span style="color:#94a3b8">加载中…</span></div>
+  </div>
+  <div style="max-width:750px;margin:0 auto" id="sfList"></div>
+  <div style="background:#f8fafc;border-top:1px solid #f1f5f9;border-radius:0 0 8px 8px;padding:6px 10px;font-size:10px;color:#64748b;display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px">
+    <span id="sfSource">数据源: 东方财富个股资金流</span><span id="sfUpdate"></span>
+  </div>
+</div>
+
+<!-- 板块轮动热力图（近10日） -->
+<div class="cd" style="border-color:#8b5cf6;background:#fff">
+  <div style="background:linear-gradient(135deg,#3b0764 0%,#1e1b4b 100%);border-radius:8px;padding:10px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+    <div style="font-size:15px;font-weight:800;color:#c4b5fd;letter-spacing:1px;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000">🔥 板块轮动热力图</div>
+    <div style="font-size:11px;color:#94a3b8" id="hmUpdate">近10日主力净流入(亿)</div>
+  </div>
+  <div style="max-width:750px;margin:0 auto;overflow-x:auto" id="hmTable"></div>
+  <div style="background:#f8fafc;border-top:1px solid #f1f5f9;border-radius:0 0 8px 8px;padding:6px 10px;font-size:10px;color:#64748b">
+    <span id="hmSource">数据源: 东方财富板块历史资金流</span>
+  </div>
+</div>
+
+<!-- 北向资金 -->
+<div class="cd" style="border-color:#f59e0b;background:#fff">
+  <div style="background:linear-gradient(135deg,#78350f 0%,#451a03 100%);border-radius:8px;padding:10px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+    <div style="font-size:15px;font-weight:800;color:#fbbf24;letter-spacing:1px;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000">🌏 北向资金</div>
+    <div style="font-size:11px;color:#94a3b8" id="nbUpdate">加载中…</div>
+  </div>
+  <div style="max-width:750px;margin:0 auto" id="nbContent"></div>
+  <div style="background:#f8fafc;border-top:1px solid #f1f5f9;border-radius:0 0 8px 8px;padding:6px 10px;font-size:10px;color:#64748b">
+    <span>数据源: 东方财富沪深港通 | 注:2024年8月起北向实时盘中数据停止披露,仅收盘后汇总</span>
+  </div>
+</div>
+
 <!-- 每日分析 -->
 <div class="cd" style="border-color:var(--s9)">
   <div class="ct">
@@ -528,6 +564,133 @@ async function fetchWithTimeout(url,ms){
   }
 }
 
+/* ═══════════ ① 个股资金流（持仓主力净流入） ═══════════ */
+function sfSecid(code){
+  // 腾讯代码 → 东财secid: sh→1. sz/bj→0. hk跳过
+  if(code.startsWith('sh'))return '1.'+code.slice(2);
+  if(code.startsWith('sz')||code.startsWith('bj'))return '0.'+code.slice(2);
+  return null; // hk不支持
+}
+function sfFetch(){
+  const secs=(typeof portfolio!=='undefined'?portfolio:DEFAULT_PF)
+    .map(s=>sfSecid(s.code)).filter(x=>x);
+  if(!secs.length){document.getElementById('sfList').innerHTML='<div class="state-box" style="color:#64748b">无A股持仓</div>';return;}
+  const url=CF_EM+'/ulist.np/get?fltt=2&invt=2&fields=f12,f14,f62,f184&secids='+secs.join(',')+'&ut='+CF_UT;
+  fetch(url,{signal:AbortSignal.timeout(10000)})
+    .then(r=>r.json()).then(d=>{
+      const diff=((d||{}).data||{}).diff||[];
+      sfRender(diff);
+    }).catch(()=>{document.getElementById('sfList').innerHTML='<div class="state-box" style="color:#64748b">加载失败</div>';});
+}
+function sfRender(diff){
+  const el=document.getElementById('sfList');
+  if(!diff.length){el.innerHTML='<div class="state-box" style="color:#64748b">暂无数据</div>';return;}
+  diff.sort((a,b)=>(b.f62||0)-(a.f62||0));
+  const mx=Math.max(...diff.map(x=>Math.abs(x.f62||0)),1);
+  let tot=0;
+  let h='<table style="width:100%;border-collapse:collapse;font-size:12px">';
+  diff.forEach(x=>{
+    const v=(x.f62||0)/1e8; tot+=v;
+    const pct=(x.f184||0);
+    const col=v>=0?'#dc2626':'#16a34a';
+    const bw=Math.abs(x.f62||0)/mx*100;
+    h+='<tr style="border-bottom:1px solid #f1f5f9">'
+      +'<td style="padding:7px 8px;font-weight:600;white-space:nowrap">'+x.f14+'</td>'
+      +'<td style="padding:7px 8px;text-align:right;font-weight:700;color:'+col+';white-space:nowrap">'+(v>=0?'+':'')+v.toFixed(2)+'亿</td>'
+      +'<td style="padding:7px 8px;text-align:right;font-size:10px;color:#64748b;white-space:nowrap">'+(pct>=0?'+':'')+pct.toFixed(1)+'%</td>'
+      +'<td style="padding:7px 8px;width:40%"><div style="height:8px;background:#f1f5f9;border-radius:4px"><div style="height:8px;width:'+bw+'%;background:'+col+';border-radius:4px"></div></div></td>'
+      +'</tr>';
+  });
+  h+='</table>';
+  el.innerHTML=h;
+  document.getElementById('sfSummary').innerHTML='<span style="color:'+(tot>=0?'#dc2626':'#16a34a')+'">合计 '+(tot>=0?'+':'')+tot.toFixed(2)+'亿</span>';
+  document.getElementById('sfUpdate').textContent='更新 '+cfNowStr();
+}
+
+/* ═══════════ ② 板块轮动热力图（近10日主力净流入） ═══════════ */
+const HM_SECTORS=[ // 重点板块
+  {c:'BK0475',n:'半导体'},{c:'BK0737',n:'软件开发'},{c:'BK0448',n:'通信设备'},
+  {c:'BK0477',n:'酿酒'},{c:'BK0479',n:'汽车'},{c:'BK0481',n:'医药'},
+  {c:'BK0733',n:'贵金属'},{c:'BK0478',n:'有色金属'},{c:'BK0473',n:'券商'},
+  {c:'BK0437',n:'煤炭'},{c:'BK1204',n:'国防军工'},{c:'BK1033',n:'光伏'}
+];
+let hmData={}; // {name:[{date,flow}],...}
+let hmDone=0;
+function hmFetch(){
+  hmDone=0;hmData={};
+  let ok=0;
+  HM_SECTORS.forEach(s=>{
+    const url=CF_EM+'/stock/fflow/kline/get?lmt=10&klt=101&secid=90.'+s.c+'&fields1=f1,f2,f3,f7&fields2=f51,f52,f53,f54,f55,f56&ut='+CF_UT;
+    fetch(url,{signal:AbortSignal.timeout(9000)})
+      .then(r=>r.json()).then(d=>{
+        const kl=(((d||{}).data||{}).klines)||[];
+        if(kl.length){hmData[s.n]=kl.map(row=>{const p=row.split(',');return {date:p[0].slice(5),flow:parseFloat(((parseFloat(p[1])||0)/1e8).toFixed(1))};});ok++;}
+      }).catch(()=>{})
+      .finally(()=>{hmDone++;if(hmDone>=HM_SECTORS.length){if(ok)hmRender();else document.getElementById('hmTable').innerHTML='<div class="state-box" style="color:#64748b">加载失败</div>';}});
+  });
+}
+function hmRender(){
+  const el=document.getElementById('hmTable');
+  const names=Object.keys(hmData);
+  if(!names.length){el.innerHTML='<div class="state-box" style="color:#64748b">暂无数据</div>';return;}
+  // 收集所有日期（并集，升序）
+  const dates=[...new Set(names.flatMap(n=>hmData[n].map(x=>x.date)))].sort();
+  // 每板块按近10日累计净流入排序
+  const sorted=names.sort((a,b)=>{
+    const sa=hmData[a].reduce((s,x)=>s+x.flow,0),sb=hmData[b].reduce((s,x)=>s+x.flow,0);
+    return sb-sa;
+  });
+  // 找全局最大绝对值用于颜色归一化
+  let mx=1;
+  names.forEach(n=>hmData[n].forEach(x=>{if(Math.abs(x.flow)>mx)mx=Math.abs(x.flow);}));
+  const cell=v=>{
+    if(v===null||v===undefined)return '<td style="padding:6px 4px;text-align:center;background:#f8fafc;color:#cbd5e1">-</td>';
+    const a=Math.min(Math.abs(v)/mx,1);
+    const bg=v>=0?('rgba(220,38,38,'+(0.12+a*0.75)+')'):('rgba(22,163,74,'+(0.12+a*0.75)+')');
+    const fg=a>0.5?'#fff':'#1f2937';
+    return '<td style="padding:6px 4px;text-align:center;background:'+bg+';color:'+fg+';font-weight:600;font-size:10px;white-space:nowrap">'+(v>=0?'+':'')+v+'</td>';
+  };
+  let h='<table style="border-collapse:collapse;font-size:11px;min-width:100%"><thead><tr><th style="padding:6px;text-align:left;position:sticky;left:0;background:#fff;font-size:10px;color:#64748b">板块</th>';
+  dates.forEach(d=>{h+='<th style="padding:6px 4px;font-size:9px;color:#64748b;font-weight:400;white-space:nowrap">'+d+'</th>';});
+  h+='<th style="padding:6px 4px;font-size:10px;color:#64748b">合计</th></tr></thead><tbody>';
+  sorted.forEach(n=>{
+    const map={};hmData[n].forEach(x=>map[x.date]=x.flow);
+    const tot=hmData[n].reduce((s,x)=>s+x.flow,0);
+    h+='<tr><td style="padding:6px;font-weight:600;white-space:nowrap;position:sticky;left:0;background:#fff;font-size:11px">'+n+'</td>';
+    dates.forEach(d=>{h+=cell(map[d]);});
+    h+=cell(parseFloat(tot.toFixed(1)))+'</tr>';
+  });
+  h+='</tbody></table>';
+  el.innerHTML=h;
+  document.getElementById('hmUpdate').textContent='近'+dates.length+'日 · 更新 '+cfNowStr();
+}
+
+/* ═══════════ ③ 北向资金 ═══════════ */
+function nbFetch(){
+  const url='https://push2delay.eastmoney.com/api/qt/kamt/get?fields1=f1,f2,f3,f4&fields2=f51,f52,f53,f54,f55,f56&ut='+CF_UT;
+  fetch(url,{signal:AbortSignal.timeout(10000)})
+    .then(r=>r.json()).then(d=>{nbRender((d||{}).data||{});})
+    .catch(()=>{document.getElementById('nbContent').innerHTML='<div class="state-box" style="color:#64748b">加载失败</div>';});
+}
+function nbRender(data){
+  const el=document.getElementById('nbContent');
+  const s2n=data.sh2hk||{},hk2s=data.hk2sh||{};
+  const row=(label,o)=>{
+    const net=(o.dayNetAmtIn||0)/1e4; // 万→亿
+    const col=net>=0?'#dc2626':'#16a34a';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid #f1f5f9">'
+      +'<span style="font-weight:600;font-size:13px">'+label+'</span>'
+      +'<span style="font-weight:700;font-size:16px;color:'+col+'">'+(net>=0?'+':'')+net.toFixed(2)+'亿</span></div>';
+  };
+  let h=row('北向(沪股通+深股通)',hk2s)+row('南向(港股通)',s2n);
+  // 若数据为0（盘中停止披露），提示
+  if(!(hk2s.dayNetAmtIn)&&!(s2n.dayNetAmtIn)){
+    h='<div class="state-box" style="color:#64748b;padding:14px">今日北向盘中数据未披露(2024年8月起仅收盘后汇总)<br><span style="font-size:10px">收盘后自动更新当日净买入</span></div>';
+  }
+  el.innerHTML=h;
+  document.getElementById('nbUpdate').textContent=(hk2s.date2||'')+' 更新 '+cfNowStr();
+}
+
 /* ═══════════ 板块资金流向动态图（SVG） ═══════════ */
 let cfHistory={}; // {name:[{t,flow},...]}
 let cfLoaded=false;
@@ -762,6 +925,11 @@ setInterval(()=>{
   const n=new Date(),h=n.getHours(),m=n.getMinutes();
   if((h===9&&m>=30)||(h>=10&&h<15)){refreshStocks();}
 },60000);
+
+/* ═══════════ 启动三个资金模块（所有const/function定义之后，避免TDZ） ═══════════ */
+sfFetch();hmFetch();nbFetch();
+setInterval(()=>{if(cfIsTrading()){sfFetch();nbFetch();}},30000);
+setInterval(()=>{if(cfIsTrading()){hmFetch();}},300000); // 热力图5分钟
 </script>
 </body>
 </html>
