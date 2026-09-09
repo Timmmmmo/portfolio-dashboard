@@ -46,6 +46,15 @@ input:focus{outline:none;border-color:var(--s4)}
 label{font-size:11px;color:var(--label);display:block;margin-bottom:3px}
 .toolbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center}
 .disclaimer-bar{position:fixed;bottom:0;left:0;right:0;background:var(--s6);color:var(--danger);font-size:10px;padding:4px 12px;text-align:center;z-index:999;border-top:1px solid var(--danger)}
+.feed-item{display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;line-height:1.6}
+.feed-item:last-child{border:none}
+.feed-time{color:var(--sm);font-size:10px;white-space:nowrap;padding-top:2px;min-width:38px}
+.feed-tag{background:var(--input);border:1px solid var(--bd);padding:0 6px;border-radius:4px;font-size:10px;white-space:nowrap;margin-top:1px}
+.feed-tag.up{background:var(--s6);color:var(--danger);border-color:transparent}
+.feed-tag.dn{background:var(--s7);color:var(--success);border-color:transparent}
+.feed-tag.warn{color:var(--warn);border-color:var(--warn)}
+.feed-txt{color:var(--s3);flex:1;white-space:pre-wrap;word-break:break-word}
+.feed-meta{font-size:10px;color:var(--label);margin-bottom:4px}
 .snap-item{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;flex-wrap:wrap;gap:4px}
 .snap-item:last-child{border:none}
 .ai-body{padding:8px;font-size:12px;line-height:1.7;background:var(--input);border-radius:6px;margin-top:6px;white-space:pre-wrap;max-height:480px;overflow-y:auto}
@@ -108,6 +117,27 @@ label{font-size:11px;color:var(--label);display:block;margin-bottom:3px}
   </div>
   <div id="industryDist" style="font-size:11px;color:var(--label);margin-bottom:8px;display:flex;gap:6px;flex-wrap:wrap"></div>
   <div id="stockGrid" class="sg"></div>
+</div>
+
+<!-- 小时情报流（持仓&板块，每小时更新，保留30条） -->
+<div class="cd" style="border-color:#22d3ee">
+  <div class="ct">
+    ⚡ 持仓&amp;板块情报 <span class="tag" id="intelFeedTag">加载中...</span>
+    <span style="font-size:10px;color:var(--label);font-weight:400">每小时自动更新 · 保留最近30条</span>
+  </div>
+  <div id="intelFeedList"></div>
+  <div class="feed-meta" id="intelFeedMeta"></div>
+</div>
+
+<!-- A股市场小时总结 -->
+<div class="cd" style="border-color:#f472b6">
+  <div class="ct">
+    📈 A股市场小时总结 <span class="tag" id="intelSumTag">加载中...</span>
+    <span style="font-size:10px;color:var(--label);font-weight:400">每小时整点自动更新</span>
+  </div>
+  <div id="intelSumContent">
+    <div class="state-box"><span class="sp"></span>加载市场总结...</div>
+  </div>
 </div>
 
 <!-- 板块资金流向（动态图） -->
@@ -222,7 +252,7 @@ const DEFAULT_PF=[
   {code:'sz000021',name:'深科技',cost:46.75,shares:0,logic:'存储封测',tags:'存储'},
   {code:'hk00981',name:'中芯国际(H)',cost:58.68,shares:0,logic:'芯片代工',tags:'芯片'},
   {code:'sh600399',name:'抚顺特钢',cost:6.63,shares:0,logic:'特钢',tags:'特钢'},
-  {code:'sh601069',name:'华钰矿业',cost:69.83,shares:0,logic:'黄金锑矿',tags:'黄金'},
+  {code:'sh601020',name:'华钰矿业',cost:69.83,shares:0,logic:'黄金锑矿',tags:'黄金'},
   {code:'sz300346',name:'南大光电',cost:53.22,shares:0,logic:'光刻胶MO源',tags:'光刻胶'},
   {code:'bj872808',name:'曙光数创',cost:83.18,shares:0,logic:'液冷',tags:'液冷'},
   {code:'sh600338',name:'西藏珠峰',cost:18.75,shares:0,logic:'铅锌锂矿',tags:'锂矿'},
@@ -252,6 +282,7 @@ function startApp(){
   seedSnapshots();
   renderPortfolio();
   loadDailyReports();
+  loadIntel();
   refreshAll();
 }
 
@@ -588,6 +619,52 @@ async function fetchWithTimeout(url,ms){
   }catch(e){
     clearTimeout(t);
     throw e;
+  }
+}
+
+/* ═══════════ 小时情报 + A股总结（intel_state.json，同源fetch） ═══════════ */
+let intelLoaded=false;
+async function loadIntel(){
+  const feedEl=document.getElementById('intelFeedList');
+  const sumEl=document.getElementById('intelSumContent');
+  const tagEl=document.getElementById('intelFeedTag');
+  const sumTag=document.getElementById('intelSumTag');
+  const metaEl=document.getElementById('intelFeedMeta');
+  try{
+    const resp=await fetchWithTimeout('intel_state.json?t='+Date.now(),8000);
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    const data=await resp.json();
+    intelLoaded=true;
+    // 情报流
+    const feed=(data.feed||[]).slice(0,30);
+    tagEl.textContent=feed.length+'条/30';
+    if(metaEl)metaEl.textContent='最近更新 '+(data.updated||'--');
+    if(!feed.length){
+      feedEl.innerHTML='<div class="state-box">暂无情报，首个整点后自动生成</div>';
+    }else{
+      feedEl.innerHTML=feed.map(it=>{
+        const c=(it.cat||'').trim();
+        const cls=c==='up'||c==='dn'||c==='warn'?c:'';
+        const tagTxt=it.tag||'';
+        const chip=tagTxt?('<span class="feed-tag '+(cls==='warn'||c==='up'||c==='dn'?cls:'')+'">'+escHtml(tagTxt)+'</span>'):'';
+        const timeTxt=it.t||'';
+        const time=timeTxt?('<span class="feed-time">'+escHtml(timeTxt)+'</span>'):'';
+        return '<div class="feed-item">'+time+chip+'<span class="feed-txt">'+escHtml(it.txt||'').replace(/\n/g,'<br>')+'</span></div>';
+      }).join('');
+    }
+    // 市场总结
+    sumTag.textContent=(data.updated||'--')+' 更新';
+    const md=(data.summary||'').trim();
+    if(md){
+      sumEl.innerHTML='<div class="ai-body" style="max-height:none">'+mdToHtml(md)+'</div>';
+    }else{
+      sumEl.innerHTML='<div class="state-box">暂无市场总结，首个整点后自动生成</div>';
+    }
+  }catch(e){
+    tagEl.textContent='待生成';
+    feedEl.innerHTML='<div class="state-box">情报尚未生成<br><span style="font-size:11px">每小时更新：首条情报将在最近一个整点后出现<br>（若刚部署请等待1-2分钟CDN刷新）</span></div>';
+    sumTag.textContent='待生成';
+    sumEl.innerHTML='<div class="state-box">市场总结尚未生成</div>';
   }
 }
 
