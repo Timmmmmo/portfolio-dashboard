@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """通过 GitHub Contents API 提交单文件（无需git网络推送）。
-token 从 Windows 凭据管理器读取（git credential fill），不写入本文件/命令行。
+token 来源：优先环境变量 GH_TOKEN，其次 Windows 凭据管理器(git credential fill)。
 用法: python gh_upload.py <repo内相对路径> [提交说明]
 """
-import base64, json, subprocess, sys, urllib.request
+import base64, json, os, subprocess, sys, urllib.request
 
 REPO = 'Timmmmmo/portfolio-dashboard'
 
 def get_token():
+    if os.environ.get('GH_TOKEN'):
+        return os.environ['GH_TOKEN']
     out = subprocess.run(['git', 'credential', 'fill'],
                          input='protocol=https\nhost=github.com\n\n',
                          capture_output=True, text=True, encoding='utf-8')
