@@ -1,14 +1,24 @@
 ---
 feature: push-notify
-status: designed
+status: delivered
 updated: 2026-09-29
 branch: main
-commits: 
+commits: fef0aec..c5ed88b
 ---
 
 # Server酱推送通知
 
 ## Report
+
+**What was built** — 新增 `notify.py`，支持 Server酱微信推送：盘中关键警报（止损/减仓，同日去重）与盘后复盘（市场状态+剧本+持仓信号+板块资金流）。`update.yml` 在数据抓取后调用，北京时间 ≥15:00 自动切换为复盘模式；无 `SERVERCHAN_KEY` 时静默跳过。SendKey 存放在 GitHub Actions Secret，不进仓库。
+
+**Verification** — `notify.py` 本地格式/去重测试 PASS（7 条关键信号文案正确，指纹去重生效）；Actions 跑次 `36528354988` 步骤「Server酱推送」日志 `alert: sent True ... SUCCESS pushid:58962481`；全 job `completed/success`。
+
+**Journey log** —
+1. 本机无 nacl/cryptography，无法用 API 写 Secret，改由用户在 GitHub 网页添加，更稳。
+2. GitHub API/ git push 在本时段网络抖动严重，改用单文件 Contents API 重试上传。
+3. 首次写 workflow 文件被 404 拒绝，确认需 `workflow` scope。
+4. 无 Key 时 exit 0 的设计保证主流程不受影响。
 
 ## [S1] Problem
 Dashboard 已上线并按 30 分钟节奏更新，但用户必须主动打开网址才能看到操盘建议和持仓信号。盘中触发止损/减仓时无法及时知晓，收盘后也没有可回看的汇总推送。需要把关键信息主动推到微信。
