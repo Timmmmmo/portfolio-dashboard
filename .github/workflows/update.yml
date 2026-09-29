@@ -93,7 +93,7 @@ jobs:
               html = f.read()
 
           def inject(var, obj):
-              nonlocal html
+              global html
               s = json.dumps(obj, ensure_ascii=False)
               pat = rf'const {var} = (\{{.*?\}}|\[.*?\]|\{{\}}|\[\]);'
               if re.search(pat, html, flags=re.DOTALL):
