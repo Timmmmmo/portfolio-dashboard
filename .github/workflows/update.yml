@@ -66,6 +66,13 @@ jobs:
           export TZ=Asia/Shanghai
           python portfolio_tracker.py > portfolio_data.json 2>portfolio_err.log || true
 
+      - name: Server酱推送（警报/复盘）
+        env:
+          SERVERCHAN_KEY: ${{ secrets.SERVERCHAN_KEY }}
+        run: |
+          export TZ=Asia/Shanghai
+          python notify.py --mode alert --also-review || true
+
       - name: 注入 index.html
         run: |
           python3 << 'PYEOF'
@@ -137,7 +144,7 @@ jobs:
         run: |
           git config user.name "Dashboard Bot"
           git config user.email "bot@timmmmmo.github.io"
-          git add index.html trader_signal.json quotes_data.json lianban_data.json news_data.json portfolio_data.json intel_state.json sector_flow.json 2>/dev/null || true
+          git add index.html trader_signal.json quotes_data.json lianban_data.json news_data.json portfolio_data.json intel_state.json sector_flow.json notify_state.json 2>/dev/null || true
           git add index.html
           git diff --staged --quiet || git commit -m "auto: 操盘更新 $(date -d '+8 hours' '+%Y-%m-%d %H:%M' 2>/dev/null || date '+%Y-%m-%d %H:%M')"
           git push
