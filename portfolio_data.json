@@ -1,0 +1,114 @@
+{
+  "update_time": "2026-09-29 11:24",
+  "period": "盘后",
+  "date": "2026-09-29",
+  "holdings": [
+    {
+      "code": "hk00981",
+      "name": "中芯国际(H)",
+      "sector": "AI芯片",
+      "price": 0,
+      "chg": 0,
+      "status": "⏳ 等待数据",
+      "signal": "hold",
+      "desc": "中国最先进制程代工厂"
+    },
+    {
+      "code": "sz000021",
+      "name": "深科技",
+      "sector": "存储封测",
+      "price": 0,
+      "chg": 0,
+      "status": "⏳ 等待数据",
+      "signal": "hold",
+      "desc": "存储封测铲子龙头"
+    },
+    {
+      "code": "sh603650",
+      "name": "彤程新材",
+      "sector": "光刻胶",
+      "price": 0,
+      "chg": 0,
+      "status": "⏳ 等待数据",
+      "signal": "hold",
+      "desc": "ArF/KrF光刻胶国产龙头"
+    },
+    {
+      "code": "sh688106",
+      "name": "金宏气体",
+      "sector": "特气/氦气",
+      "price": 0,
+      "chg": 0,
+      "status": "⏳ 等待数据",
+      "signal": "hold",
+      "desc": "氦气不可替代+出口禁令受益"
+    },
+    {
+      "code": "sh688114",
+      "name": "华大智造",
+      "sector": "基因测序",
+      "price": 0,
+      "chg": 0,
+      "status": "⏳ 等待数据",
+      "signal": "hold",
+      "desc": "国产测序唯一标的"
+    },
+    {
+      "code": "sh688507",
+      "name": "索辰科技",
+      "sector": "CAE仿真",
+      "price": 0,
+      "chg": 0,
+      "status": "⏳ 等待数据",
+      "signal": "hold",
+      "desc": "国产CAE+军工市占率第一"
+    },
+    {
+      "code": "sz002594",
+      "name": "比亚迪",
+      "sector": "新能源车",
+      "price": 0,
+      "chg": 0,
+      "status": "⏳ 等待数据",
+      "signal": "hold",
+      "desc": "全球销量冠军"
+    },
+    {
+      "code": "sz000762",
+      "name": "西藏矿业",
+      "sector": "锂矿",
+      "price": 0,
+      "chg": 0,
+      "status": "⏳ 等待数据",
+      "signal": "hold",
+      "desc": "锂矿周期底部"
+    },
+    {
+      "code": "sz300174",
+      "name": "元力股份",
+      "sector": "超级电容",
+      "price": 0,
+      "chg": 0,
+      "status": "⏳ 等待数据",
+      "signal": "hold",
+      "desc": "底部企稳中"
+    },
+    {
+      "code": "sh603127",
+      "name": "昭衍新药",
+      "sector": "实验猴/CXO",
+      "price": 0,
+      "chg": 0,
+      "status": "⏳ 等待数据",
+      "signal": "hold",
+      "desc": "中国最大实验猴群，CXO上游卖水人"
+    }
+  ],
+  "news_summary": [
+    "AI应用: 科技主线持续催化",
+    "固态电池: 技术迭代方向",
+    "地缘政治: 关注潜在风险",
+    "资金面: 市场情绪指标"
+  ],
+  "total": 10
+}
