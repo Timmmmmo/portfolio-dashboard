@@ -1,52 +1,140 @@
-name: 更新Dashboard
+name: 操盘手Dashboard更新
+
 on:
   schedule:
-    - cron: '0 * * * *'  # 每整点
+    # 北京时间开盘期间每30分钟 (UTC = 北京-8)
+    # 上午 9:00-11:30 → UTC 1:00-3:30
+    # 下午 13:00-15:30 → UTC 5:00-7:30
+    - cron: '0,30 1-3,5-7 * * 1-5'
+    # 收盘复盘 北京 17:00 → UTC 9:00
+    - cron: '0 9 * * 1-5'
+    # 盘前情报 北京 8:30 → UTC 0:30
+    - cron: '30 0 * * 1-5'
   workflow_dispatch:
 
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: 全市场连板扫描
-        run: python lianban_scanner.py > lianban_data.json 2>&1
+      - name: 时钟与时段
+        run: |
+          export TZ=Asia/Shanghai
+          python market_clock.py
 
-      - name: 财联社新闻抓取
-        run: python news_fetcher.py > news_data.json 2>&1
+      - name: 行情快照
+        run: |
+          export TZ=Asia/Shanghai
+          python tools/snapshot_quotes.py > quotes_data.json 2>quotes_err.log || true
+          head -c 200 quotes_data.json || true
+
+      - name: 操盘信号引擎
+        run: |
+          export TZ=Asia/Shanghai
+          python trader_engine.py > trader_signal.json 2>trader_err.log || true
+          echo "--- trader_signal head ---"
+          head -c 400 trader_signal.json || true
+
+      - name: 细分板块资金流
+        run: |
+          export TZ=Asia/Shanghai
+          python sector_flow.py > sector_flow.json 2>sector_flow_err.log || true
+          echo "--- sector_flow head ---"
+          head -c 300 sector_flow.json || true
+
+      - name: 全市场连板扫描
+        run: |
+          export TZ=Asia/Shanghai
+          python lianban_scanner.py > lianban_data.json 2>lianban_err.log || true
+
+      - name: 财经新闻抓取
+        run: |
+          export TZ=Asia/Shanghai
+          python news_fetcher.py > news_data.json 2>news_err.log || true
 
       - name: 持仓跟踪分析
-        run: python portfolio_tracker.py > portfolio_data.json 2>&1
+        run: |
+          export TZ=Asia/Shanghai
+          python portfolio_tracker.py > portfolio_data.json 2>portfolio_err.log || true
 
-      - name: 更新到index.html
+      - name: 注入 index.html
         run: |
           python3 << 'PYEOF'
-          import json, re
-          
-          with open('lianban_data.json') as f: lb = json.load(f)
-          with open('news_data.json') as f: news = json.load(f)
-          
-          with open('index.html') as f: html = f.read()
-          
-          lb_str = json.dumps(lb, ensure_ascii=False)
-          html = re.sub(r'const LBD = \{.*?\};', f'const LBD = {lb_str};', html, flags=re.DOTALL)
-          
-          news_str = json.dumps(news, ensure_ascii=False)
-          html = re.sub(r'const NEWS_DATA = \{.*?\};', f'const NEWS_DATA = {news_str};', html, flags=re.DOTALL)
-          
-          with open('index.html', 'w') as f: f.write(html)
-          
-          print(f'LBD: {lb["days"]}d, News: {news["total"]}')
+          import json, re, os
+          from datetime import datetime
+          import zoneinfo
+          tz = zoneinfo.ZoneInfo('Asia/Shanghai')
+          now = datetime.now(tz).strftime('%Y-%m-%d %H:%M')
+
+          def load(name, default):
+              try:
+                  with open(name, encoding='utf-8') as f:
+                      s = f.read().strip()
+                  if not s:
+                      return default
+                  return json.loads(s)
+              except Exception:
+                  return default
+
+          trader = load('trader_signal.json', {})
+          quotes = load('quotes_data.json', {})
+          lianban = load('lianban_data.json', {})
+          news = load('news_data.json', {})
+          portfolio = load('portfolio_data.json', {})
+          sector_flow = load('sector_flow.json', {})
+
+          with open('index.html', encoding='utf-8') as f:
+              html = f.read()
+
+          def inject(var, obj):
+              nonlocal html
+              s = json.dumps(obj, ensure_ascii=False)
+              pat = rf'const {var} = (\{{.*?\}}|\[.*?\]|\{{\}}|\[\]);'
+              if re.search(pat, html, flags=re.DOTALL):
+                  html = re.sub(pat, f'const {var} = {s};', html, count=1, flags=re.DOTALL)
+              else:
+                  # 兜底：追加到 BOOT 区
+                  html = html.replace(
+                      'const BOOT_DONE = false;',
+                      f'const {var} = {s};\nconst BOOT_DONE = false;'
+                  )
+
+          inject('TRADER_DATA', trader)
+          inject('QUOTES_DATA', quotes)
+          inject('LBD', lianban)
+          inject('NEWS_DATA', news)
+          inject('PORTFOLIO_DATA', portfolio)
+          inject('SECTOR_FLOW_DATA', sector_flow)
+
+          # 更新时间戳
+          html = re.sub(
+              r'(const DATA_STAMP = )["\'].*?["\'];',
+              rf'\g<1>"{now}";',
+              html,
+              count=1
+          )
+          if 'const DATA_STAMP' not in html:
+              html = html.replace(
+                  'const BOOT_DONE = false;',
+                  f'const DATA_STAMP = "{now}";\nconst BOOT_DONE = false;'
+              )
+
+          with open('index.html', 'w', encoding='utf-8') as f:
+              f.write(html)
+          print(f'injected ok @ {now}')
           PYEOF
 
       - name: 提交更新
         run: |
           git config user.name "Dashboard Bot"
           git config user.email "bot@timmmmmo.github.io"
-          git add index.html lianban_data.json news_data.json
-          git diff --staged --quiet || git commit -m "auto: update $(date '+%Y-%m-%d %H:%M')"
+          git add index.html trader_signal.json quotes_data.json lianban_data.json news_data.json portfolio_data.json intel_state.json sector_flow.json 2>/dev/null || true
+          git add index.html
+          git diff --staged --quiet || git commit -m "auto: 操盘更新 $(date -d '+8 hours' '+%Y-%m-%d %H:%M' 2>/dev/null || date '+%Y-%m-%d %H:%M')"
           git push
