@@ -1,7 +1,141 @@
 {
-  "update_time": "2026-09-29 23:33",
-  "news": [],
-  "analysis": [],
-  "total": 0,
-  "status": "no_data"
+  "update_time": "2026-09-30 13:48",
+  "news": [
+    {
+      "time": "90745952",
+      "title": "印度设定目标：到2032财年乘用车燃油效率将提升16.7%",
+      "content": "印度设定目标：到2032财年乘用车燃油效率将提升16.7%",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-09-30/doc-initqqvi2215156.shtml"
+    },
+    {
+      "time": "90745941",
+      "title": "一周之内两家公司启动私有化，主动寻求“退市” 今年以来港股已有31家公司除牌",
+      "content": "一周之内两家公司启动私有化，主动寻求“退市” 今年以来港股已有31家公司除牌",
+      "url": "https://finance.sina.com.cn/roll/2026-09-30/doc-initqqvm2608646.shtml"
+    },
+    {
+      "time": "90745810",
+      "title": "朋友圈的贷款中介突然“消停”！今起这项新规正式施行",
+      "content": "朋友圈的贷款中介突然“消停”！今起这项新规正式施行",
+      "url": "https://finance.sina.com.cn/roll/2026-09-30/doc-initqqvi5833607.shtml"
+    },
+    {
+      "time": "90745462",
+      "title": "台湾以东海域发生5.5级地震，震源深度10千米，网友：厦门福州有震感",
+      "content": "台湾以东海域发生5.5级地震，震源深度10千米，网友：厦门福州有震感",
+      "url": "https://finance.sina.com.cn/roll/2026-09-30/doc-initqquz7053309.shtml"
+    },
+    {
+      "time": "90745246",
+      "title": "“木头姐”抛售AMD股票套现逾1亿美元，加仓英伟达、特斯拉和SpaceX",
+      "content": "“木头姐”抛售AMD股票套现逾1亿美元，加仓英伟达、特斯拉和SpaceX",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-09-30/doc-initqqvm2600233.shtml"
+    },
+    {
+      "time": "90745182",
+      "title": "摩根大通和高盛均预计中东原油输出规模接近战前水平",
+      "content": "摩根大通和高盛均预计中东原油输出规模接近战前水平",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-09-30/doc-initqqvm2599465.shtml"
+    },
+    {
+      "time": "90744671",
+      "title": "油价飙升抹平政策红利，外资再度撤离印度",
+      "content": "油价飙升抹平政策红利，外资再度撤离印度",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-09-30/doc-initqqvi2206798.shtml"
+    },
+    {
+      "time": "90744579",
+      "title": "花旗：普拉达维持“中性”评级 目标价下调至39.90港元",
+      "content": "花旗：普拉达维持“中性”评级 目标价下调至39.90港元",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-09-30/doc-initqqvi5819901.shtml"
+    },
+    {
+      "time": "90744463",
+      "title": "花旗：广汽集团H股目标价上调至2.7港元",
+      "content": "花旗：广汽集团H股目标价上调至2.7港元",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-09-30/doc-initqqvm2591167.shtml"
+    },
+    {
+      "time": "90744053",
+      "title": "苹果在印度推出支付服务，挑战谷歌与Paytm",
+      "content": "苹果在印度推出支付服务，挑战谷歌与Paytm",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-09-30/doc-initqqvi5813445.shtml"
+    },
+    {
+      "time": "90742911",
+      "title": "迈克尔·伯里门徒警告韩国股市存在“价值陷阱”",
+      "content": "迈克尔·伯里门徒警告韩国股市存在“价值陷阱”",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-09-30/doc-initqqvi2192796.shtml"
+    },
+    {
+      "time": "90742674",
+      "title": "韩国央行将于12月购买1吨黄金",
+      "content": "韩国央行将于12月购买1吨黄金",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-09-30/doc-initqqvm2566435.shtml"
+    },
+    {
+      "time": "90742440",
+      "title": "美债期货市场做空交易扎堆 轧空风险悄然升温",
+      "content": "美债期货市场做空交易扎堆 轧空风险悄然升温",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-09-30/doc-initqqvi5791579.shtml"
+    },
+    {
+      "time": "90741700",
+      "title": "长三角铁路今迎假期首波出行大客流，计划开行列车3127列",
+      "content": "长三角铁路今迎假期首波出行大客流，计划开行列车3127列",
+      "url": "https://finance.sina.com.cn/jjxw/2026-09-30/doc-initqqvi5782250.shtml"
+    },
+    {
+      "time": "90741377",
+      "title": "金融科技公司Zilch正为明年上市遴选投行",
+      "content": "金融科技公司Zilch正为明年上市遴选投行",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-09-30/doc-initqqvi5777836.shtml"
+    },
+    {
+      "time": "90741251",
+      "title": "日本两年期国债发行因收益率高而需求强劲",
+      "content": "日本两年期国债发行因收益率高而需求强劲",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-09-30/doc-initqqvi2181272.shtml"
+    },
+    {
+      "time": "90740946",
+      "title": "华创证券：阅文集团首予“强推”评级 目标价28.19港元",
+      "content": "华创证券：阅文集团首予“强推”评级 目标价28.19港元",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-09-30/doc-initqqvi5770982.shtml"
+    },
+    {
+      "time": "90740856",
+      "title": "申万宏源：赤子城科技上调2026至2027年归母净利润预测 维持“买入”评级",
+      "content": "申万宏源：赤子城科技上调2026至2027年归母净利润预测 维持“买入”评级",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-09-30/doc-initqqvi5769579.shtml"
+    },
+    {
+      "time": "90740649",
+      "title": "康希诺生物午前大涨逾16% 莫德纳ESMO数据预期提振mRNA赛道",
+      "content": "康希诺生物午前大涨逾16% 莫德纳ESMO数据预期提振mRNA赛道",
+      "url": "https://finance.sina.com.cn/stock/hkstock/marketalerts/2026-09-30/doc-initqqvm2538841.shtml"
+    },
+    {
+      "time": "90740563",
+      "title": "港股午评：恒指跌0.04% 科指跌0.15% 半导体板块下挫 创新药概念股强势 欢创科技上市首日涨超194%",
+      "content": "港股午评：恒指跌0.04% 科指跌0.15% 半导体板块下挫 创新药概念股强势 欢创科技上市首日涨超194%",
+      "url": "https://finance.sina.com.cn/stock/hkstock/marketalerts/2026-09-30/doc-initqqvi5771415.shtml"
+    }
+  ],
+  "analysis": [
+    {
+      "topic": "半导体/AI",
+      "comment": "产业链催化，利好国产替代"
+    },
+    {
+      "topic": "CXO/医药",
+      "comment": "板块低位，投融资回暖"
+    },
+    {
+      "topic": "资金面",
+      "comment": "市场情绪指标"
+    }
+  ],
+  "total": 20,
+  "status": "ok"
 }

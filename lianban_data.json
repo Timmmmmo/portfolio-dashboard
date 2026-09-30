@@ -1,41 +1,28 @@
 {
-  "update_time": "2026-09-29 23:33",
-  "days": 12,
+  "update_time": "2026-09-30 13:48",
+  "days": 8,
   "data": {
-    "2026-07-14": {
+    "2026-07-15": {
       "stocks": [
         {
-          "code": "sh600488",
-          "name": "津药药业",
+          "code": "sh603538",
+          "name": "美诺华",
           "streak": 2,
           "sector": "主板",
-          "chg": 12.52
+          "chg": 14.54
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-07-15": {
+    "2026-07-21": {
       "stocks": [
         {
-          "code": "sh600488",
-          "name": "津药药业",
-          "streak": 3,
-          "sector": "主板",
-          "chg": 13.87
-        }
-      ],
-      "count": 1,
-      "max_streak": 3
-    },
-    "2026-07-20": {
-      "stocks": [
-        {
-          "code": "sh600982",
-          "name": "宁波能源",
+          "code": "sh600664",
+          "name": "哈药股份",
           "streak": 2,
           "sector": "主板",
-          "chg": 9.96
+          "chg": 19.43
         }
       ],
       "count": 1,
@@ -57,6 +44,13 @@
     "2026-08-03": {
       "stocks": [
         {
+          "code": "sh605179",
+          "name": "一鸣食品",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 10.02
+        },
+        {
           "code": "sz002882",
           "name": "金龙羽",
           "streak": 2,
@@ -64,99 +58,60 @@
           "chg": 10.86
         }
       ],
-      "count": 1,
+      "count": 2,
       "max_streak": 2
     },
-    "2026-08-06": {
+    "2026-09-01": {
       "stocks": [
         {
-          "code": "sh600601",
-          "name": "方正科技",
+          "code": "sz002942",
+          "name": "新农股份",
           "streak": 2,
           "sector": "主板",
-          "chg": 12.61
+          "chg": 11.57
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-08-31": {
+    "2026-09-22": {
       "stocks": [
         {
-          "code": "sz003005",
-          "name": "竞业达",
+          "code": "sh600503",
+          "name": "华丽家族",
           "streak": 2,
           "sector": "主板",
-          "chg": 9.98
+          "chg": 13.62
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-09-07": {
+    "2026-09-23": {
       "stocks": [
         {
-          "code": "sz000892",
-          "name": "欢瑞世纪",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.48
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-08": {
-      "stocks": [
-        {
-          "code": "sz002172",
-          "name": "澳洋健康",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 9.94
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-11": {
-      "stocks": [
-        {
-          "code": "sz000823",
-          "name": "超声电子",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 10.41
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-14": {
-      "stocks": [
-        {
-          "code": "sh605058",
-          "name": "澳弘电子",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.12
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-15": {
-      "stocks": [
-        {
-          "code": "sh605058",
-          "name": "澳弘电子",
+          "code": "sh600503",
+          "name": "华丽家族",
           "streak": 3,
           "sector": "主板",
-          "chg": 11.02
+          "chg": 10.11
         }
       ],
       "count": 1,
       "max_streak": 3
+    },
+    "2026-09-24": {
+      "stocks": [
+        {
+          "code": "sh600802",
+          "name": "福建水泥",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 14.14
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
     }
   }
 }
