@@ -1,6 +1,42 @@
 {
-  "update_time": "2026-09-30 13:48",
+  "update_time": "2026-09-30 14:17",
   "news": [
+    {
+      "time": "90748933",
+      "title": "马斯克回应达美航空CEO拒绝采用星链：隔离AI的最佳方法是让它搭乘达美航班",
+      "content": "马斯克回应达美航空CEO拒绝采用星链：隔离AI的最佳方法是让它搭乘达美航班",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-09-30/doc-initqvax6947366.shtml"
+    },
+    {
+      "time": "90748859",
+      "title": "三星集团将向AI基础设施企业Helix合计投资10亿美元",
+      "content": "三星集团将向AI基础设施企业Helix合计投资10亿美元",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-09-30/doc-initqvcf2106151.shtml"
+    },
+    {
+      "time": "90748635",
+      "title": "消息人士：AMD 首席执行官苏姿丰将于下月访问韩国",
+      "content": "消息人士：AMD 首席执行官苏姿丰将于下月访问韩国",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-09-30/doc-initqvcf2104511.shtml"
+    },
+    {
+      "time": "90748610",
+      "title": "受人工智能概念炒作推高的韩国股市，三季度表现位居全球主要市场末位",
+      "content": "受人工智能概念炒作推高的韩国股市，三季度表现位居全球主要市场末位",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-09-30/doc-initqvcf5736493.shtml"
+    },
+    {
+      "time": "90747384",
+      "title": "野村称正密切关注日元贬值推高利率的风险",
+      "content": "野村称正密切关注日元贬值推高利率的风险",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-09-30/doc-initqvax6935548.shtml"
+    },
+    {
+      "time": "90747036",
+      "title": "香港金管局：知识产权融资沙盒参与银行完成首批试点个案的融资审批",
+      "content": "香港金管局：知识产权融资沙盒参与银行完成首批试点个案的融资审批",
+      "url": "https://finance.sina.com.cn/stock/hkstock/ggscyd/2026-09-30/doc-initqvcf5721441.shtml"
+    },
     {
       "time": "90745952",
       "title": "印度设定目标：到2032财年乘用车燃油效率将提升16.7%",
@@ -84,56 +120,20 @@
       "title": "长三角铁路今迎假期首波出行大客流，计划开行列车3127列",
       "content": "长三角铁路今迎假期首波出行大客流，计划开行列车3127列",
       "url": "https://finance.sina.com.cn/jjxw/2026-09-30/doc-initqqvi5782250.shtml"
-    },
-    {
-      "time": "90741377",
-      "title": "金融科技公司Zilch正为明年上市遴选投行",
-      "content": "金融科技公司Zilch正为明年上市遴选投行",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-09-30/doc-initqqvi5777836.shtml"
-    },
-    {
-      "time": "90741251",
-      "title": "日本两年期国债发行因收益率高而需求强劲",
-      "content": "日本两年期国债发行因收益率高而需求强劲",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-09-30/doc-initqqvi2181272.shtml"
-    },
-    {
-      "time": "90740946",
-      "title": "华创证券：阅文集团首予“强推”评级 目标价28.19港元",
-      "content": "华创证券：阅文集团首予“强推”评级 目标价28.19港元",
-      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-09-30/doc-initqqvi5770982.shtml"
-    },
-    {
-      "time": "90740856",
-      "title": "申万宏源：赤子城科技上调2026至2027年归母净利润预测 维持“买入”评级",
-      "content": "申万宏源：赤子城科技上调2026至2027年归母净利润预测 维持“买入”评级",
-      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-09-30/doc-initqqvi5769579.shtml"
-    },
-    {
-      "time": "90740649",
-      "title": "康希诺生物午前大涨逾16% 莫德纳ESMO数据预期提振mRNA赛道",
-      "content": "康希诺生物午前大涨逾16% 莫德纳ESMO数据预期提振mRNA赛道",
-      "url": "https://finance.sina.com.cn/stock/hkstock/marketalerts/2026-09-30/doc-initqqvm2538841.shtml"
-    },
-    {
-      "time": "90740563",
-      "title": "港股午评：恒指跌0.04% 科指跌0.15% 半导体板块下挫 创新药概念股强势 欢创科技上市首日涨超194%",
-      "content": "港股午评：恒指跌0.04% 科指跌0.15% 半导体板块下挫 创新药概念股强势 欢创科技上市首日涨超194%",
-      "url": "https://finance.sina.com.cn/stock/hkstock/marketalerts/2026-09-30/doc-initqqvi5771415.shtml"
     }
   ],
   "analysis": [
     {
-      "topic": "半导体/AI",
-      "comment": "产业链催化，利好国产替代"
-    },
-    {
-      "topic": "CXO/医药",
-      "comment": "板块低位，投融资回暖"
+      "topic": "AI应用",
+      "comment": "科技主线持续催化"
     },
     {
       "topic": "资金面",
       "comment": "市场情绪指标"
+    },
+    {
+      "topic": "金融/券商",
+      "comment": "权重股表现"
     }
   ],
   "total": 20,

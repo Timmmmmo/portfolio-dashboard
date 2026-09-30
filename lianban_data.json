@@ -1,6 +1,6 @@
 {
-  "update_time": "2026-09-30 13:48",
-  "days": 8,
+  "update_time": "2026-09-30 14:16",
+  "days": 9,
   "data": {
     "2026-07-15": {
       "stocks": [
@@ -44,13 +44,6 @@
     "2026-08-03": {
       "stocks": [
         {
-          "code": "sh605179",
-          "name": "一鸣食品",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 10.02
-        },
-        {
           "code": "sz002882",
           "name": "金龙羽",
           "streak": 2,
@@ -58,7 +51,20 @@
           "chg": 10.86
         }
       ],
-      "count": 2,
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-08-21": {
+      "stocks": [
+        {
+          "code": "sh603838",
+          "name": "*ST四通",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 10.57
+        }
+      ],
+      "count": 1,
       "max_streak": 2
     },
     "2026-09-01": {
