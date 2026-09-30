@@ -1,5 +1,5 @@
 {
-  "update_time": "2026-09-30 14:16",
+  "update_time": "2026-09-30 20:54",
   "days": 9,
   "data": {
     "2026-07-15": {
@@ -10,6 +10,19 @@
           "streak": 2,
           "sector": "主板",
           "chg": 14.54
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-07-20": {
+      "stocks": [
+        {
+          "code": "sz000037",
+          "name": "深南电A",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 10.0
         }
       ],
       "count": 1,
@@ -49,19 +62,6 @@
           "streak": 2,
           "sector": "主板",
           "chg": 10.86
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-08-21": {
-      "stocks": [
-        {
-          "code": "sh603838",
-          "name": "*ST四通",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 10.57
         }
       ],
       "count": 1,
