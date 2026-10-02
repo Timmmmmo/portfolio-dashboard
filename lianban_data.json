@@ -1,6 +1,6 @@
 {
-  "update_time": "2026-10-02 13:58",
-  "days": 7,
+  "update_time": "2026-10-02 14:36",
+  "days": 9,
   "data": {
     "2026-07-15": {
       "stocks": [
@@ -23,16 +23,9 @@
           "streak": 2,
           "sector": "主板",
           "chg": 10.0
-        },
-        {
-          "code": "sz000899",
-          "name": "赣能股份",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 9.91
         }
       ],
-      "count": 2,
+      "count": 1,
       "max_streak": 2
     },
     "2026-07-21": {
@@ -48,35 +41,8 @@
       "count": 1,
       "max_streak": 2
     },
-    "2026-07-23": {
-      "stocks": [
-        {
-          "code": "sh600227",
-          "name": "赤天化",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 10.23
-        },
-        {
-          "code": "sh600722",
-          "name": "金牛化工",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 9.99
-        }
-      ],
-      "count": 2,
-      "max_streak": 2
-    },
     "2026-07-31": {
       "stocks": [
-        {
-          "code": "sz000009",
-          "name": "中国宝安",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.97
-        },
         {
           "code": "sh600418",
           "name": "江淮汽车",
@@ -85,21 +51,60 @@
           "chg": 11.74
         }
       ],
-      "count": 2,
+      "count": 1,
       "max_streak": 2
     },
-    "2026-08-10": {
+    "2026-08-03": {
       "stocks": [
         {
-          "code": "sh603102",
-          "name": "百合股份",
+          "code": "sz002882",
+          "name": "金龙羽",
           "streak": 2,
           "sector": "主板",
-          "chg": 10.63
+          "chg": 10.86
         }
       ],
       "count": 1,
       "max_streak": 2
+    },
+    "2026-09-01": {
+      "stocks": [
+        {
+          "code": "sz002942",
+          "name": "新农股份",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 11.57
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-09-22": {
+      "stocks": [
+        {
+          "code": "sh600503",
+          "name": "华丽家族",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 13.62
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-09-23": {
+      "stocks": [
+        {
+          "code": "sh600503",
+          "name": "华丽家族",
+          "streak": 3,
+          "sector": "主板",
+          "chg": 10.11
+        }
+      ],
+      "count": 1,
+      "max_streak": 3
     },
     "2026-09-24": {
       "stocks": [
