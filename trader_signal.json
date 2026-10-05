@@ -1,5 +1,5 @@
 {
-  "update_time": "2026-10-05 13:58:10",
+  "update_time": "2026-10-05 14:29:20",
   "market": {
     "score": 40.9,
     "regime": "defense",
@@ -126,9 +126,9 @@
         "target": 67.48,
         "pos_pct": 60,
         "reason": "横盘整理，持有观察",
-        "pnl": 4.29,
-        "price": 61.2,
-        "chg": 1.58
+        "pnl": 4.55,
+        "price": 61.35,
+        "chg": 1.83
       }
     },
     {
