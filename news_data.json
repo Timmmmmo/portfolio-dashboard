@@ -1,6 +1,48 @@
 {
-  "update_time": "2026-10-06 14:37",
+  "update_time": "2026-10-06 15:07",
   "news": [
+    {
+      "time": "91270378",
+      "title": "斗山恒能向美国SpaceXAI交付首台燃气轮机",
+      "content": "斗山恒能向美国SpaceXAI交付首台燃气轮机",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-06/doc-iniuhitk7077281.shtml"
+    },
+    {
+      "time": "91270199",
+      "title": "全文 | 余承东接受多家国际媒体记者采访",
+      "content": "全文 | 余承东接受多家国际媒体记者采访",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-06/doc-iniuhitk7076122.shtml"
+    },
+    {
+      "time": "91269958",
+      "title": "日经225指数收涨1.1% 自7月1日以来首次收于70000点上方",
+      "content": "日经225指数收涨1.1% 自7月1日以来首次收于70000点上方",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-06/doc-iniuhitk7074792.shtml"
+    },
+    {
+      "time": "91269906",
+      "title": "余承东：内存涨价导致每部手机多花超200美元",
+      "content": "余承东：内存涨价导致每部手机多花超200美元",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-06/doc-iniuhiti5748891.shtml"
+    },
+    {
+      "time": "91269795",
+      "title": "韩国股市高开低走，KOSPI指数收跌0.9%终结两连涨",
+      "content": "韩国股市高开低走，KOSPI指数收跌0.9%终结两连涨",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-06/doc-iniuhitk7074101.shtml"
+    },
+    {
+      "time": "91269072",
+      "title": "韩国三大百货连锁店今年面向外国顾客的销售额均已超去年全年",
+      "content": "韩国三大百货连锁店今年面向外国顾客的销售额均已超去年全年",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-06/doc-iniuhitf8969095.shtml"
+    },
+    {
+      "time": "91268759",
+      "title": "德国8月份工业订单环比大跌10.6%",
+      "content": "德国8月份工业订单环比大跌10.6%",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-06/doc-iniuhiti5738548.shtml"
+    },
     {
       "time": "91268586",
       "title": "三环集团午后涨逾6% 机构指国内MLCC原厂有望加速导入国际供应链",
@@ -56,6 +98,12 @@
       "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-06/doc-iniuhitf8952512.shtml"
     },
     {
+      "time": "91266640",
+      "title": "美军红海突发！沙特、巴基斯坦、土耳其，联合发布",
+      "content": "美军红海突发！沙特、巴基斯坦、土耳其，联合发布",
+      "url": "https://finance.sina.com.cn/world/gjcj/2026-10-06/doc-iniuhitf8954457.shtml"
+    },
+    {
       "time": "91265565",
       "title": "国庆长假过后，期货市场怎么走？",
       "content": "国庆长假过后，期货市场怎么走？",
@@ -72,61 +120,9 @@
       "title": "中银国际：FORTIOR维持“买入”评级 目标价上调至187.9港元",
       "content": "中银国际：FORTIOR维持“买入”评级 目标价上调至187.9港元",
       "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-06/doc-iniuhitp5778162.shtml"
-    },
-    {
-      "time": "91265129",
-      "title": "快手-W午后涨近3% 可灵AI全新模型Kling 4.0已开启内测",
-      "content": "快手-W午后涨近3% 可灵AI全新模型Kling 4.0已开启内测",
-      "url": "https://finance.sina.com.cn/stock/hkstock/marketalerts/2026-10-06/doc-iniuhitk7051793.shtml"
-    },
-    {
-      "time": "91264794",
-      "title": "视频丨国庆假期第六天 全国即将迎来返程高峰",
-      "content": "视频丨国庆假期第六天 全国即将迎来返程高峰",
-      "url": "https://finance.sina.com.cn/jjxw/2026-10-06/doc-iniuhitk7052141.shtml"
-    },
-    {
-      "time": "91264620",
-      "title": "AMD首席执行官：未来数年芯片需求将“非常高”",
-      "content": "AMD首席执行官：未来数年芯片需求将“非常高”",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-06/doc-iniuhitp5774988.shtml"
-    },
-    {
-      "time": "91264488",
-      "title": "三星电机称赢得美国客户2900亿韩元AI服务器MLCC订单",
-      "content": "三星电机称赢得美国客户2900亿韩元AI服务器MLCC订单",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-06/doc-iniuhitf8929529.shtml"
-    },
-    {
-      "time": "91264438",
-      "title": "DeepSeek势将融资至少120亿美元 腾讯和宁德时代参与领投",
-      "content": "DeepSeek势将融资至少120亿美元 腾讯和宁德时代参与领投",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-06/doc-iniuhitp5774271.shtml"
-    },
-    {
-      "time": "91264227",
-      "title": "铃木以低于比亚迪的价格搅动日本微型电动车市场",
-      "content": "铃木以低于比亚迪的价格搅动日本微型电动车市场",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-06/doc-iniuhitp5773559.shtml"
-    },
-    {
-      "time": "91264217",
-      "title": "特朗普突传重磅！美媒独家：特朗普国家安全核心幕僚秘密齐聚戴维营，讨论伊朗与也门局势",
-      "content": "特朗普突传重磅！美媒独家：特朗普国家安全核心幕僚秘密齐聚戴维营，讨论伊朗与也门局势",
-      "url": "https://finance.sina.com.cn/world/gjcj/2026-10-06/doc-iniuhiti5703675.shtml"
-    },
-    {
-      "time": "91264187",
-      "title": "欧洲“黑天鹅”正在逼近？法国3.6万亿债务炸弹告急 最危险恶性循环已经启动",
-      "content": "欧洲“黑天鹅”正在逼近？法国3.6万亿债务炸弹告急 最危险恶性循环已经启动",
-      "url": "https://finance.sina.com.cn/world/gjcj/2026-10-06/doc-iniuhitk7049406.shtml"
     }
   ],
   "analysis": [
-    {
-      "topic": "半导体/AI",
-      "comment": "产业链催化，利好国产替代"
-    },
     {
       "topic": "AI应用",
       "comment": "科技主线持续催化"
@@ -134,18 +130,6 @@
     {
       "topic": "CXO/医药",
       "comment": "板块低位，投融资回暖"
-    },
-    {
-      "topic": "新能源车",
-      "comment": "出海进展催化"
-    },
-    {
-      "topic": "地缘政治",
-      "comment": "关注潜在风险"
-    },
-    {
-      "topic": "资金面",
-      "comment": "市场情绪指标"
     },
     {
       "topic": "金融/券商",
