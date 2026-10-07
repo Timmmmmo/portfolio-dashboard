@@ -1,6 +1,42 @@
 {
-  "update_time": "2026-10-07 14:14",
+  "update_time": "2026-10-07 14:48",
   "news": [
+    {
+      "time": "91355395",
+      "title": "国际货币基金组织总裁格奥尔基耶娃：人工智能对各国领导人而言，既是希望也是隐患",
+      "content": "国际货币基金组织总裁格奥尔基耶娃：人工智能对各国领导人而言，既是希望也是隐患",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-07/doc-iniuksyc8174938.shtml"
+    },
+    {
+      "time": "91354940",
+      "title": "沙特阿美考量沙特日益增长的天然气过剩问题",
+      "content": "沙特阿美考量沙特日益增长的天然气过剩问题",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-07/doc-iniuksyf4943704.shtml"
+    },
+    {
+      "time": "91354810",
+      "title": "AI相关科技股涨势停滞 铜价企稳",
+      "content": "AI相关科技股涨势停滞 铜价企稳",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-07/doc-iniuksyh6012391.shtml"
+    },
+    {
+      "time": "91354320",
+      "title": "汇丰计划在英国财富管理业务大规模裁员，推进人工智能转型",
+      "content": "汇丰计划在英国财富管理业务大规模裁员，推进人工智能转型",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-07/doc-iniuksym4736688.shtml"
+    },
+    {
+      "time": "91354145",
+      "title": "保时捷：计划员工规模削减25% 汽车业务净现金流利润率目标9%-12%",
+      "content": "保时捷：计划员工规模削减25% 汽车业务净现金流利润率目标9%-12%",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-07/doc-iniuksyh6009813.shtml"
+    },
+    {
+      "time": "91354105",
+      "title": "布鲁塞尔拟通过对大型企业征税，向科技巨头课税",
+      "content": "布鲁塞尔拟通过对大型企业征税，向科技巨头课税",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-07/doc-iniuksyc8164790.shtml"
+    },
     {
       "time": "91353558",
       "title": "龙资源午后涨超8% 芬兰Jokisivu金矿钻探发现高品位样段",
@@ -84,49 +120,9 @@
       "title": "达利欧： AI 泡沫濒临破裂节点",
       "content": "达利欧： AI 泡沫濒临破裂节点",
       "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-07/doc-iniuknsf8231319.shtml"
-    },
-    {
-      "time": "91346660",
-      "title": "欧盟正考虑通过一项面向大型企业的广泛税项对美国大型科技公司征税",
-      "content": "欧盟正考虑通过一项面向大型企业的广泛税项对美国大型科技公司征税",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-07/doc-iniuknsp4829256.shtml"
-    },
-    {
-      "time": "91346419",
-      "title": "韩国议员办公室披露韩国投资者因杠杆ETF损失17亿美元",
-      "content": "韩国议员办公室披露韩国投资者因杠杆ETF损失17亿美元",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-07/doc-iniuknsi5001233.shtml"
-    },
-    {
-      "time": "91346120",
-      "title": "汇丰计划在英国财富管理业务大规模裁员",
-      "content": "汇丰计划在英国财富管理业务大规模裁员",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-07/doc-iniuknsp4825562.shtml"
-    },
-    {
-      "time": "91345946",
-      "title": "瑞银：长和维持“买入”评级 目标价101港元",
-      "content": "瑞银：长和维持“买入”评级 目标价101港元",
-      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-07/doc-iniuknsk6098263.shtml"
-    },
-    {
-      "time": "91345943",
-      "title": "花旗：玖龙纸业维持“中性”评级 目标价下降至5.8港元",
-      "content": "花旗：玖龙纸业维持“中性”评级 目标价下降至5.8港元",
-      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-07/doc-iniuknsp4824256.shtml"
-    },
-    {
-      "time": "91345649",
-      "title": "港股午评：恒指跌0.53% 科指跌0.91% 科网股低迷 半导体板块下挫",
-      "content": "港股午评：恒指跌0.53% 科指跌0.91% 科网股低迷 半导体板块下挫",
-      "url": "https://finance.sina.com.cn/stock/hkstock/marketalerts/2026-10-07/doc-iniuknsf8219662.shtml"
     }
   ],
   "analysis": [
-    {
-      "topic": "半导体/AI",
-      "comment": "产业链催化，利好国产替代"
-    },
     {
       "topic": "AI应用",
       "comment": "科技主线持续催化"
