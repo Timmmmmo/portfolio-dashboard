@@ -1,6 +1,6 @@
 {
-  "update_time": "2026-10-08 14:57",
-  "days": 5,
+  "update_time": "2026-10-08 22:24",
+  "days": 8,
   "data": {
     "2026-07-15": {
       "stocks": [
@@ -18,6 +18,13 @@
     "2026-07-20": {
       "stocks": [
         {
+          "code": "sz001388",
+          "name": "信通电子",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 12.46
+        },
+        {
           "code": "sh600310",
           "name": "广西能源",
           "streak": 2,
@@ -32,7 +39,7 @@
           "chg": 11.02
         }
       ],
-      "count": 2,
+      "count": 3,
       "max_streak": 2
     },
     "2026-07-23": {
@@ -73,6 +80,45 @@
         }
       ],
       "count": 2,
+      "max_streak": 2
+    },
+    "2026-09-01": {
+      "stocks": [
+        {
+          "code": "sz002942",
+          "name": "新农股份",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 11.57
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-09-08": {
+      "stocks": [
+        {
+          "code": "sz002172",
+          "name": "澳洋健康",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 9.94
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-09-10": {
+      "stocks": [
+        {
+          "code": "sz000565",
+          "name": "渝三峡Ａ",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 12.68
+        }
+      ],
+      "count": 1,
       "max_streak": 2
     },
     "2026-09-21": {
