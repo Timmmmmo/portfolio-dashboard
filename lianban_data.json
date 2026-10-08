@@ -1,6 +1,6 @@
 {
-  "update_time": "2026-10-08 00:14",
-  "days": 9,
+  "update_time": "2026-10-08 14:26",
+  "days": 7,
   "data": {
     "2026-07-15": {
       "stocks": [
@@ -18,44 +18,66 @@
     "2026-07-20": {
       "stocks": [
         {
-          "code": "sz000037",
-          "name": "深南电A",
+          "code": "sz001388",
+          "name": "信通电子",
           "streak": 2,
           "sector": "主板",
-          "chg": 10.0
+          "chg": 12.46
+        },
+        {
+          "code": "sh600310",
+          "name": "广西能源",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 12.06
+        },
+        {
+          "code": "sz000722",
+          "name": "湖南发展",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 11.02
+        },
+        {
+          "code": "sz000899",
+          "name": "赣能股份",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 9.91
         }
       ],
-      "count": 1,
+      "count": 4,
       "max_streak": 2
     },
-    "2026-07-21": {
+    "2026-07-23": {
       "stocks": [
         {
-          "code": "sh600664",
-          "name": "哈药股份",
+          "code": "sh600227",
+          "name": "赤天化",
           "streak": 2,
           "sector": "主板",
-          "chg": 19.43
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-07-31": {
-      "stocks": [
+          "chg": 10.23
+        },
         {
-          "code": "sh600418",
-          "name": "江淮汽车",
+          "code": "sh600722",
+          "name": "金牛化工",
           "streak": 2,
           "sector": "主板",
-          "chg": 11.74
+          "chg": 9.99
         }
       ],
-      "count": 1,
+      "count": 2,
       "max_streak": 2
     },
     "2026-08-03": {
       "stocks": [
+        {
+          "code": "sh605179",
+          "name": "一鸣食品",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 10.02
+        },
         {
           "code": "sz002882",
           "name": "金龙羽",
@@ -64,7 +86,7 @@
           "chg": 10.86
         }
       ],
-      "count": 1,
+      "count": 2,
       "max_streak": 2
     },
     "2026-09-01": {
@@ -80,40 +102,27 @@
       "count": 1,
       "max_streak": 2
     },
-    "2026-09-22": {
+    "2026-09-08": {
       "stocks": [
         {
-          "code": "sh600503",
-          "name": "华丽家族",
+          "code": "sz002172",
+          "name": "澳洋健康",
           "streak": 2,
           "sector": "主板",
-          "chg": 13.62
+          "chg": 9.94
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-09-23": {
+    "2026-09-21": {
       "stocks": [
         {
-          "code": "sh600503",
-          "name": "华丽家族",
-          "streak": 3,
-          "sector": "主板",
-          "chg": 10.11
-        }
-      ],
-      "count": 1,
-      "max_streak": 3
-    },
-    "2026-09-24": {
-      "stocks": [
-        {
-          "code": "sh600802",
-          "name": "福建水泥",
+          "code": "sz002285",
+          "name": "世联行",
           "streak": 2,
           "sector": "主板",
-          "chg": 14.14
+          "chg": 10.8
         }
       ],
       "count": 1,
