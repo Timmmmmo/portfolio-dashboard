@@ -1,62 +1,48 @@
 {
-  "update_time": "2026-10-09 00:13",
-  "days": 8,
+  "update_time": "2026-10-09 14:26",
+  "days": 12,
   "data": {
-    "2026-07-15": {
+    "2026-07-16": {
       "stocks": [
         {
-          "code": "sh603538",
-          "name": "美诺华",
+          "code": "sz301520",
+          "name": "万邦医药",
           "streak": 2,
-          "sector": "主板",
-          "chg": 14.54
+          "sector": "创业板",
+          "chg": 21.45
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-07-20": {
-      "stocks": [
-        {
-          "code": "sz001388",
-          "name": "信通电子",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.46
-        },
-        {
-          "code": "sh600310",
-          "name": "广西能源",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.06
-        },
-        {
-          "code": "sz000722",
-          "name": "湖南发展",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 11.02
-        }
-      ],
-      "count": 3,
-      "max_streak": 2
-    },
     "2026-07-23": {
       "stocks": [
-        {
-          "code": "sh600227",
-          "name": "赤天化",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 10.23
-        },
         {
           "code": "sh600722",
           "name": "金牛化工",
           "streak": 2,
           "sector": "主板",
           "chg": 9.99
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-07-31": {
+      "stocks": [
+        {
+          "code": "sh603039",
+          "name": "泛微网络",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 13.42
+        },
+        {
+          "code": "sh603171",
+          "name": "税友股份",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 14.05
         }
       ],
       "count": 2,
@@ -70,26 +56,71 @@
           "streak": 2,
           "sector": "主板",
           "chg": 10.02
-        },
-        {
-          "code": "sz002882",
-          "name": "金龙羽",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 10.86
         }
       ],
-      "count": 2,
+      "count": 1,
       "max_streak": 2
     },
-    "2026-09-01": {
+    "2026-08-06": {
       "stocks": [
         {
-          "code": "sz002942",
-          "name": "新农股份",
+          "code": "sh603039",
+          "name": "泛微网络",
           "streak": 2,
           "sector": "主板",
-          "chg": 11.57
+          "chg": 12.56
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-08-21": {
+      "stocks": [
+        {
+          "code": "sh603838",
+          "name": "*ST四通",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 10.57
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-08-31": {
+      "stocks": [
+        {
+          "code": "sz003005",
+          "name": "竞业达",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 9.98
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-09-04": {
+      "stocks": [
+        {
+          "code": "sh600865",
+          "name": "百大集团",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 12.82
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-09-07": {
+      "stocks": [
+        {
+          "code": "sz000892",
+          "name": "欢瑞世纪",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 12.48
         }
       ],
       "count": 1,
@@ -108,31 +139,31 @@
       "count": 1,
       "max_streak": 2
     },
-    "2026-09-10": {
+    "2026-09-14": {
       "stocks": [
         {
-          "code": "sz000565",
-          "name": "渝三峡Ａ",
+          "code": "sh605058",
+          "name": "澳弘电子",
           "streak": 2,
           "sector": "主板",
-          "chg": 12.68
+          "chg": 12.12
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-09-21": {
+    "2026-09-15": {
       "stocks": [
         {
-          "code": "sz002285",
-          "name": "世联行",
-          "streak": 2,
+          "code": "sh605058",
+          "name": "澳弘电子",
+          "streak": 3,
           "sector": "主板",
-          "chg": 10.8
+          "chg": 11.02
         }
       ],
       "count": 1,
-      "max_streak": 2
+      "max_streak": 3
     }
   }
 }
