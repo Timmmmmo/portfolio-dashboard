@@ -1,6 +1,114 @@
 {
-  "update_time": "2026-10-09 14:26",
+  "update_time": "2026-10-09 15:06",
   "news": [
+    {
+      "time": "91529389",
+      "title": "品浩：美国10年期国债收益率或触及6%，为2000年以来首次",
+      "content": "品浩：美国10年期国债收益率或触及6%，为2000年以来首次",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-09/doc-iniurfei2963943.shtml"
+    },
+    {
+      "time": "91529205",
+      "title": "SK集团会长称将尽快建设光州半导体产业集群，以满足不断增长的需求",
+      "content": "SK集团会长称将尽快建设光州半导体产业集群，以满足不断增长的需求",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-09/doc-iniurfei2962641.shtml"
+    },
+    {
+      "time": "91529109",
+      "title": "OpenAI年化营收，较此前市场预期低200亿美元",
+      "content": "OpenAI年化营收，较此前市场预期低200亿美元",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-09/doc-iniurfei2962171.shtml"
+    },
+    {
+      "time": "91529020",
+      "title": "强厄尔尼诺遏制产量预期，全球粮价持续上涨",
+      "content": "强厄尔尼诺遏制产量预期，全球粮价持续上涨",
+      "url": "https://finance.sina.com.cn/jjxw/2026-10-09/doc-iniurfei2962003.shtml"
+    },
+    {
+      "time": "91528952",
+      "title": "日立成为Anthropic关键基础设施网络防御计划创始合作伙伴，将Claude引入能源与交通安全领域",
+      "content": "日立成为Anthropic关键基础设施网络防御计划创始合作伙伴，将Claude引入能源与交通安全领域",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-09/doc-iniurfen1095323.shtml"
+    },
+    {
+      "time": "91528658",
+      "title": "OpenAI年化收入较此前报道低200亿美元，软银股价一度暴跌7.3%，AI概念股遭抛售",
+      "content": "OpenAI年化收入较此前报道低200亿美元，软银股价一度暴跌7.3%，AI概念股遭抛售",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-09/doc-iniurfen1092469.shtml"
+    },
+    {
+      "time": "91528520",
+      "title": "花旗预计日本或在美元兑日元升至160时干预汇市，欧元兑日元明年或跌至170",
+      "content": "花旗预计日本或在美元兑日元升至160时干预汇市，欧元兑日元明年或跌至170",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-09/doc-iniurfei2958910.shtml"
+    },
+    {
+      "time": "91528458",
+      "title": "超强厄尔尼诺已经形成！",
+      "content": "超强厄尔尼诺已经形成！",
+      "url": "https://finance.sina.com.cn/roll/2026-10-09/doc-iniurfei2960803.shtml"
+    },
+    {
+      "time": "91528412",
+      "title": "密西西比电力预警后，亚马逊如何改造数据中心供电架",
+      "content": "密西西比电力预警后，亚马逊如何改造数据中心供电架",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-09/doc-iniurfep7862571.shtml"
+    },
+    {
+      "time": "91528330",
+      "title": "杰富瑞：空客9月交付72架飞机，同比下降1%，全年870架交付目标面临压力",
+      "content": "杰富瑞：空客9月交付72架飞机，同比下降1%，全年870架交付目标面临压力",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-09/doc-iniurfei6912079.shtml"
+    },
+    {
+      "time": "91528145",
+      "title": "光大期货1009黄金点评：多空博弈加剧，黄金是反弹还是诱多？",
+      "content": "光大期货1009黄金点评：多空博弈加剧，黄金是反弹还是诱多？",
+      "url": "https://finance.sina.com.cn/money/nmetal/hjzx/2026-10-09/doc-iniurfei6910858.shtml"
+    },
+    {
+      "time": "91528071",
+      "title": "SpaceX斥资80亿美元收购美国全国性频谱，通信塔股盘后涨超3%，三大电信运营商跌5%至7%",
+      "content": "SpaceX斥资80亿美元收购美国全国性频谱，通信塔股盘后涨超3%，三大电信运营商跌5%至7%",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-09/doc-iniurfei6910397.shtml"
+    },
+    {
+      "time": "91527987",
+      "title": "OpenAI预计年底年化收入达到700亿美元，9月底仅500亿美元的消息一度引发美股科技股抛售",
+      "content": "OpenAI预计年底年化收入达到700亿美元，9月底仅500亿美元的消息一度引发美股科技股抛售",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-09/doc-iniurfei2955264.shtml"
+    },
+    {
+      "time": "91527695",
+      "title": "继650亿美元押注OpenAI后，孙正义再寻千亿美元融资：拟向中东资本募资扩张AI版图",
+      "content": "继650亿美元押注OpenAI后，孙正义再寻千亿美元融资：拟向中东资本募资扩张AI版图",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-09/doc-iniurfei6907700.shtml"
+    },
+    {
+      "time": "91527393",
+      "title": "创想三维午后涨逾5% 公司新品K3 3D打印机正式在京东开启预售",
+      "content": "创想三维午后涨逾5% 公司新品K3 3D打印机正式在京东开启预售",
+      "url": "https://finance.sina.com.cn/stock/hkstock/marketalerts/2026-10-09/doc-iniurfei6904877.shtml"
+    },
+    {
+      "time": "91527297",
+      "title": "Pimco警告：10年期美债收益率恐上触6%，为2000年以来首次",
+      "content": "Pimco警告：10年期美债收益率恐上触6%，为2000年以来首次",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkstocknews/2026-10-09/doc-iniurfen1084208.shtml"
+    },
+    {
+      "time": "91527272",
+      "title": "万国黄金集团午后涨近6% 机构指金岭矿扩产为公司中期业绩增长核心驱动力",
+      "content": "万国黄金集团午后涨近6% 机构指金岭矿扩产为公司中期业绩增长核心驱动力",
+      "url": "https://finance.sina.com.cn/stock/hkstock/marketalerts/2026-10-09/doc-iniurfep7846931.shtml"
+    },
+    {
+      "time": "91527174",
+      "title": "苹果据报削减iPhone 18 Pro系列零部件订单15%至20%，存储芯片涨价拖累新机需求",
+      "content": "苹果据报削减iPhone 18 Pro系列零部件订单15%至20%，存储芯片涨价拖累新机需求",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-09/doc-iniurfen1073193.shtml"
+    },
     {
       "time": "91527144",
       "title": "内房股午后部分拉升 世茂集团大涨超44%旭辉控股集团涨超21%",
@@ -12,120 +120,24 @@
       "title": "视频|李大霄：先救港股或行之有效",
       "content": "视频|李大霄：先救港股或行之有效",
       "url": "https://finance.sina.com.cn/stock/roll/2026-10-09/doc-iniurfen1071172.shtml"
-    },
-    {
-      "time": "91526982",
-      "title": "中资券商股午后拉升 中国银河及光大证券均涨逾3%",
-      "content": "中资券商股午后拉升 中国银河及光大证券均涨逾3%",
-      "url": "https://finance.sina.com.cn/stock/hkstock/marketalerts/2026-10-09/doc-iniurfen1070349.shtml"
-    },
-    {
-      "time": "91526843",
-      "title": "花旗下调诺和诺德目标价至296丹麦克朗：减肥药片剂销售前景改善，但利润率增长乏力",
-      "content": "花旗下调诺和诺德目标价至296丹麦克朗：减肥药片剂销售前景改善，但利润率增长乏力",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-09/doc-iniurfei2945107.shtml"
-    },
-    {
-      "time": "91526508",
-      "title": "马斯克称SpaceX收购低频段频谱资源“无异于一场地震”",
-      "content": "马斯克称SpaceX收购低频段频谱资源“无异于一场地震”",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-09/doc-iniurfei6896729.shtml"
-    },
-    {
-      "time": "91525190",
-      "title": "期糖冲高突遭抛售！极端天气连番轰炸，全球食糖供应链将迎超级风暴？",
-      "content": "期糖冲高突遭抛售！极端天气连番轰炸，全球食糖供应链将迎超级风暴？",
-      "url": "https://finance.sina.com.cn/money/future/fmnews/2026-10-09/doc-iniurfep7820492.shtml"
-    },
-    {
-      "time": "91522900",
-      "title": "“金镯子断货”！水贝黄金，外国游客组团扫货",
-      "content": "“金镯子断货”！水贝黄金，外国游客组团扫货",
-      "url": "https://finance.sina.com.cn/wm/2026-10-09/doc-iniuqywm7005943.shtml"
-    },
-    {
-      "time": "91522660",
-      "title": "关于延长港股交易时间，香港证监会发声！",
-      "content": "关于延长港股交易时间，香港证监会发声！",
-      "url": "https://finance.sina.com.cn/esg/2026-10-09/doc-iniuqywq1171385.shtml"
-    },
-    {
-      "time": "91522396",
-      "title": "乳业股午后涨幅居前 现代牧业及蒙牛乳业均涨超4%",
-      "content": "乳业股午后涨幅居前 现代牧业及蒙牛乳业均涨超4%",
-      "url": "https://finance.sina.com.cn/stock/hkstock/marketalerts/2026-10-09/doc-iniuqywm6998921.shtml"
-    },
-    {
-      "time": "91522215",
-      "title": "美银证券：金界控股降至“逊于大市”评级 目标价下调至3.10港元",
-      "content": "美银证券：金界控股降至“逊于大市”评级 目标价下调至3.10港元",
-      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-09/doc-iniuqywm3043057.shtml"
-    },
-    {
-      "time": "91521995",
-      "title": "高盛：小马智行-W持续扩张Robotaxi车队 维持“买入”评级",
-      "content": "高盛：小马智行-W持续扩张Robotaxi车队 维持“买入”评级",
-      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-09/doc-iniuqywm3041847.shtml"
-    },
-    {
-      "time": "91521934",
-      "title": "小摩：潍柴动力维持“增持”评级 目标价上调至57港元",
-      "content": "小摩：潍柴动力维持“增持”评级 目标价上调至57港元",
-      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-09/doc-iniuqywq1142346.shtml"
-    },
-    {
-      "time": "91521843",
-      "title": "浙商证券：铝价上行成本改善 创新实业维持“买入”评级",
-      "content": "浙商证券：铝价上行成本改善 创新实业维持“买入”评级",
-      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-09/doc-iniuqywm3041114.shtml"
-    },
-    {
-      "time": "91521795",
-      "title": "涉嫌受贿2000万港元，绿城中国原董事会主席张亚东被香港廉署起诉，公司回应",
-      "content": "涉嫌受贿2000万港元，绿城中国原董事会主席张亚东被香港廉署起诉，公司回应",
-      "url": "https://finance.sina.com.cn/stock/hkstock/hkstocknews/2026-10-09/doc-iniuqywq1141226.shtml"
-    },
-    {
-      "time": "91521753",
-      "title": "信达证券：李斌就任中烟香港董事会主席 中长期公司增长动力充沛",
-      "content": "信达证券：李斌就任中烟香港董事会主席 中长期公司增长动力充沛",
-      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-09/doc-iniuqywr7913300.shtml"
-    },
-    {
-      "time": "91521673",
-      "title": "中通快递-W于10月8日斥资约446.57万美元回购约22.56万股",
-      "content": "中通快递-W于10月8日斥资约446.57万美元回购约22.56万股",
-      "url": "https://finance.sina.com.cn/stock/hkstock/ggscyd/2026-10-09/doc-iniuqywq1140229.shtml"
-    },
-    {
-      "time": "91521641",
-      "title": "名创优品于10月8日斥资约23.53万美元回购约10.5万股",
-      "content": "名创优品于10月8日斥资约23.53万美元回购约10.5万股",
-      "url": "https://finance.sina.com.cn/stock/hkstock/ggscyd/2026-10-09/doc-iniuqywm6994804.shtml"
-    },
-    {
-      "time": "91521585",
-      "title": "东日本铁路：IDC Frontier 遭网络攻击，旗下用户数据或泄露",
-      "content": "东日本铁路：IDC Frontier 遭网络攻击，旗下用户数据或泄露",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-09/doc-iniuqywm3039838.shtml"
-    },
-    {
-      "time": "91521305",
-      "title": "日本首相称增强经济竞争力将有助于提振对日元的信心",
-      "content": "日本首相称增强经济竞争力将有助于提振对日元的信心",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-09/doc-iniuqywq1136800.shtml"
-    },
-    {
-      "time": "91520906",
-      "title": "软银寻求向海湾投资者筹集至多1000亿美元资金",
-      "content": "软银寻求向海湾投资者筹集至多1000亿美元资金",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-09/doc-iniuqywr7905270.shtml"
     }
   ],
   "analysis": [
     {
-      "topic": "金融/券商",
-      "comment": "权重股表现"
+      "topic": "半导体/AI",
+      "comment": "产业链催化，利好国产替代"
+    },
+    {
+      "topic": "AI应用",
+      "comment": "科技主线持续催化"
+    },
+    {
+      "topic": "存储/封测",
+      "comment": "利好封测产业链"
+    },
+    {
+      "topic": "天气/灾害",
+      "comment": "关注受损行业"
     }
   ],
   "total": 20,

@@ -1,20 +1,7 @@
 {
-  "update_time": "2026-10-09 14:26",
-  "days": 12,
+  "update_time": "2026-10-09 15:06",
+  "days": 11,
   "data": {
-    "2026-07-16": {
-      "stocks": [
-        {
-          "code": "sz301520",
-          "name": "万邦医药",
-          "streak": 2,
-          "sector": "创业板",
-          "chg": 21.45
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
     "2026-07-23": {
       "stocks": [
         {
