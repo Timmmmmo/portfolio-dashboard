@@ -1,15 +1,15 @@
 {
-  "update_time": "2026-10-09 23:58",
-  "days": 11,
+  "update_time": "2026-10-12 14:14",
+  "days": 7,
   "data": {
-    "2026-07-23": {
+    "2026-07-14": {
       "stocks": [
         {
-          "code": "sh600722",
-          "name": "金牛化工",
+          "code": "sz003030",
+          "name": "祖名股份",
           "streak": 2,
           "sector": "主板",
-          "chg": 9.99
+          "chg": 10.32
         }
       ],
       "count": 1,
@@ -18,70 +18,11 @@
     "2026-07-31": {
       "stocks": [
         {
-          "code": "sh603039",
-          "name": "泛微网络",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 13.42
-        },
-        {
           "code": "sh603171",
           "name": "税友股份",
           "streak": 2,
           "sector": "主板",
           "chg": 14.05
-        }
-      ],
-      "count": 2,
-      "max_streak": 2
-    },
-    "2026-08-03": {
-      "stocks": [
-        {
-          "code": "sh605179",
-          "name": "一鸣食品",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 10.02
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-08-06": {
-      "stocks": [
-        {
-          "code": "sh603039",
-          "name": "泛微网络",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.56
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-08-21": {
-      "stocks": [
-        {
-          "code": "sh603838",
-          "name": "*ST四通",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 10.57
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-08-31": {
-      "stocks": [
-        {
-          "code": "sz003005",
-          "name": "竞业达",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 9.98
         }
       ],
       "count": 1,
@@ -113,19 +54,6 @@
       "count": 1,
       "max_streak": 2
     },
-    "2026-09-08": {
-      "stocks": [
-        {
-          "code": "sz002172",
-          "name": "澳洋健康",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 9.94
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
     "2026-09-14": {
       "stocks": [
         {
@@ -151,6 +79,26 @@
       ],
       "count": 1,
       "max_streak": 3
+    },
+    "2026-10-12": {
+      "stocks": [
+        {
+          "code": "sh603232",
+          "name": "格尔软件",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 9.95
+        },
+        {
+          "code": "sh605058",
+          "name": "澳弘电子",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 13.05
+        }
+      ],
+      "count": 2,
+      "max_streak": 2
     }
   }
 }
