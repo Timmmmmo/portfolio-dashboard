@@ -1,37 +1,37 @@
 {
-  "update_time": "2026-10-13 02:42:30",
+  "update_time": "2026-10-13 14:55:21",
   "market": {
-    "score": 27.7,
-    "regime": "cash",
-    "regime_cn": "空仓观望",
-    "regime_note": "风险释放期，现金为王",
-    "avg_chg": -1.79,
+    "score": 44.8,
+    "regime": "swing",
+    "regime_cn": "震荡",
+    "regime_note": "高抛低吸，控制仓位",
+    "avg_chg": -0.15,
     "risk": "high",
     "risk_cn": "高风险",
     "indices": [
       {
         "code": "sh000001",
         "name": "上证指数",
-        "price": 3797.24,
-        "chg": -0.43
+        "price": 3798.0,
+        "chg": 0.02
       },
       {
         "code": "sz399001",
         "name": "深证成指",
-        "price": 12384.87,
-        "chg": -2.03
+        "price": 12348.49,
+        "chg": -0.29
       },
       {
         "code": "sz399006",
         "name": "创业板指",
-        "price": 2963.82,
-        "chg": -2.61
+        "price": 2956.63,
+        "chg": -0.24
       },
       {
         "code": "sh000688",
         "name": "科创50",
-        "price": 1426.72,
-        "chg": -2.1
+        "price": 1425.11,
+        "chg": -0.11
       }
     ]
   },
@@ -46,13 +46,13 @@
       "signal": {
         "action": "reduce",
         "action_cn": "减仓",
-        "stop": 22.44,
+        "stop": 21.91,
         "target": 34.81,
         "pos_pct": 30,
-        "reason": "浮亏 -22.8%，减仓或设好止损",
-        "pnl": -22.79,
-        "price": 23.37,
-        "chg": -2.22
+        "reason": "浮亏 -22.3%，减仓或设好止损",
+        "pnl": -22.33,
+        "price": 23.51,
+        "chg": 0.6
       }
     },
     {
@@ -63,15 +63,15 @@
       "cost": 68.15,
       "shares": 0,
       "signal": {
-        "action": "watch",
-        "action_cn": "观望",
-        "stop": 63.38,
+        "action": "reduce",
+        "action_cn": "减仓",
+        "stop": 59.09,
         "target": 78.37,
-        "pos_pct": 40,
-        "reason": "走弱 -3.0%，不加仓，盯止损",
-        "pnl": -3.24,
-        "price": 65.94,
-        "chg": -2.96
+        "pos_pct": 30,
+        "reason": "浮亏 -8.1%，减仓或设好止损",
+        "pnl": -8.06,
+        "price": 62.66,
+        "chg": -4.97
       }
     },
     {
@@ -82,15 +82,15 @@
       "cost": 90.74,
       "shares": 0,
       "signal": {
-        "action": "hold",
-        "action_cn": "持有",
-        "stop": 82.45,
+        "action": "reduce",
+        "action_cn": "减仓",
+        "stop": 80.4,
         "target": 104.35,
-        "pos_pct": 50,
-        "reason": "无明确信号，按计划持有",
-        "pnl": -6.77,
-        "price": 84.6,
-        "chg": -0.41
+        "pos_pct": 30,
+        "reason": "浮亏 -9.5%，减仓或设好止损",
+        "pnl": -9.47,
+        "price": 82.15,
+        "chg": -2.9
       }
     },
     {
@@ -103,13 +103,13 @@
       "signal": {
         "action": "reduce",
         "action_cn": "减仓",
-        "stop": 29.9,
+        "stop": 28.45,
         "target": 53.76,
         "pos_pct": 30,
-        "reason": "浮亏 -34.6%，减仓或设好止损",
-        "pnl": -34.63,
-        "price": 30.56,
-        "chg": -4.59
+        "reason": "浮亏 -34.8%，减仓或设好止损",
+        "pnl": -34.78,
+        "price": 30.49,
+        "chg": -0.23
       }
     },
     {
@@ -120,15 +120,15 @@
       "cost": 58.68,
       "shares": 0,
       "signal": {
-        "action": "watch",
-        "action_cn": "观望",
-        "stop": 54.49,
+        "action": "hold",
+        "action_cn": "持有",
+        "stop": 52.53,
         "target": 67.48,
-        "pos_pct": 40,
-        "reason": "走弱 -2.5%，不加仓，盯止损",
-        "pnl": -4.23,
-        "price": 56.2,
-        "chg": -2.52
+        "pos_pct": 50,
+        "reason": "无明确信号，按计划持有",
+        "pnl": -5.59,
+        "price": 55.4,
+        "chg": -1.42
       }
     },
     {
@@ -141,13 +141,13 @@
       "signal": {
         "action": "reduce",
         "action_cn": "减仓",
-        "stop": 4.18,
+        "stop": 4.12,
         "target": 7.62,
         "pos_pct": 30,
-        "reason": "浮亏 -35.1%，减仓或设好止损",
-        "pnl": -35.14,
-        "price": 4.3,
-        "chg": 0.7
+        "reason": "浮亏 -34.1%，减仓或设好止损",
+        "pnl": -34.09,
+        "price": 4.37,
+        "chg": 1.63
       }
     },
     {
@@ -160,13 +160,13 @@
       "signal": {
         "action": "reduce",
         "action_cn": "减仓",
-        "stop": 18.34,
+        "stop": 17.69,
         "target": 80.3,
         "pos_pct": 30,
-        "reason": "浮亏 -73.1%，减仓或设好止损",
-        "pnl": -73.13,
-        "price": 18.76,
-        "chg": -4.53
+        "reason": "浮亏 -73.6%，减仓或设好止损",
+        "pnl": -73.58,
+        "price": 18.45,
+        "chg": -1.65
       }
     },
     {
@@ -179,13 +179,13 @@
       "signal": {
         "action": "reduce",
         "action_cn": "减仓",
-        "stop": 44.14,
+        "stop": 42.52,
         "target": 61.2,
         "pos_pct": 30,
-        "reason": "浮亏 -13.9%，减仓或设好止损",
-        "pnl": -13.9,
-        "price": 45.82,
-        "chg": -1.46
+        "reason": "浮亏 -14.6%，减仓或设好止损",
+        "pnl": -14.64,
+        "price": 45.43,
+        "chg": -0.85
       }
     },
     {
@@ -217,22 +217,22 @@
       "signal": {
         "action": "reduce",
         "action_cn": "减仓",
-        "stop": 11.57,
+        "stop": 11.23,
         "target": 21.56,
         "pos_pct": 30,
-        "reason": "浮亏 -36.8%，减仓或设好止损",
-        "pnl": -36.8,
-        "price": 11.85,
-        "chg": -3.5
+        "reason": "浮亏 -37.2%，减仓或设好止损",
+        "pnl": -37.17,
+        "price": 11.78,
+        "chg": -0.59
       }
     }
   ],
   "playbook": [
-    "【空仓观望】风险释放期，现金为王",
-    "等待缩量企稳或标志性阳线再进场",
+    "【震荡】仓位 4-5 成，高抛低吸，不追高",
+    "冲高兑现、急跌接筹，单日振幅大时减仓过夜风险",
     "⚠️ 触及止损：曙光数创，执行离场纪律",
-    "🔻 建议减仓：金宏气体、深科技、抚顺特钢、华钰矿业",
-    "大盘温度 27.7 分 · 平均涨跌 -1.79% · 严格执行止损纪律"
+    "🔻 建议减仓：金宏气体、华大智造、比亚迪、深科技",
+    "大盘温度 44.8 分 · 平均涨跌 -0.15% · 严格执行止损纪律"
   ],
   "intel_feed": [
     {
@@ -418,54 +418,54 @@
   ],
   "sectors": [
     {
-      "name": "传媒",
-      "value": 21.32,
-      "chg": 2.3
+      "name": "印制电路板",
+      "value": 20.93,
+      "chg": 6.05
     },
     {
-      "name": "半导体设备",
-      "value": 16.26,
-      "chg": 0.21
+      "name": "集成电路制造",
+      "value": 20.12,
+      "chg": -0.67
     },
     {
-      "name": "银行",
-      "value": 8.68,
-      "chg": 1.99
+      "name": "国防军工",
+      "value": 19.13,
+      "chg": 2.49
     },
     {
-      "name": "银行Ⅱ",
-      "value": 8.68,
-      "chg": 1.99
+      "name": "元件",
+      "value": 13.66,
+      "chg": 4.75
     },
     {
-      "name": "风电零部件",
-      "value": 7.77,
-      "chg": 3.09
+      "name": "电子",
+      "value": 12.16,
+      "chg": 0.99
     },
     {
-      "name": "影视院线",
-      "value": 6.91,
-      "chg": 3.89
+      "name": "航海装备Ⅲ",
+      "value": 9.83,
+      "chg": 4.29
     },
     {
-      "name": "风电设备",
-      "value": 6.66,
-      "chg": 2.51
+      "name": "航海装备Ⅱ",
+      "value": 9.83,
+      "chg": 4.29
     },
     {
-      "name": "影视动漫制作",
-      "value": 6.6,
-      "chg": 4.24
+      "name": "营销代理",
+      "value": 8.61,
+      "chg": 1.69
     },
     {
-      "name": "股份制银行Ⅲ",
-      "value": 6.15,
-      "chg": 2.1
+      "name": "航空装备Ⅲ",
+      "value": 7.76,
+      "chg": 3.06
     },
     {
-      "name": "数字媒体",
-      "value": 5.59,
-      "chg": 1.65
+      "name": "航空装备Ⅱ",
+      "value": 7.76,
+      "chg": 3.06
     }
   ]
 }
