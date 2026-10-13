@@ -1,6 +1,36 @@
 {
-  "update_time": "2026-10-13 14:56",
+  "update_time": "2026-10-13 15:18",
   "news": [
+    {
+      "time": "91875902",
+      "title": "博通CEO：许多AI投资者就像赌徒 根本不知道自己在投资什么",
+      "content": "博通CEO：许多AI投资者就像赌徒 根本不知道自己在投资什么",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-13/doc-inivafqm8154094.shtml"
+    },
+    {
+      "time": "91875763",
+      "title": "尊界V800公布第三方检测结果引热议，懂车帝测试当事人连发多条质疑",
+      "content": "尊界V800公布第三方检测结果引热议，懂车帝测试当事人连发多条质疑",
+      "url": "https://finance.sina.com.cn/chanjing/gsnews/2026-10-13/doc-inivafqi7293197.shtml"
+    },
+    {
+      "time": "91875551",
+      "title": "尊界V800公布制动踏板第三方检测结果，无疑再次打脸！",
+      "content": "尊界V800公布制动踏板第三方检测结果，无疑再次打脸！",
+      "url": "https://finance.sina.com.cn/chanjing/gsnews/2026-10-13/doc-inivafqm8149233.shtml"
+    },
+    {
+      "time": "91875028",
+      "title": "三星计划扩充AI内存与存储战略",
+      "content": "三星计划扩充AI内存与存储战略",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-13/doc-inivafqp8873874.shtml"
+    },
+    {
+      "time": "91874656",
+      "title": "Kakao推出全新AI助手服务，将登陆KakaoTalk",
+      "content": "Kakao推出全新AI助手服务，将登陆KakaoTalk",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-13/doc-inivafqi7267413.shtml"
+    },
     {
       "time": "91874591",
       "title": "韩国开发研究院：韩国经济复苏尚未广泛惠及普通家庭",
@@ -90,36 +120,6 @@
       "title": "硫磺争夺加剧，全球粮食价格面临新威胁",
       "content": "硫磺争夺加剧，全球粮食价格面临新威胁",
       "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-13/doc-inivafqh0468285.shtml"
-    },
-    {
-      "time": "91872861",
-      "title": "比尔·盖茨警告：AI既是“工具”也是“武器”",
-      "content": "比尔·盖茨警告：AI既是“工具”也是“武器”",
-      "url": "https://finance.sina.com.cn/wm/2026-10-13/doc-inivafqp8854771.shtml"
-    },
-    {
-      "time": "91872207",
-      "title": "投资者无惧美债抛售潮，锁定数十年最高收益率",
-      "content": "投资者无惧美债抛售潮，锁定数十年最高收益率",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-13/doc-inivafqp8843753.shtml"
-    },
-    {
-      "time": "91871562",
-      "title": "Anthropic警告：AI模型可能很快无需访问数据中心即可实现自我复制",
-      "content": "Anthropic警告：AI模型可能很快无需访问数据中心即可实现自我复制",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-13/doc-inivafqi7218376.shtml"
-    },
-    {
-      "time": "91871200",
-      "title": "我国矿产资源重划“家底” 《矿产资源目录》发布",
-      "content": "我国矿产资源重划“家底” 《矿产资源目录》发布",
-      "url": "https://finance.sina.com.cn/jjxw/2026-10-13/doc-inivafqp8832572.shtml"
-    },
-    {
-      "time": "91870706",
-      "title": "韩国计划不迟于2031年将44个政府机构迁至世宗市",
-      "content": "韩国计划不迟于2031年将44个政府机构迁至世宗市",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-13/doc-inivafqh0433863.shtml"
     }
   ],
   "analysis": [
@@ -134,6 +134,10 @@
     {
       "topic": "新能源车",
       "comment": "出海进展催化"
+    },
+    {
+      "topic": "存储/封测",
+      "comment": "利好封测产业链"
     },
     {
       "topic": "地缘政治",

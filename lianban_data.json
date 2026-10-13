@@ -1,15 +1,41 @@
 {
-  "update_time": "2026-10-13 14:56",
-  "days": 12,
+  "update_time": "2026-10-13 15:18",
+  "days": 17,
   "data": {
-    "2026-07-22": {
+    "2026-07-17": {
       "stocks": [
         {
-          "code": "sz002396",
-          "name": "星网锐捷",
+          "code": "sh603118",
+          "name": "共进股份",
           "streak": 2,
           "sector": "主板",
-          "chg": 14.69
+          "chg": 12.32
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-07-20": {
+      "stocks": [
+        {
+          "code": "sz001388",
+          "name": "信通电子",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 12.46
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-07-29": {
+      "stocks": [
+        {
+          "code": "sz002199",
+          "name": "东晶电子",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 12.9
         }
       ],
       "count": 1,
@@ -18,6 +44,13 @@
     "2026-07-31": {
       "stocks": [
         {
+          "code": "sh600418",
+          "name": "江淮汽车",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 11.74
+        },
+        {
           "code": "sh603171",
           "name": "税友股份",
           "streak": 2,
@@ -25,11 +58,18 @@
           "chg": 14.05
         }
       ],
-      "count": 1,
+      "count": 2,
       "max_streak": 2
     },
     "2026-08-06": {
       "stocks": [
+        {
+          "code": "sh600330",
+          "name": "天通股份",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 11.14
+        },
         {
           "code": "sh600601",
           "name": "方正科技",
@@ -38,7 +78,7 @@
           "chg": 12.61
         }
       ],
-      "count": 1,
+      "count": 2,
       "max_streak": 2
     },
     "2026-08-07": {
@@ -62,6 +102,45 @@
           "streak": 2,
           "sector": "主板",
           "chg": 10.03
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-08-27": {
+      "stocks": [
+        {
+          "code": "sh600969",
+          "name": "郴电国际",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 10.23
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-09-01": {
+      "stocks": [
+        {
+          "code": "sz002942",
+          "name": "新农股份",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 11.57
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-09-04": {
+      "stocks": [
+        {
+          "code": "sh600865",
+          "name": "百大集团",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 12.82
         }
       ],
       "count": 1,
@@ -96,13 +175,6 @@
     "2026-09-11": {
       "stocks": [
         {
-          "code": "sz002201",
-          "name": "九鼎新材",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 11.23
-        },
-        {
           "code": "sz000823",
           "name": "超声电子",
           "streak": 2,
@@ -110,7 +182,7 @@
           "chg": 10.41
         }
       ],
-      "count": 2,
+      "count": 1,
       "max_streak": 2
     },
     "2026-09-14": {
