@@ -1,20 +1,7 @@
 {
-  "update_time": "2026-10-14 13:08",
-  "days": 13,
+  "update_time": "2026-10-14 13:48",
+  "days": 12,
   "data": {
-    "2026-07-09": {
-      "stocks": [
-        {
-          "code": "sz000677",
-          "name": "ST海龙",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 11.26
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
     "2026-07-20": {
       "stocks": [
         {
@@ -32,13 +19,6 @@
           "chg": 12.06
         },
         {
-          "code": "sz000722",
-          "name": "湖南发展",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 11.02
-        },
-        {
           "code": "sz000899",
           "name": "赣能股份",
           "streak": 2,
@@ -46,7 +26,7 @@
           "chg": 9.91
         }
       ],
-      "count": 4,
+      "count": 3,
       "max_streak": 2
     },
     "2026-08-06": {

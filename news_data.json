@@ -1,6 +1,84 @@
 {
-  "update_time": "2026-10-14 13:08",
+  "update_time": "2026-10-14 13:48",
   "news": [
+    {
+      "time": "91956747",
+      "title": "花旗：金蝶国际维持“买入”评级 目标价11.90港元",
+      "content": "花旗：金蝶国际维持“买入”评级 目标价11.90港元",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-14/doc-inivekps4452332.shtml"
+    },
+    {
+      "time": "91956619",
+      "title": "阜博集团午后涨超6% 公司收购Dreamesh所属实体安晴国际",
+      "content": "阜博集团午后涨超6% 公司收购Dreamesh所属实体安晴国际",
+      "url": "https://finance.sina.com.cn/stock/hkstock/marketalerts/2026-10-14/doc-inivekpp8540986.shtml"
+    },
+    {
+      "time": "91956419",
+      "title": "希音-W午后涨逾5% 摩根大通首次覆盖给予目标价50港元",
+      "content": "希音-W午后涨逾5% 摩根大通首次覆盖给予目标价50港元",
+      "url": "https://finance.sina.com.cn/stock/hkstock/marketalerts/2026-10-14/doc-inivekps4444218.shtml"
+    },
+    {
+      "time": "91956131",
+      "title": "阿斯麦上调2026年营收展望 AI投资热潮继续提振光刻机需求",
+      "content": "阿斯麦上调2026年营收展望 AI投资热潮继续提振光刻机需求",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-14/doc-inivekpp8533050.shtml"
+    },
+    {
+      "time": "91955281",
+      "title": "瑞银：恒隆地产维持“中性”评级 目标价下调27.1%至7港元",
+      "content": "瑞银：恒隆地产维持“中性”评级 目标价下调27.1%至7港元",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-14/doc-inivekpu1193427.shtml"
+    },
+    {
+      "time": "91955278",
+      "title": "瑞银：香港交易所维持“中性”评级 目标价下调至420港元",
+      "content": "瑞银：香港交易所维持“中性”评级 目标价下调至420港元",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-14/doc-inivekps4420856.shtml"
+    },
+    {
+      "time": "91955275",
+      "title": "大摩：金蝶国际维持“增持”评级 目标价11.4港元",
+      "content": "大摩：金蝶国际维持“增持”评级 目标价11.4港元",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-14/doc-inivekps4420815.shtml"
+    },
+    {
+      "time": "91955273",
+      "title": "大和：继续看好百胜中国及古茗 均给予“买入”评级",
+      "content": "大和：继续看好百胜中国及古茗 均给予“买入”评级",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-14/doc-inivekpm7788634.shtml"
+    },
+    {
+      "time": "91955270",
+      "title": "国海证券：阿里巴巴-W维持“买入”评级 给予目标价184港元",
+      "content": "国海证券：阿里巴巴-W维持“买入”评级 给予目标价184港元",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-14/doc-inivekpu1193291.shtml"
+    },
+    {
+      "time": "91955270",
+      "title": "大摩：海底捞降至“与大市同步”评级 目标价降至10.5港元",
+      "content": "大摩：海底捞降至“与大市同步”评级 目标价降至10.5港元",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-14/doc-inivekps4420750.shtml"
+    },
+    {
+      "time": "91955147",
+      "title": "阿斯麦预计第四季度销售额142亿至152亿欧元，全年销售额440亿至450亿欧元",
+      "content": "阿斯麦预计第四季度销售额142亿至152亿欧元，全年销售额440亿至450亿欧元",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-14/doc-inivekps4418877.shtml"
+    },
+    {
+      "time": "91955065",
+      "title": "高德美以15亿美元企业价值收购 ZO Skin Health",
+      "content": "高德美以15亿美元企业价值收购 ZO Skin Health",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-14/doc-inivekpm7786587.shtml"
+    },
+    {
+      "time": "91954623",
+      "title": "特朗普称即将在格陵兰岛开始大规模油气及矿产勘探工作",
+      "content": "特朗普称即将在格陵兰岛开始大规模油气及矿产勘探工作",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-14/doc-inivekpp8512684.shtml"
+    },
     {
       "time": "91954248",
       "title": "投资大佬巴伦：SpaceX市值十年会可能达到20万亿至50万亿美元",
@@ -42,84 +120,6 @@
       "title": "瑞银：中国车企过去一个月持续受压 但忧虑正逐渐被反映",
       "content": "瑞银：中国车企过去一个月持续受压 但忧虑正逐渐被反映",
       "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-14/doc-inivekpm7758671.shtml"
-    },
-    {
-      "time": "91952754",
-      "title": "大摩：保险业监管压力或为短期现象 看好内地及香港保险需求",
-      "content": "大摩：保险业监管压力或为短期现象 看好内地及香港保险需求",
-      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-14/doc-inivekpu1149344.shtml"
-    },
-    {
-      "time": "91952228",
-      "title": "新加坡PDG拟融资12亿美元用于马来西亚数据中心项目",
-      "content": "新加坡PDG拟融资12亿美元用于马来西亚数据中心项目",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-14/doc-inivekps4364711.shtml"
-    },
-    {
-      "time": "91951958",
-      "title": "惠誉：马来西亚评级或因财政改善面临上调压力",
-      "content": "惠誉：马来西亚评级或因财政改善面临上调压力",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-14/doc-inivekpm7747896.shtml"
-    },
-    {
-      "time": "91951790",
-      "title": "IMF总裁认为美国仅靠经济增长不足以解决高债务和财政赤字问题",
-      "content": "IMF总裁认为美国仅靠经济增长不足以解决高债务和财政赤字问题",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-14/doc-inivekpm7745432.shtml"
-    },
-    {
-      "time": "91951656",
-      "title": "花旗：建滔积层板重申“买入”评级 目标价维持96港元",
-      "content": "花旗：建滔积层板重申“买入”评级 目标价维持96港元",
-      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-14/doc-inivekpp8475036.shtml"
-    },
-    {
-      "time": "91951523",
-      "title": "富瑞：哔哩哔哩维持“买入”评级 目标价下调至221港元",
-      "content": "富瑞：哔哩哔哩维持“买入”评级 目标价下调至221港元",
-      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-14/doc-inivekps4350575.shtml"
-    },
-    {
-      "time": "91951448",
-      "title": "花旗：和黄医药重申“买入/高风险”评级 目标价40.10港元",
-      "content": "花旗：和黄医药重申“买入/高风险”评级 目标价40.10港元",
-      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-14/doc-inivekpu1121789.shtml"
-    },
-    {
-      "time": "91951360",
-      "title": "名创优品于10月13日斥资约24.28万美元回购约9.77万股",
-      "content": "名创优品于10月13日斥资约24.28万美元回购约9.77万股",
-      "url": "https://finance.sina.com.cn/stock/hkstock/ggscyd/2026-10-14/doc-inivekps4347791.shtml"
-    },
-    {
-      "time": "91950680",
-      "title": "爱芯元智午前涨逾9% 正式发布AX8860大算力边端AI芯片系列",
-      "content": "爱芯元智午前涨逾9% 正式发布AX8860大算力边端AI芯片系列",
-      "url": "https://finance.sina.com.cn/stock/hkstock/marketalerts/2026-10-14/doc-iniveefw1239148.shtml"
-    },
-    {
-      "time": "91950457",
-      "title": "港股午评：恒指涨0.16% 科指涨1.61% 科网股普涨 油气股活跃 小米涨超5%",
-      "content": "港股午评：恒指涨0.16% 科指涨1.61% 科网股普涨 油气股活跃 小米涨超5%",
-      "url": "https://finance.sina.com.cn/stock/hkstock/marketalerts/2026-10-14/doc-iniveefr8592488.shtml"
-    },
-    {
-      "time": "91950445",
-      "title": "加拿大皇家银行下调多家银行目标价",
-      "content": "加拿大皇家银行下调多家银行目标价",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-14/doc-iniveefw1234633.shtml"
-    },
-    {
-      "time": "91950283",
-      "title": "交易员：印度储备银行在外汇市场抛售美元以支撑卢比",
-      "content": "交易员：印度储备银行在外汇市场抛售美元以支撑卢比",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-14/doc-iniveefu4459392.shtml"
-    },
-    {
-      "time": "91950126",
-      "title": "罗博特科午前大涨逾10% 公司目前正按客户需求节奏持续扩产",
-      "content": "罗博特科午前大涨逾10% 公司目前正按客户需求节奏持续扩产",
-      "url": "https://finance.sina.com.cn/stock/hkstock/marketalerts/2026-10-14/doc-iniveefr8587530.shtml"
     }
   ],
   "analysis": [
@@ -134,10 +134,6 @@
     {
       "topic": "资金面",
       "comment": "市场情绪指标"
-    },
-    {
-      "topic": "金融/券商",
-      "comment": "权重股表现"
     }
   ],
   "total": 20,
