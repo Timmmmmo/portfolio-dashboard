@@ -1,5 +1,5 @@
 {
-  "update_time": "2026-10-15 13:01",
+  "update_time": "2026-10-15 13:32",
   "days": 15,
   "data": {
     "2026-07-16": {
@@ -41,14 +41,14 @@
       "count": 1,
       "max_streak": 2
     },
-    "2026-07-29": {
+    "2026-07-21": {
       "stocks": [
         {
-          "code": "sz002199",
-          "name": "东晶电子",
+          "code": "sh600664",
+          "name": "哈药股份",
           "streak": 2,
           "sector": "主板",
-          "chg": 12.9
+          "chg": 19.43
         }
       ],
       "count": 1,
@@ -62,19 +62,6 @@
           "streak": 2,
           "sector": "主板",
           "chg": 11.14
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-08-10": {
-      "stocks": [
-        {
-          "code": "sh603102",
-          "name": "百合股份",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 10.63
         }
       ],
       "count": 1,
@@ -196,6 +183,19 @@
       ],
       "count": 1,
       "max_streak": 3
+    },
+    "2026-10-15": {
+      "stocks": [
+        {
+          "code": "sz001216",
+          "name": "华瓷股份",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 10.78
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
     }
   }
 }
