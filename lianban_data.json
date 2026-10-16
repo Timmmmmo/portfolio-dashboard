@@ -1,7 +1,20 @@
 {
-  "update_time": "2026-10-16 13:21",
-  "days": 9,
+  "update_time": "2026-10-16 18:14",
+  "days": 10,
   "data": {
+    "2026-07-15": {
+      "stocks": [
+        {
+          "code": "sh603538",
+          "name": "美诺华",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 14.54
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
     "2026-07-17": {
       "stocks": [
         {
