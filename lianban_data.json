@@ -1,214 +1,110 @@
 {
-  "update_time": "2026-10-15 22:03",
-  "days": 17,
+  "update_time": "2026-10-16 12:46",
+  "days": 9,
   "data": {
-    "2026-07-16": {
-      "stocks": [
-        {
-          "code": "sz301520",
-          "name": "万邦医药",
-          "streak": 2,
-          "sector": "创业板",
-          "chg": 21.45
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
     "2026-07-17": {
       "stocks": [
         {
-          "code": "sz002731",
-          "name": "*ST萃华",
+          "code": "sz002829",
+          "name": "星网宇达",
           "streak": 2,
           "sector": "主板",
-          "chg": 15.0
+          "chg": 11.64
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-07-20": {
+    "2026-07-31": {
       "stocks": [
         {
-          "code": "sz000722",
-          "name": "湖南发展",
+          "code": "sh600418",
+          "name": "江淮汽车",
           "streak": 2,
           "sector": "主板",
-          "chg": 11.02
+          "chg": 11.74
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-07-21": {
+    "2026-08-27": {
       "stocks": [
         {
-          "code": "sh600664",
-          "name": "哈药股份",
+          "code": "sh600969",
+          "name": "郴电国际",
           "streak": 2,
           "sector": "主板",
-          "chg": 19.43
+          "chg": 10.23
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-08-03": {
+    "2026-09-01": {
       "stocks": [
         {
-          "code": "sz002882",
-          "name": "金龙羽",
+          "code": "sz002942",
+          "name": "新农股份",
           "streak": 2,
           "sector": "主板",
-          "chg": 10.86
+          "chg": 11.57
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-08-06": {
+    "2026-09-04": {
       "stocks": [
         {
-          "code": "sh600330",
-          "name": "天通股份",
+          "code": "sh600865",
+          "name": "百大集团",
           "streak": 2,
           "sector": "主板",
-          "chg": 11.14
+          "chg": 12.82
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-08-10": {
+    "2026-09-21": {
       "stocks": [
         {
-          "code": "sh603102",
-          "name": "百合股份",
+          "code": "sz002285",
+          "name": "世联行",
           "streak": 2,
           "sector": "主板",
-          "chg": 10.63
+          "chg": 10.8
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-08-21": {
+    "2026-09-24": {
       "stocks": [
         {
-          "code": "sh603838",
-          "name": "*ST四通",
+          "code": "sh600802",
+          "name": "福建水泥",
           "streak": 2,
           "sector": "主板",
-          "chg": 10.57
+          "chg": 14.14
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-08-24": {
+    "2026-09-28": {
       "stocks": [
         {
-          "code": "sh603330",
-          "name": "天洋新材",
+          "code": "sh601218",
+          "name": "吉鑫科技",
           "streak": 2,
           "sector": "主板",
-          "chg": 10.03
+          "chg": 10.0
         }
       ],
       "count": 1,
       "max_streak": 2
-    },
-    "2026-08-31": {
-      "stocks": [
-        {
-          "code": "sz003005",
-          "name": "竞业达",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 9.98
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-07": {
-      "stocks": [
-        {
-          "code": "sz000892",
-          "name": "欢瑞世纪",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.48
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-08": {
-      "stocks": [
-        {
-          "code": "sz002172",
-          "name": "澳洋健康",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 9.94
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-10": {
-      "stocks": [
-        {
-          "code": "sz000565",
-          "name": "渝三峡Ａ",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.68
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-11": {
-      "stocks": [
-        {
-          "code": "sz000823",
-          "name": "超声电子",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 10.41
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-14": {
-      "stocks": [
-        {
-          "code": "sh605058",
-          "name": "澳弘电子",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.12
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-15": {
-      "stocks": [
-        {
-          "code": "sh605058",
-          "name": "澳弘电子",
-          "streak": 3,
-          "sector": "主板",
-          "chg": 11.02
-        }
-      ],
-      "count": 1,
-      "max_streak": 3
     },
     "2026-10-15": {
       "stocks": [
