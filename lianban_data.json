@@ -1,97 +1,91 @@
 {
-  "update_time": "2026-10-16 21:54",
-  "days": 10,
+  "update_time": "2026-10-19 13:02",
+  "days": 8,
   "data": {
-    "2026-07-15": {
+    "2026-07-17": {
       "stocks": [
         {
-          "code": "sh603538",
-          "name": "美诺华",
+          "code": "sh603118",
+          "name": "共进股份",
           "streak": 2,
           "sector": "主板",
-          "chg": 14.54
+          "chg": 12.32
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-07-17": {
+    "2026-07-20": {
       "stocks": [
         {
-          "code": "sz002829",
-          "name": "星网宇达",
+          "code": "sh600982",
+          "name": "宁波能源",
           "streak": 2,
           "sector": "主板",
-          "chg": 11.64
+          "chg": 9.96
+        },
+        {
+          "code": "sz000899",
+          "name": "赣能股份",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 9.91
         }
       ],
-      "count": 1,
+      "count": 2,
       "max_streak": 2
     },
     "2026-07-31": {
       "stocks": [
         {
-          "code": "sh600418",
-          "name": "江淮汽车",
+          "code": "sh603171",
+          "name": "税友股份",
           "streak": 2,
           "sector": "主板",
-          "chg": 11.74
+          "chg": 14.05
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-08-21": {
+    "2026-08-24": {
       "stocks": [
         {
-          "code": "sh603838",
-          "name": "*ST四通",
+          "code": "sh603330",
+          "name": "天洋新材",
           "streak": 2,
           "sector": "主板",
-          "chg": 10.57
+          "chg": 10.03
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-09-01": {
+    "2026-09-14": {
       "stocks": [
         {
-          "code": "sz002942",
-          "name": "新农股份",
+          "code": "sh605058",
+          "name": "澳弘电子",
           "streak": 2,
           "sector": "主板",
-          "chg": 11.57
+          "chg": 12.12
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-09-04": {
+    "2026-09-15": {
       "stocks": [
         {
-          "code": "sh600865",
-          "name": "百大集团",
-          "streak": 2,
+          "code": "sh605058",
+          "name": "澳弘电子",
+          "streak": 3,
           "sector": "主板",
-          "chg": 12.82
+          "chg": 11.02
         }
       ],
       "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-21": {
-      "stocks": [
-        {
-          "code": "sz002285",
-          "name": "世联行",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 10.8
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
+      "max_streak": 3
     },
     "2026-09-24": {
       "stocks": [
@@ -106,27 +100,14 @@
       "count": 1,
       "max_streak": 2
     },
-    "2026-09-28": {
+    "2026-10-19": {
       "stocks": [
         {
-          "code": "sh601218",
-          "name": "吉鑫科技",
+          "code": "sz000530",
+          "name": "冰山冷热",
           "streak": 2,
           "sector": "主板",
-          "chg": 10.0
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-10-15": {
-      "stocks": [
-        {
-          "code": "sh601811",
-          "name": "新华文轩",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.54
+          "chg": 11.13
         }
       ],
       "count": 1,
