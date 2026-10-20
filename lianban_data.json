@@ -1,6 +1,6 @@
 {
-  "update_time": "2026-10-20 13:38",
-  "days": 6,
+  "update_time": "2026-10-20 18:51",
+  "days": 8,
   "data": {
     "2026-07-20": {
       "stocks": [
@@ -15,8 +15,28 @@
       "count": 1,
       "max_streak": 2
     },
+    "2026-07-22": {
+      "stocks": [
+        {
+          "code": "sz002396",
+          "name": "星网锐捷",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 14.69
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
     "2026-07-31": {
       "stocks": [
+        {
+          "code": "sh603039",
+          "name": "泛微网络",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 13.42
+        },
         {
           "code": "sh603171",
           "name": "税友股份",
@@ -25,7 +45,7 @@
           "chg": 14.05
         }
       ],
-      "count": 1,
+      "count": 2,
       "max_streak": 2
     },
     "2026-08-03": {
@@ -44,11 +64,11 @@
     "2026-08-06": {
       "stocks": [
         {
-          "code": "sh688549",
-          "name": "中巨芯",
+          "code": "sh603039",
+          "name": "泛微网络",
           "streak": 2,
-          "sector": "科创板",
-          "chg": 21.78
+          "sector": "主板",
+          "chg": 12.56
         }
       ],
       "count": 1,
@@ -75,6 +95,19 @@
           "streak": 2,
           "sector": "主板",
           "chg": 9.95
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-10-19": {
+      "stocks": [
+        {
+          "code": "sz000530",
+          "name": "冰山冷热",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 11.27
         }
       ],
       "count": 1,
