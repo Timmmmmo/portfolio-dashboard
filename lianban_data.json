@@ -1,35 +1,28 @@
 {
-  "update_time": "2026-10-20 00:18",
-  "days": 8,
+  "update_time": "2026-10-20 13:04",
+  "days": 7,
   "data": {
-    "2026-07-17": {
+    "2026-07-15": {
       "stocks": [
         {
-          "code": "sh603118",
-          "name": "共进股份",
+          "code": "sh603538",
+          "name": "美诺华",
           "streak": 2,
           "sector": "主板",
-          "chg": 12.32
-        },
-        {
-          "code": "sz002829",
-          "name": "星网宇达",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 11.64
+          "chg": 14.54
         }
       ],
-      "count": 2,
+      "count": 1,
       "max_streak": 2
     },
     "2026-07-20": {
       "stocks": [
         {
-          "code": "sz000899",
-          "name": "赣能股份",
+          "code": "sz001388",
+          "name": "信通电子",
           "streak": 2,
           "sector": "主板",
-          "chg": 9.91
+          "chg": 12.46
         }
       ],
       "count": 1,
@@ -38,6 +31,13 @@
     "2026-07-31": {
       "stocks": [
         {
+          "code": "sh603039",
+          "name": "泛微网络",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 13.42
+        },
+        {
           "code": "sh603171",
           "name": "税友股份",
           "streak": 2,
@@ -45,69 +45,56 @@
           "chg": 14.05
         }
       ],
-      "count": 1,
+      "count": 2,
       "max_streak": 2
     },
-    "2026-08-24": {
+    "2026-08-03": {
       "stocks": [
         {
-          "code": "sh603330",
-          "name": "天洋新材",
+          "code": "sh605179",
+          "name": "一鸣食品",
           "streak": 2,
           "sector": "主板",
-          "chg": 10.03
+          "chg": 10.02
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-09-14": {
+    "2026-08-06": {
       "stocks": [
         {
-          "code": "sh605058",
-          "name": "澳弘电子",
+          "code": "sh603039",
+          "name": "泛微网络",
           "streak": 2,
           "sector": "主板",
-          "chg": 12.12
+          "chg": 12.56
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-09-15": {
+    "2026-09-11": {
       "stocks": [
         {
-          "code": "sh605058",
-          "name": "澳弘电子",
-          "streak": 3,
-          "sector": "主板",
-          "chg": 11.02
-        }
-      ],
-      "count": 1,
-      "max_streak": 3
-    },
-    "2026-09-24": {
-      "stocks": [
-        {
-          "code": "sh600802",
-          "name": "福建水泥",
+          "code": "sz000823",
+          "name": "超声电子",
           "streak": 2,
           "sector": "主板",
-          "chg": 14.14
+          "chg": 10.41
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-10-19": {
+    "2026-10-20": {
       "stocks": [
         {
-          "code": "sz000530",
-          "name": "冰山冷热",
+          "code": "sh605258",
+          "name": "协和电子",
           "streak": 2,
           "sector": "主板",
-          "chg": 11.27
+          "chg": 10.39
         }
       ],
       "count": 1,
