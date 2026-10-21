@@ -1,6 +1,6 @@
 {
-  "update_time": "2026-10-21 13:40",
-  "days": 16,
+  "update_time": "2026-10-21 19:05",
+  "days": 20,
   "data": {
     "2026-07-15": {
       "stocks": [
@@ -15,8 +15,35 @@
       "count": 1,
       "max_streak": 2
     },
+    "2026-07-16": {
+      "stocks": [
+        {
+          "code": "sz301520",
+          "name": "万邦医药",
+          "streak": 2,
+          "sector": "创业板",
+          "chg": 21.45
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
     "2026-07-20": {
       "stocks": [
+        {
+          "code": "sz001388",
+          "name": "信通电子",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 12.46
+        },
+        {
+          "code": "sh600310",
+          "name": "广西能源",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 12.06
+        },
         {
           "code": "sz000722",
           "name": "湖南发展",
@@ -25,7 +52,7 @@
           "chg": 11.02
         }
       ],
-      "count": 1,
+      "count": 3,
       "max_streak": 2
     },
     "2026-07-21": {
@@ -36,6 +63,32 @@
           "streak": 2,
           "sector": "主板",
           "chg": 19.43
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-07-23": {
+      "stocks": [
+        {
+          "code": "sh600227",
+          "name": "赤天化",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 10.23
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-07-29": {
+      "stocks": [
+        {
+          "code": "sz002199",
+          "name": "东晶电子",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 12.9
         }
       ],
       "count": 1,
@@ -120,19 +173,6 @@
       "count": 1,
       "max_streak": 2
     },
-    "2026-08-27": {
-      "stocks": [
-        {
-          "code": "sh600969",
-          "name": "郴电国际",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 10.23
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
     "2026-09-04": {
       "stocks": [
         {
@@ -206,6 +246,32 @@
           "streak": 2,
           "sector": "主板",
           "chg": 14.14
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-10-13": {
+      "stocks": [
+        {
+          "code": "sh603968",
+          "name": "醋化股份",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 10.46
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-10-14": {
+      "stocks": [
+        {
+          "code": "sh600847",
+          "name": "万里股份",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 9.98
         }
       ],
       "count": 1,
