@@ -1,6 +1,6 @@
 {
-  "update_time": "2026-10-22 13:41",
-  "days": 11,
+  "update_time": "2026-10-22 19:05",
+  "days": 9,
   "data": {
     "2026-07-17": {
       "stocks": [
@@ -80,32 +80,6 @@
       "count": 1,
       "max_streak": 2
     },
-    "2026-09-14": {
-      "stocks": [
-        {
-          "code": "sh605058",
-          "name": "澳弘电子",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.12
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-15": {
-      "stocks": [
-        {
-          "code": "sh605058",
-          "name": "澳弘电子",
-          "streak": 3,
-          "sector": "主板",
-          "chg": 11.02
-        }
-      ],
-      "count": 1,
-      "max_streak": 3
-    },
     "2026-09-24": {
       "stocks": [
         {
@@ -119,19 +93,6 @@
       "count": 1,
       "max_streak": 2
     },
-    "2026-10-15": {
-      "stocks": [
-        {
-          "code": "sh601811",
-          "name": "新华文轩",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.54
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
     "2026-10-19": {
       "stocks": [
         {
@@ -140,6 +101,19 @@
           "streak": 2,
           "sector": "主板",
           "chg": 11.27
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-10-22": {
+      "stocks": [
+        {
+          "code": "sh603330",
+          "name": "天洋新材",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 11.0
         }
       ],
       "count": 1,
