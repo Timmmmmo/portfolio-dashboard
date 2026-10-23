@@ -1,15 +1,15 @@
 {
-  "update_time": "2026-10-23 13:40",
-  "days": 7,
+  "update_time": "2026-10-23 18:58",
+  "days": 8,
   "data": {
-    "2026-07-20": {
+    "2026-07-17": {
       "stocks": [
         {
-          "code": "sz001388",
-          "name": "信通电子",
+          "code": "sz002829",
+          "name": "星网宇达",
           "streak": 2,
           "sector": "主板",
-          "chg": 12.46
+          "chg": 11.64
         }
       ],
       "count": 1,
@@ -18,11 +18,11 @@
     "2026-07-31": {
       "stocks": [
         {
-          "code": "sz000009",
-          "name": "中国宝安",
+          "code": "sh603039",
+          "name": "泛微网络",
           "streak": 2,
           "sector": "主板",
-          "chg": 12.97
+          "chg": 13.42
         },
         {
           "code": "sh603171",
@@ -33,6 +33,19 @@
         }
       ],
       "count": 2,
+      "max_streak": 2
+    },
+    "2026-08-06": {
+      "stocks": [
+        {
+          "code": "sh603039",
+          "name": "泛微网络",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 12.56
+        }
+      ],
+      "count": 1,
       "max_streak": 2
     },
     "2026-08-21": {
@@ -95,9 +108,16 @@
           "streak": 2,
           "sector": "主板",
           "chg": 14.81
+        },
+        {
+          "code": "sh603728",
+          "name": "鸣志电器",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 12.17
         }
       ],
-      "count": 1,
+      "count": 2,
       "max_streak": 2
     }
   }
