@@ -1,41 +1,35 @@
 {
-  "update_time": "2026-10-22 22:28",
-  "days": 9,
+  "update_time": "2026-10-23 13:08",
+  "days": 7,
   "data": {
-    "2026-07-17": {
-      "stocks": [
-        {
-          "code": "sz002731",
-          "name": "*ST萃华",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 15.0
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-07-20": {
-      "stocks": [
-        {
-          "code": "sz001388",
-          "name": "信通电子",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.46
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
     "2026-07-31": {
       "stocks": [
         {
-          "code": "sz000009",
-          "name": "中国宝安",
+          "code": "sh603039",
+          "name": "泛微网络",
           "streak": 2,
           "sector": "主板",
-          "chg": 12.97
+          "chg": 13.42
+        },
+        {
+          "code": "sh603171",
+          "name": "税友股份",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 14.05
+        }
+      ],
+      "count": 2,
+      "max_streak": 2
+    },
+    "2026-08-06": {
+      "stocks": [
+        {
+          "code": "sh603039",
+          "name": "泛微网络",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 12.56
         }
       ],
       "count": 1,
@@ -54,70 +48,57 @@
       "count": 1,
       "max_streak": 2
     },
-    "2026-08-24": {
+    "2026-09-04": {
       "stocks": [
         {
-          "code": "sh603330",
-          "name": "天洋新材",
+          "code": "sh600865",
+          "name": "百大集团",
           "streak": 2,
           "sector": "主板",
-          "chg": 10.03
+          "chg": 12.82
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-09-11": {
+    "2026-09-21": {
       "stocks": [
         {
-          "code": "sz002201",
-          "name": "九鼎新材",
+          "code": "sz002285",
+          "name": "世联行",
           "streak": 2,
           "sector": "主板",
-          "chg": 11.23
+          "chg": 10.8
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-09-24": {
+    "2026-09-22": {
       "stocks": [
         {
-          "code": "sh600802",
-          "name": "福建水泥",
+          "code": "sh600503",
+          "name": "华丽家族",
           "streak": 2,
           "sector": "主板",
-          "chg": 14.14
+          "chg": 13.62
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-10-19": {
+    "2026-09-23": {
       "stocks": [
         {
-          "code": "sz000530",
-          "name": "冰山冷热",
-          "streak": 2,
+          "code": "sh600503",
+          "name": "华丽家族",
+          "streak": 3,
           "sector": "主板",
-          "chg": 11.27
+          "chg": 10.11
         }
       ],
       "count": 1,
-      "max_streak": 2
-    },
-    "2026-10-22": {
-      "stocks": [
-        {
-          "code": "sh603330",
-          "name": "天洋新材",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 11.0
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
+      "max_streak": 3
     }
   }
 }
