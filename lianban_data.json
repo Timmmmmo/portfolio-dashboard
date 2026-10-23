@@ -1,20 +1,7 @@
 {
-  "update_time": "2026-10-23 18:58",
-  "days": 8,
+  "update_time": "2026-10-23 22:09",
+  "days": 7,
   "data": {
-    "2026-07-17": {
-      "stocks": [
-        {
-          "code": "sz002829",
-          "name": "星网宇达",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 11.64
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
     "2026-07-31": {
       "stocks": [
         {
