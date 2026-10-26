@@ -1,43 +1,29 @@
 {
-  "update_time": "2026-10-26 13:04",
-  "days": 5,
+  "update_time": "2026-10-26 13:43",
+  "days": 8,
   "data": {
     "2026-07-31": {
       "stocks": [
-        {
-          "code": "sz000009",
-          "name": "中国宝安",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.97
-        },
         {
           "code": "sh600418",
           "name": "江淮汽车",
           "streak": 2,
           "sector": "主板",
           "chg": 11.74
-        },
-        {
-          "code": "sh603039",
-          "name": "泛微网络",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 13.42
-        },
-        {
-          "code": "sh603171",
-          "name": "税友股份",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 14.05
         }
       ],
-      "count": 4,
+      "count": 1,
       "max_streak": 2
     },
     "2026-08-03": {
       "stocks": [
+        {
+          "code": "sh605179",
+          "name": "一鸣食品",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 10.02
+        },
         {
           "code": "sz002882",
           "name": "金龙羽",
@@ -46,30 +32,30 @@
           "chg": 10.86
         }
       ],
-      "count": 1,
+      "count": 2,
       "max_streak": 2
     },
-    "2026-08-06": {
+    "2026-08-21": {
       "stocks": [
         {
-          "code": "sh603039",
-          "name": "泛微网络",
+          "code": "sh603838",
+          "name": "四通股份",
           "streak": 2,
           "sector": "主板",
-          "chg": 12.56
+          "chg": 10.57
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-08-31": {
+    "2026-09-04": {
       "stocks": [
         {
-          "code": "sz003005",
-          "name": "竞业达",
+          "code": "sh600865",
+          "name": "百大集团",
           "streak": 2,
           "sector": "主板",
-          "chg": 9.98
+          "chg": 12.82
         }
       ],
       "count": 1,
@@ -83,6 +69,45 @@
           "streak": 2,
           "sector": "主板",
           "chg": 9.94
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-09-21": {
+      "stocks": [
+        {
+          "code": "sz002285",
+          "name": "世联行",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 10.8
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-10-12": {
+      "stocks": [
+        {
+          "code": "sh603232",
+          "name": "格尔软件",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 9.95
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-10-23": {
+      "stocks": [
+        {
+          "code": "sh603528",
+          "name": "多伦科技",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 14.81
         }
       ],
       "count": 1,
