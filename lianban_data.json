@@ -1,9 +1,23 @@
 {
-  "update_time": "2026-10-23 22:09",
-  "days": 7,
+  "update_time": "2026-10-26 13:04",
+  "days": 5,
   "data": {
     "2026-07-31": {
       "stocks": [
+        {
+          "code": "sz000009",
+          "name": "中国宝安",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 12.97
+        },
+        {
+          "code": "sh600418",
+          "name": "江淮汽车",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 11.74
+        },
         {
           "code": "sh603039",
           "name": "泛微网络",
@@ -19,7 +33,20 @@
           "chg": 14.05
         }
       ],
-      "count": 2,
+      "count": 4,
+      "max_streak": 2
+    },
+    "2026-08-03": {
+      "stocks": [
+        {
+          "code": "sz002882",
+          "name": "金龙羽",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 10.86
+        }
+      ],
+      "count": 1,
       "max_streak": 2
     },
     "2026-08-06": {
@@ -35,76 +62,30 @@
       "count": 1,
       "max_streak": 2
     },
-    "2026-08-21": {
+    "2026-08-31": {
       "stocks": [
         {
-          "code": "sh603838",
-          "name": "四通股份",
+          "code": "sz003005",
+          "name": "竞业达",
           "streak": 2,
           "sector": "主板",
-          "chg": 10.57
+          "chg": 9.98
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-09-04": {
+    "2026-09-08": {
       "stocks": [
         {
-          "code": "sh600865",
-          "name": "百大集团",
+          "code": "sz002172",
+          "name": "澳洋健康",
           "streak": 2,
           "sector": "主板",
-          "chg": 12.82
+          "chg": 9.94
         }
       ],
       "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-22": {
-      "stocks": [
-        {
-          "code": "sh600503",
-          "name": "华丽家族",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 13.62
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-23": {
-      "stocks": [
-        {
-          "code": "sh600503",
-          "name": "华丽家族",
-          "streak": 3,
-          "sector": "主板",
-          "chg": 10.11
-        }
-      ],
-      "count": 1,
-      "max_streak": 3
-    },
-    "2026-10-23": {
-      "stocks": [
-        {
-          "code": "sh603528",
-          "name": "多伦科技",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 14.81
-        },
-        {
-          "code": "sh603728",
-          "name": "鸣志电器",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.17
-        }
-      ],
-      "count": 2,
       "max_streak": 2
     }
   }
