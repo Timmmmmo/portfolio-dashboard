@@ -1,11 +1,101 @@
 {
-  "update_time": "2026-10-29 14:06",
+  "update_time": "2026-10-29 14:43",
   "news": [
+    {
+      "time": "93255866",
+      "title": "美国副总统万斯致信伊朗最高安全官员，寻求重启美伊和平谈判",
+      "content": "美国副总统万斯致信伊朗最高安全官员，寻求重启美伊和平谈判",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-29/doc-iniwwpnw2791504.shtml"
+    },
+    {
+      "time": "93255785",
+      "title": "谷歌股价暴跌10% 第三季度人工智能支出达513亿美元引发担忧",
+      "content": "谷歌股价暴跌10% 第三季度人工智能支出达513亿美元引发担忧",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-29/doc-iniwwpnx8832789.shtml"
+    },
+    {
+      "time": "93255699",
+      "title": "日立第二财季净利润下滑19%，股价大跌超10%领跌日经225指数",
+      "content": "日立第二财季净利润下滑19%，股价大跌超10%领跌日经225指数",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-29/doc-iniwwpnz5282300.shtml"
+    },
+    {
+      "time": "93255606",
+      "title": "AI发现软件漏洞的速度远超企业修复能力，网络安全支出激增带动行业增长",
+      "content": "AI发现软件漏洞的速度远超企业修复能力，网络安全支出激增带动行业增长",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-29/doc-iniwwpnx8830732.shtml"
+    },
+    {
+      "time": "93255174",
+      "title": "比特币一度跌破8万美元：三星引发科技股震荡，美联储鹰派立场施压",
+      "content": "比特币一度跌破8万美元：三星引发科技股震荡，美联储鹰派立场施压",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-29/doc-iniwwpnu6007258.shtml"
+    },
+    {
+      "time": "93255149",
+      "title": "今日原油：中东外交谈判出现新进展，国际油价回落超1%",
+      "content": "今日原油：中东外交谈判出现新进展，国际油价回落超1%",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-29/doc-iniwwpnu6007060.shtml"
+    },
+    {
+      "time": "93255021",
+      "title": "欧盟石油进口账单飙升！二季度月均多花近100亿欧元",
+      "content": "欧盟石油进口账单飙升！二季度月均多花近100亿欧元",
+      "url": "https://finance.sina.com.cn/roll/2026-10-29/doc-iniwwpnw2782938.shtml"
+    },
+    {
+      "time": "93254719",
+      "title": "花旗：滔搏给予“买入”评级 目标价1.7港元上半财年纯利符合预期",
+      "content": "花旗：滔搏给予“买入”评级 目标价1.7港元上半财年纯利符合预期",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-29/doc-iniwwpnw2778595.shtml"
+    },
+    {
+      "time": "93254638",
+      "title": "中信里昂：复星医药维持“跑赢大市”评级 目标价上调1.9%至27.1港元",
+      "content": "中信里昂：复星医药维持“跑赢大市”评级 目标价上调1.9%至27.1港元",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-29/doc-iniwwpnx8822306.shtml"
+    },
+    {
+      "time": "93254525",
+      "title": "高盛：诺诚健华目标价上调至23.16港元 给予“买入”评级",
+      "content": "高盛：诺诚健华目标价上调至23.16港元 给予“买入”评级",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-29/doc-iniwwpnz5271784.shtml"
+    },
+    {
+      "time": "93254438",
+      "title": "里昂：比亚迪股份及吉利汽车均给予“高度确信跑赢大市”评级",
+      "content": "里昂：比亚迪股份及吉利汽车均给予“高度确信跑赢大市”评级",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-29/doc-iniwwpnx8820288.shtml"
+    },
+    {
+      "time": "93254348",
+      "title": "招银国际：中兴通讯维持“买入”评级 目标价降至31港元",
+      "content": "招银国际：中兴通讯维持“买入”评级 目标价降至31港元",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-29/doc-iniwwpnu5998484.shtml"
+    },
+    {
+      "time": "93254278",
+      "title": "大摩：中金公司维持“增持”评级 目标价32.8港元",
+      "content": "大摩：中金公司维持“增持”评级 目标价32.8港元",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-29/doc-iniwwpnx8818548.shtml"
+    },
+    {
+      "time": "93254217",
+      "title": "中金：渣打集团目标价上调3.3%至263港元 维持“跑赢行业”评级",
+      "content": "中金：渣打集团目标价上调3.3%至263港元 维持“跑赢行业”评级",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-29/doc-iniwwpnz5268577.shtml"
+    },
     {
       "time": "93253466",
       "title": "快讯：现货黄金跌超1%，现报4025.15美元/盎司。",
       "content": "快讯：现货黄金跌超1%，现报4025.15美元/盎司。",
       "url": "https://finance.sina.com.cn/money/nmetal/roll/2026-10-29/doc-iniwwpnz5262822.shtml"
+    },
+    {
+      "time": "93252927",
+      "title": "廖岷拟出任IMF副总裁 历任中国籍副总裁有何特点？",
+      "content": "廖岷拟出任IMF副总裁 历任中国籍副总裁有何特点？",
+      "url": "https://finance.sina.com.cn/china/2026-10-29/doc-iniwwpnu5996790.shtml"
     },
     {
       "time": "93252457",
@@ -30,102 +120,20 @@
       "title": "花旗：中国石油股份维持“买入”评级 目标价12港元",
       "content": "花旗：中国石油股份维持“买入”评级 目标价12港元",
       "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-29/doc-iniwwiew6107889.shtml"
-    },
-    {
-      "time": "93252049",
-      "title": "荣利营造午后涨逾10% 拟折让约9.77%配股净筹约9460万港元",
-      "content": "荣利营造午后涨逾10% 拟折让约9.77%配股净筹约9460万港元",
-      "url": "https://finance.sina.com.cn/stock/hkstock/marketalerts/2026-10-29/doc-iniwwiez8930124.shtml"
-    },
-    {
-      "time": "93251918",
-      "title": "脑动极光-B午后涨超14% 仅7个交易日低点反弹超两倍",
-      "content": "脑动极光-B午后涨超14% 仅7个交易日低点反弹超两倍",
-      "url": "https://finance.sina.com.cn/stock/hkstock/marketalerts/2026-10-29/doc-iniwwifc5379702.shtml"
-    },
-    {
-      "time": "93251284",
-      "title": "现代汽车第三季度净利润下降24.2%，下调全年销量目标至400万辆",
-      "content": "现代汽车第三季度净利润下降24.2%，下调全年销量目标至400万辆",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-29/doc-iniwwiez8925050.shtml"
-    },
-    {
-      "time": "93250407",
-      "title": "特朗普称5000美元在海湖庄园只能买汉堡，遭美参议员痛批",
-      "content": "特朗普称5000美元在海湖庄园只能买汉堡，遭美参议员痛批",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-29/doc-iniwwiew6092700.shtml"
-    },
-    {
-      "time": "93250369",
-      "title": "金价下跌，女子花5万元买的金手镯，还没戴过就已经亏了1.3万元",
-      "content": "金价下跌，女子花5万元买的金手镯，还没戴过就已经亏了1.3万元",
-      "url": "https://finance.sina.com.cn/jjxw/2026-10-29/doc-iniwwiey2872708.shtml"
-    },
-    {
-      "time": "93249905",
-      "title": "丰田9月份全球销量连续三个月下滑，中国销量下降近20%",
-      "content": "丰田9月份全球销量连续三个月下滑，中国销量下降近20%",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-29/doc-iniwwiew6087411.shtml"
-    },
-    {
-      "time": "93249499",
-      "title": "倩碧控股完成配售1932万股新股份",
-      "content": "倩碧控股完成配售1932万股新股份",
-      "url": "https://finance.sina.com.cn/stock/hkstock/ggscyd/2026-10-29/doc-iniwwiez8911473.shtml"
-    },
-    {
-      "time": "93249486",
-      "title": "AI债务融资激增 华尔街信贷市场开始担忧吃不消",
-      "content": "AI债务融资激增 华尔街信贷市场开始担忧吃不消",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-29/doc-iniwwiey2859812.shtml"
-    },
-    {
-      "time": "93249372",
-      "title": "现代汽车将2026年销量目标下调至400万辆",
-      "content": "现代汽车将2026年销量目标下调至400万辆",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-29/doc-iniwwiey2858789.shtml"
-    },
-    {
-      "time": "93249220",
-      "title": "DoorDash洽谈收购Instacart 将提前发布财报",
-      "content": "DoorDash洽谈收购Instacart 将提前发布财报",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-29/doc-iniwwiez8908743.shtml"
-    },
-    {
-      "time": "93249165",
-      "title": "近三天沪市新增回购增持方案29单 拟增持回购金额近45亿元",
-      "content": "近三天沪市新增回购增持方案29单 拟增持回购金额近45亿元",
-      "url": "https://finance.sina.com.cn/stock/s/2026-10-29/doc-iniwwiey2855877.shtml"
-    },
-    {
-      "time": "93249134",
-      "title": "吉利汽车发布前三季度业绩 股东应占利润139.28亿元同比增加7%",
-      "content": "吉利汽车发布前三季度业绩 股东应占利润139.28亿元同比增加7%",
-      "url": "https://finance.sina.com.cn/stock/hkstock/ggscyd/2026-10-29/doc-iniwwifc5358243.shtml"
-    },
-    {
-      "time": "93249050",
-      "title": "中通快递-W于10月28日斥资545.66万美元回购27.58万股",
-      "content": "中通快递-W于10月28日斥资545.66万美元回购27.58万股",
-      "url": "https://finance.sina.com.cn/stock/hkstock/ggscyd/2026-10-29/doc-iniwwifc5357227.shtml"
-    },
-    {
-      "time": "93249042",
-      "title": "名创优品于10月28日斥资23.93万美元回购9.85万股",
-      "content": "名创优品于10月28日斥资23.93万美元回购9.85万股",
-      "url": "https://finance.sina.com.cn/stock/hkstock/ggscyd/2026-10-29/doc-iniwwiez8906519.shtml"
-    },
-    {
-      "time": "93248902",
-      "title": "瑞和数智公布出售38.76枚比特币",
-      "content": "瑞和数智公布出售38.76枚比特币",
-      "url": "https://finance.sina.com.cn/stock/hkstock/ggscyd/2026-10-29/doc-iniwwiew6076448.shtml"
     }
   ],
   "analysis": [
     {
       "topic": "AI应用",
       "comment": "科技主线持续催化"
+    },
+    {
+      "topic": "新能源车",
+      "comment": "出海进展催化"
+    },
+    {
+      "topic": "地缘政治",
+      "comment": "关注潜在风险"
     }
   ],
   "total": 20,

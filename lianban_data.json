@@ -1,6 +1,6 @@
 {
-  "update_time": "2026-10-29 14:05",
-  "days": 7,
+  "update_time": "2026-10-29 14:43",
+  "days": 10,
   "data": {
     "2026-08-03": {
       "stocks": [
@@ -10,6 +10,19 @@
           "streak": 2,
           "sector": "主板",
           "chg": 10.02
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-08-24": {
+      "stocks": [
+        {
+          "code": "sh603330",
+          "name": "天洋新材",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 10.03
         }
       ],
       "count": 1,
@@ -54,6 +67,19 @@
       "count": 1,
       "max_streak": 2
     },
+    "2026-09-28": {
+      "stocks": [
+        {
+          "code": "sh601218",
+          "name": "吉鑫科技",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 10.0
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
     "2026-10-19": {
       "stocks": [
         {
@@ -62,6 +88,19 @@
           "streak": 2,
           "sector": "主板",
           "chg": 11.27
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-10-22": {
+      "stocks": [
+        {
+          "code": "sh603330",
+          "name": "天洋新材",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 11.0
         }
       ],
       "count": 1,
