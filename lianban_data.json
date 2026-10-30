@@ -1,7 +1,20 @@
 {
-  "update_time": "2026-10-30 14:43",
-  "days": 10,
+  "update_time": "2026-10-30 21:52",
+  "days": 11,
   "data": {
+    "2026-07-17": {
+      "stocks": [
+        {
+          "code": "sz002731",
+          "name": "萃华退",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 15.0
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
     "2026-07-31": {
       "stocks": [
         {
