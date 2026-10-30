@@ -1,15 +1,55 @@
 {
-  "update_time": "2026-10-29 23:58",
-  "days": 10,
+  "update_time": "2026-10-30 14:07",
+  "days": 11,
   "data": {
-    "2026-08-03": {
+    "2026-07-31": {
       "stocks": [
         {
-          "code": "sh605179",
-          "name": "一鸣食品",
+          "code": "sz000009",
+          "name": "中国宝安",
           "streak": 2,
           "sector": "主板",
-          "chg": 10.02
+          "chg": 12.97
+        },
+        {
+          "code": "sh603039",
+          "name": "泛微网络",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 13.42
+        }
+      ],
+      "count": 2,
+      "max_streak": 2
+    },
+    "2026-08-06": {
+      "stocks": [
+        {
+          "code": "sh600601",
+          "name": "方正科技",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 12.61
+        },
+        {
+          "code": "sh603039",
+          "name": "泛微网络",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 12.56
+        }
+      ],
+      "count": 2,
+      "max_streak": 2
+    },
+    "2026-08-10": {
+      "stocks": [
+        {
+          "code": "sh603102",
+          "name": "百合股份",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 10.63
         }
       ],
       "count": 1,
@@ -28,19 +68,6 @@
       "count": 1,
       "max_streak": 2
     },
-    "2026-09-07": {
-      "stocks": [
-        {
-          "code": "sz000892",
-          "name": "欢瑞世纪",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.48
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
     "2026-09-08": {
       "stocks": [
         {
@@ -54,31 +81,44 @@
       "count": 1,
       "max_streak": 2
     },
-    "2026-09-24": {
+    "2026-09-11": {
       "stocks": [
         {
-          "code": "sh600802",
-          "name": "福建水泥",
+          "code": "sz000823",
+          "name": "超声电子",
           "streak": 2,
           "sector": "主板",
-          "chg": 14.14
+          "chg": 10.41
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-09-28": {
+    "2026-09-14": {
       "stocks": [
         {
-          "code": "sh601218",
-          "name": "吉鑫科技",
+          "code": "sh605058",
+          "name": "澳弘电子",
           "streak": 2,
           "sector": "主板",
-          "chg": 10.0
+          "chg": 12.12
         }
       ],
       "count": 1,
       "max_streak": 2
+    },
+    "2026-09-15": {
+      "stocks": [
+        {
+          "code": "sh605058",
+          "name": "澳弘电子",
+          "streak": 3,
+          "sector": "主板",
+          "chg": 11.02
+        }
+      ],
+      "count": 1,
+      "max_streak": 3
     },
     "2026-10-19": {
       "stocks": [
@@ -101,19 +141,6 @@
           "streak": 2,
           "sector": "主板",
           "chg": 11.0
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-10-23": {
-      "stocks": [
-        {
-          "code": "sh603728",
-          "name": "鸣志电器",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.17
         }
       ],
       "count": 1,
