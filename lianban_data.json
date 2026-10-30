@@ -1,6 +1,6 @@
 {
-  "update_time": "2026-10-30 14:07",
-  "days": 11,
+  "update_time": "2026-10-30 14:43",
+  "days": 10,
   "data": {
     "2026-07-31": {
       "stocks": [
@@ -119,19 +119,6 @@
       ],
       "count": 1,
       "max_streak": 3
-    },
-    "2026-10-19": {
-      "stocks": [
-        {
-          "code": "sz000530",
-          "name": "冰山冷热",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 11.27
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
     },
     "2026-10-22": {
       "stocks": [

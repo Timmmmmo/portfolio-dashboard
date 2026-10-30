@@ -1,6 +1,84 @@
 {
-  "update_time": "2026-10-30 14:07",
+  "update_time": "2026-10-30 14:44",
   "news": [
+    {
+      "time": "93342432",
+      "title": "Meta推出AI时尚应用Style Sketch",
+      "content": "Meta推出AI时尚应用Style Sketch",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-30/doc-iniwysmu5564677.shtml"
+    },
+    {
+      "time": "93342330",
+      "title": "凯捷上调2026年营收增长预期至9%至9.5%，但核心业务及订单增长放缓",
+      "content": "凯捷上调2026年营收增长预期至9%至9.5%，但核心业务及订单增长放缓",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-30/doc-iniwysmz4719959.shtml"
+    },
+    {
+      "time": "93342194",
+      "title": "印度散户在Jio上市首日的保证金交易规模达2.34亿美元",
+      "content": "印度散户在Jio上市首日的保证金交易规模达2.34亿美元",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-30/doc-iniwysmw2337955.shtml"
+    },
+    {
+      "time": "93342092",
+      "title": "OpenAI支持的Thrive Holdings收购ADT",
+      "content": "OpenAI支持的Thrive Holdings收购ADT",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-30/doc-iniwysmu5560413.shtml"
+    },
+    {
+      "time": "93341799",
+      "title": "韩国仁川机场航空公司网络故障 值机业务严重受阻",
+      "content": "韩国仁川机场航空公司网络故障 值机业务严重受阻",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-30/doc-iniwysmx8264290.shtml"
+    },
+    {
+      "time": "93341763",
+      "title": "今日“木头姐”调仓：连续两日增持Cerebras，减持Tempus AI",
+      "content": "今日“木头姐”调仓：连续两日增持Cerebras，减持Tempus AI",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-30/doc-iniwysmw2331968.shtml"
+    },
+    {
+      "time": "93341444",
+      "title": "SpaceX第三季度单一AI客户贡献34.5%营收，Anthropic算力合同最高达1205亿美元",
+      "content": "SpaceX第三季度单一AI客户贡献34.5%营收，Anthropic算力合同最高达1205亿美元",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-30/doc-iniwysmw2327241.shtml"
+    },
+    {
+      "time": "93341242",
+      "title": "日本央行维持利率在1.25%不变，称基础通胀已达到2%目标",
+      "content": "日本央行维持利率在1.25%不变，称基础通胀已达到2%目标",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-30/doc-iniwysmw2324394.shtml"
+    },
+    {
+      "time": "93341088",
+      "title": "币安遭遇黑客攻击损失63亿美元 比特币和以太坊大跌",
+      "content": "币安遭遇黑客攻击损失63亿美元 比特币和以太坊大跌",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-30/doc-iniwysmx8256162.shtml"
+    },
+    {
+      "time": "93340939",
+      "title": "今日原油：美军高层向特朗普汇报对伊朗军事行动方案，国际油价升至六个月高位",
+      "content": "今日原油：美军高层向特朗普汇报对伊朗军事行动方案，国际油价升至六个月高位",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-30/doc-iniwysmw2321225.shtml"
+    },
+    {
+      "time": "93340757",
+      "title": "Spotify据悉拟明年第一季度推出AI混音服务",
+      "content": "Spotify据悉拟明年第一季度推出AI混音服务",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-30/doc-iniwysmw2319041.shtml"
+    },
+    {
+      "time": "93340510",
+      "title": "Spotify计划2027年初推出AI音乐混音服务，拟每月额外收费最高5美元",
+      "content": "Spotify计划2027年初推出AI音乐混音服务，拟每月额外收费最高5美元",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-30/doc-iniwysmz4701295.shtml"
+    },
+    {
+      "time": "93339501",
+      "title": "金价连续下跌，风险加大！小摩：4000美元下方几乎没有技术支撑，相当脆弱",
+      "content": "金价连续下跌，风险加大！小摩：4000美元下方几乎没有技术支撑，相当脆弱",
+      "url": "https://finance.sina.com.cn/jjxw/2026-10-30/doc-iniwysmz4691695.shtml"
+    },
     {
       "time": "93338974",
       "title": "高盛：友邦保险维持“买入”评级 预计第4财季新业务价值重拾两位数增长",
@@ -42,84 +120,6 @@
       "title": "韩国第三季度日均外汇交易额连续三季创新高",
       "content": "韩国第三季度日均外汇交易额连续三季创新高",
       "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-30/doc-iniwysmu5516052.shtml"
-    },
-    {
-      "time": "93337733",
-      "title": "币安遭黑客攻击影响约63亿美元 加密货币价格下跌",
-      "content": "币安遭黑客攻击影响约63亿美元 加密货币价格下跌",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-30/doc-iniwysmx8228069.shtml"
-    },
-    {
-      "time": "93337702",
-      "title": "白银短缺危机退潮，库存、投机资金和工业需求同时发出警报",
-      "content": "白银短缺危机退潮，库存、投机资金和工业需求同时发出警报",
-      "url": "https://finance.sina.com.cn/money/nmetal/hjzx/2026-10-30/doc-iniwysmu5517331.shtml"
-    },
-    {
-      "time": "93337400",
-      "title": "多家机构大幅下调卡特彼勒目标价",
-      "content": "多家机构大幅下调卡特彼勒目标价",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-30/doc-iniwysmw2289832.shtml"
-    },
-    {
-      "time": "93336860",
-      "title": "现代汽车集团将成立特殊目的公司开发AI数据中心",
-      "content": "现代汽车集团将成立特殊目的公司开发AI数据中心",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-30/doc-iniwysmz4671974.shtml"
-    },
-    {
-      "time": "93336649",
-      "title": "多家机构上调万事达卡目标价",
-      "content": "多家机构上调万事达卡目标价",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-30/doc-iniwysmz4670012.shtml"
-    },
-    {
-      "time": "93336578",
-      "title": "芯片超级周期推动，韩国9月份税收收入大增26.4万亿韩元",
-      "content": "芯片超级周期推动，韩国9月份税收收入大增26.4万亿韩元",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-30/doc-iniwysmu5505796.shtml"
-    },
-    {
-      "time": "93336503",
-      "title": "大摩：ASMPT目标价下调至215港元 维持“增持”评级",
-      "content": "大摩：ASMPT目标价下调至215港元 维持“增持”评级",
-      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-30/doc-iniwysmx8217782.shtml"
-    },
-    {
-      "time": "93336467",
-      "title": "茉莉奶白联名水杯生产商发声：正等茉莉奶白通知，产品出厂前都有检测，不可能出现易炸碎情况",
-      "content": "茉莉奶白联名水杯生产商发声：正等茉莉奶白通知，产品出厂前都有检测，不可能出现易炸碎情况",
-      "url": "https://finance.sina.com.cn/tob/2026-10-30/doc-iniwysmw2280176.shtml"
-    },
-    {
-      "time": "93336462",
-      "title": "花旗：Genie 4推动互动世界模型发展 看好快手-W可灵AI探索相关机会",
-      "content": "花旗：Genie 4推动互动世界模型发展 看好快手-W可灵AI探索相关机会",
-      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-30/doc-iniwysmx8217168.shtml"
-    },
-    {
-      "time": "93336423",
-      "title": "光大证券：看好中国石油“增储上产”潜力 维持“买入”评级",
-      "content": "光大证券：看好中国石油“增储上产”潜力 维持“买入”评级",
-      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-30/doc-iniwysmx8216583.shtml"
-    },
-    {
-      "time": "93336417",
-      "title": "光大证券：ASMPT订单创历史新高 上调净利润维持“买入”评级",
-      "content": "光大证券：ASMPT订单创历史新高 上调净利润维持“买入”评级",
-      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-30/doc-iniwysmx8216552.shtml"
-    },
-    {
-      "time": "93336090",
-      "title": "机构下调英特尔目标价 公司利润表现令人失望",
-      "content": "机构下调英特尔目标价 公司利润表现令人失望",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-10-30/doc-iniwysmz4664781.shtml"
-    },
-    {
-      "time": "93335842",
-      "title": "花旗：中创新航给予“买入”评级 目标价33.10港元",
-      "content": "花旗：中创新航给予“买入”评级 目标价33.10港元",
-      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-10-30/doc-iniwysmw2274435.shtml"
     }
   ],
   "analysis": [
@@ -130,6 +130,10 @@
     {
       "topic": "AI应用",
       "comment": "科技主线持续催化"
+    },
+    {
+      "topic": "地缘政治",
+      "comment": "关注潜在风险"
     },
     {
       "topic": "资金面",
