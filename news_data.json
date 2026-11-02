@@ -1,6 +1,42 @@
 {
-  "update_time": "2026-11-03 01:23",
+  "update_time": "2026-11-03 03:21",
   "news": [
+    {
+      "time": "93644971",
+      "title": "欧洲债市：英国国债创9月3日以来最大涨幅 油价下跌削弱加息预期",
+      "content": "欧洲债市：英国国债创9月3日以来最大涨幅 油价下跌削弱加息预期",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-03/doc-inixkrkm0211187.shtml"
+    },
+    {
+      "time": "93641978",
+      "title": "美国称南非将失去非洲增长与机会法案优惠资格",
+      "content": "美国称南非将失去非洲增长与机会法案优惠资格",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-03/doc-inixkrkn6974622.shtml"
+    },
+    {
+      "time": "93641833",
+      "title": "甲骨文启动200亿美元股债融资 为AI支出“筹粮”",
+      "content": "甲骨文启动200亿美元股债融资 为AI支出“筹粮”",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-03/doc-inixkrkm0198093.shtml"
+    },
+    {
+      "time": "93641796",
+      "title": "法国央行行长：市场可能对财政情况反应过度 预算案大概率能通过",
+      "content": "法国央行行长：市场可能对财政情况反应过度 预算案大概率能通过",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-03/doc-inixkrkq2620659.shtml"
+    },
+    {
+      "time": "93640770",
+      "title": "欧洲股市收涨 油价下跌提振周期股 阿尔斯通重挫",
+      "content": "欧洲股市收涨 油价下跌提振周期股 阿尔斯通重挫",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-03/doc-inixkrkr9066503.shtml"
+    },
+    {
+      "time": "93640757",
+      "title": "英国推进移民永居制度改革 50万人或面临更长等待期",
+      "content": "英国推进移民永居制度改革 50万人或面临更长等待期",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-03/doc-inixkrkr9066434.shtml"
+    },
     {
       "time": "93638925",
       "title": "辉立资本上调评级：亚马逊的人工智能投入终将获得回报",
@@ -84,42 +120,6 @@
       "title": "苹果已成华尔街对冲AI行情的避险标的",
       "content": "苹果已成华尔街对冲AI行情的避险标的",
       "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-02/doc-inixkmap0293156.shtml"
-    },
-    {
-      "time": "93634016",
-      "title": "福克斯公司：世界杯拉动广告收入，利润走高",
-      "content": "福克斯公司：世界杯拉动广告收入，利润走高",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-02/doc-inixkmaq7066840.shtml"
-    },
-    {
-      "time": "93633521",
-      "title": "伊朗释放外交破局信号 穆杰塔巴为和平谈判开绿灯",
-      "content": "伊朗释放外交破局信号 穆杰塔巴为和平谈判开绿灯",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-02/doc-inixkmap0286893.shtml"
-    },
-    {
-      "time": "93633463",
-      "title": "美伊谈判希望升温 欧洲能源股创6月以来最大跌幅",
-      "content": "美伊谈判希望升温 欧洲能源股创6月以来最大跌幅",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-02/doc-inixkmas2713008.shtml"
-    },
-    {
-      "time": "93633386",
-      "title": "美国10月制造业活动加速增长 生产指标创2021年以来新高",
-      "content": "美国10月制造业活动加速增长 生产指标创2021年以来新高",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-02/doc-inixkmat9163218.shtml"
-    },
-    {
-      "time": "93633017",
-      "title": "万豪国际：美加市场需求全面回暖，营收实现增长",
-      "content": "万豪国际：美加市场需求全面回暖，营收实现增长",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-02/doc-inixkmap0284477.shtml"
-    },
-    {
-      "time": "93632903",
-      "title": "瑞安航空拟削减成本，应对燃油开支上涨",
-      "content": "瑞安航空拟削减成本，应对燃油开支上涨",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-02/doc-inixkmat9161084.shtml"
     }
   ],
   "analysis": [
@@ -130,10 +130,6 @@
     {
       "topic": "AI应用",
       "comment": "科技主线持续催化"
-    },
-    {
-      "topic": "地缘政治",
-      "comment": "关注潜在风险"
     },
     {
       "topic": "金融/券商",
