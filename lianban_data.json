@@ -1,67 +1,55 @@
 {
-  "update_time": "2026-11-04 00:53",
-  "days": 11,
+  "update_time": "2026-11-04 14:46",
+  "days": 8,
   "data": {
-    "2026-07-31": {
+    "2026-08-06": {
       "stocks": [
         {
-          "code": "sz000009",
-          "name": "中国宝安",
+          "code": "sh688549",
+          "name": "中巨芯",
+          "streak": 2,
+          "sector": "科创板",
+          "chg": 21.78
+        },
+        {
+          "code": "sh600330",
+          "name": "天通股份",
           "streak": 2,
           "sector": "主板",
-          "chg": 12.97
+          "chg": 11.14
+        },
+        {
+          "code": "sh600601",
+          "name": "方正科技",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 12.61
+        }
+      ],
+      "count": 3,
+      "max_streak": 2
+    },
+    "2026-08-07": {
+      "stocks": [
+        {
+          "code": "sh603124",
+          "name": "江南新材",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 9.98
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-08-03": {
+    "2026-09-11": {
       "stocks": [
         {
-          "code": "sz002882",
-          "name": "金龙羽",
+          "code": "sz000823",
+          "name": "超声电子",
           "streak": 2,
           "sector": "主板",
-          "chg": 10.86
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-08-24": {
-      "stocks": [
-        {
-          "code": "sh603330",
-          "name": "天洋新材",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 10.03
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-07": {
-      "stocks": [
-        {
-          "code": "sz000892",
-          "name": "欢瑞世纪",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.48
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-08": {
-      "stocks": [
-        {
-          "code": "sz002172",
-          "name": "澳洋健康",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 9.94
+          "chg": 10.41
         }
       ],
       "count": 1,
@@ -93,27 +81,14 @@
       "count": 1,
       "max_streak": 3
     },
-    "2026-09-24": {
+    "2026-10-19": {
       "stocks": [
         {
-          "code": "sh600802",
-          "name": "福建水泥",
+          "code": "sz000530",
+          "name": "冰山冷热",
           "streak": 2,
           "sector": "主板",
-          "chg": 14.14
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-10-22": {
-      "stocks": [
-        {
-          "code": "sh603330",
-          "name": "天洋新材",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 11.0
+          "chg": 11.27
         }
       ],
       "count": 1,
@@ -122,24 +97,24 @@
     "2026-10-23": {
       "stocks": [
         {
-          "code": "sh603528",
-          "name": "多伦科技",
+          "code": "sh603728",
+          "name": "鸣志电器",
           "streak": 2,
           "sector": "主板",
-          "chg": 14.81
+          "chg": 12.17
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-10-27": {
+    "2026-11-04": {
       "stocks": [
         {
-          "code": "sz001318",
-          "name": "阳光乳业",
+          "code": "sz002652",
+          "name": "扬子新材",
           "streak": 2,
           "sector": "主板",
-          "chg": 12.04
+          "chg": 13.33
         }
       ],
       "count": 1,
