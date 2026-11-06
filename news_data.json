@@ -1,6 +1,84 @@
 {
-  "update_time": "2026-11-06 15:06",
+  "update_time": "2026-11-06 15:38",
   "news": [
+    {
+      "time": "93949108",
+      "title": "光大期货1106热点追踪：中期选举落地挤出地缘溢价，聚烯烃重挫",
+      "content": "光大期货1106热点追踪：中期选举落地挤出地缘溢价，聚烯烃重挫",
+      "url": "https://finance.sina.com.cn/money/future/roll/2026-11-06/doc-inixuqhs8271164.shtml"
+    },
+    {
+      "time": "93948925",
+      "title": "今日原油：连续第二日上涨，但本周仍录得两位数跌幅",
+      "content": "今日原油：连续第二日上涨，但本周仍录得两位数跌幅",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-06/doc-inixuqhu5044369.shtml"
+    },
+    {
+      "time": "93948821",
+      "title": "退市不免责！一批龙宇股份（603003）股民索赔再获得法院立案，前期已有获赔到位",
+      "content": "退市不免责！一批龙宇股份（603003）股民索赔再获得法院立案，前期已有获赔到位",
+      "url": "https://finance.sina.com.cn/stock/gmwq/rightscase/2026-11-06/doc-inixuqia5502115.shtml"
+    },
+    {
+      "time": "93948820",
+      "title": "农尚环境（300536）投资者索赔案将开庭，前期已有胜诉",
+      "content": "农尚环境（300536）投资者索赔案将开庭，前期已有胜诉",
+      "url": "https://finance.sina.com.cn/stock/gmwq/rightscase/2026-11-06/doc-inixuqhs8267949.shtml"
+    },
+    {
+      "time": "93948818",
+      "title": "一批中装建设（002822）投资者索赔获得胜诉判决，倒计时一个月",
+      "content": "一批中装建设（002822）投资者索赔获得胜诉判决，倒计时一个月",
+      "url": "https://finance.sina.com.cn/stock/gmwq/rightscase/2026-11-06/doc-inixuqhy8853438.shtml"
+    },
+    {
+      "time": "93948816",
+      "title": "一批英飞拓（002528）投资者索赔案再获得法院胜诉判决",
+      "content": "一批英飞拓（002528）投资者索赔案再获得法院胜诉判决",
+      "url": "https://finance.sina.com.cn/stock/gmwq/rightscase/2026-11-06/doc-inixuqhs8267310.shtml"
+    },
+    {
+      "time": "93948759",
+      "title": "广发证券：维持百胜中国“买入”评级 H股合理价值504.87港元",
+      "content": "广发证券：维持百胜中国“买入”评级 H股合理价值504.87港元",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-11-06/doc-inixuqia5500128.shtml"
+    },
+    {
+      "time": "93948712",
+      "title": "中金：维持新濠国际发展“中性”评级 目标价2港元",
+      "content": "中金：维持新濠国际发展“中性”评级 目标价2港元",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-11-06/doc-inixuqia5499506.shtml"
+    },
+    {
+      "time": "93948673",
+      "title": "印度成AI交易对冲标的？小摩预测：全球股市大跌背景下，印度股市或迎来强劲资金流入",
+      "content": "印度成AI交易对冲标的？小摩预测：全球股市大跌背景下，印度股市或迎来强劲资金流入",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-06/doc-inixuqhy8850824.shtml"
+    },
+    {
+      "time": "93948668",
+      "title": "中金：维持中国生物制药“跑赢行业”评级 目标价8.90港元",
+      "content": "中金：维持中国生物制药“跑赢行业”评级 目标价8.90港元",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-11-06/doc-inixuqhy8850745.shtml"
+    },
+    {
+      "time": "93948665",
+      "title": "收评：国内期货主力合约涨跌互现 苹果涨超5%",
+      "content": "收评：国内期货主力合约涨跌互现 苹果涨超5%",
+      "url": "https://finance.sina.com.cn/money/future/fmnews/2026-11-06/doc-inixuqia5498883.shtml"
+    },
+    {
+      "time": "93948544",
+      "title": "商务部：对原产于欧盟、日本的进口乙叉降冰片烯发起反倾销立案调查",
+      "content": "商务部：对原产于欧盟、日本的进口乙叉降冰片烯发起反倾销立案调查",
+      "url": "https://finance.sina.com.cn/jjxw/2026-11-06/doc-inixuqia5498433.shtml"
+    },
+    {
+      "time": "93948375",
+      "title": "三星电子越南手机基地面临关税风险 美关税调查月底落地",
+      "content": "三星电子越南手机基地面临关税风险 美关税调查月底落地",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-06/doc-inixuqhu5035483.shtml"
+    },
     {
       "time": "93948102",
       "title": "算力资产抛售潮延续 荷兰国际拟出售5亿美元数据中心贷款",
@@ -42,84 +120,6 @@
       "title": "英伟达应对数据中心监管阻力：改造阿波罗旗下旧电信楼宇",
       "content": "英伟达应对数据中心监管阻力：改造阿波罗旗下旧电信楼宇",
       "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-06/doc-inixuqhu5023747.shtml"
-    },
-    {
-      "time": "93947224",
-      "title": "主要投资者如今正质疑Anthropic的1.5万亿美元估值",
-      "content": "主要投资者如今正质疑Anthropic的1.5万亿美元估值",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-06/doc-inixuqhu5021887.shtml"
-    },
-    {
-      "time": "93947051",
-      "title": "伊朗庆祝特朗普选举受挫，斡旋方推动达成停战协议",
-      "content": "伊朗庆祝特朗普选举受挫，斡旋方推动达成停战协议",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-06/doc-inixuqhs8244575.shtml"
-    },
-    {
-      "time": "93946839",
-      "title": "今日“木头姐”调仓：前一天卖出SpaceX，第二天又买回5352万美元，同时减持1.34亿美元博通股票",
-      "content": "今日“木头姐”调仓：前一天卖出SpaceX，第二天又买回5352万美元，同时减持1.34亿美元博通股票",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-06/doc-inixuqhy8831066.shtml"
-    },
-    {
-      "time": "93946635",
-      "title": "全球AI股抛售潮蔓延，日本日经225指数暴跌超6%，较历史高点回撤逾20%",
-      "content": "全球AI股抛售潮蔓延，日本日经225指数暴跌超6%，较历史高点回撤逾20%",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-06/doc-inixuqia5477596.shtml"
-    },
-    {
-      "time": "93946409",
-      "title": "特朗普中期选举惨败，旗下迷因币跌至历史新低，较峰值暴跌约99%",
-      "content": "特朗普中期选举惨败，旗下迷因币跌至历史新低，较峰值暴跌约99%",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-06/doc-inixuqia5476331.shtml"
-    },
-    {
-      "time": "93946167",
-      "title": "美国得州候任州长拟暂停新建数据中心，计划立法加强监管",
-      "content": "美国得州候任州长拟暂停新建数据中心，计划立法加强监管",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-06/doc-inixuqhu5014305.shtml"
-    },
-    {
-      "time": "93946071",
-      "title": "菲律宾第二季度GDP增速上修至2.4%，仍接近五年最低水平",
-      "content": "菲律宾第二季度GDP增速上修至2.4%，仍接近五年最低水平",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-06/doc-inixuqhy8825521.shtml"
-    },
-    {
-      "time": "93946026",
-      "title": "欧盟能源监管机构：到2050年消费者电网费用可能上涨50%至100%",
-      "content": "欧盟能源监管机构：到2050年消费者电网费用可能上涨50%至100%",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-06/doc-inixuqhy8825144.shtml"
-    },
-    {
-      "time": "93945220",
-      "title": "高盛大砍黄金目标价！央行购金挡不住美联储转鹰，当前格局像极了2022年",
-      "content": "高盛大砍黄金目标价！央行购金挡不住美联储转鹰，当前格局像极了2022年",
-      "url": "https://finance.sina.com.cn/money/nmetal/hjzx/2026-11-06/doc-inixuqhu5009235.shtml"
-    },
-    {
-      "time": "93944868",
-      "title": "中金：保诚维持“跑赢行业”评级 目标价151.35港元",
-      "content": "中金：保诚维持“跑赢行业”评级 目标价151.35港元",
-      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-11-06/doc-inixuqhu5003769.shtml"
-    },
-    {
-      "time": "93944782",
-      "title": "中信里昂：长城汽车H股目标价下调至7港元 维持“跑赢大市”评级",
-      "content": "中信里昂：长城汽车H股目标价下调至7港元 维持“跑赢大市”评级",
-      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-11-06/doc-inixuqhs8227052.shtml"
-    },
-    {
-      "time": "93944734",
-      "title": "里昂：永利澳门维持“跑赢大市”评级 目标价7.1港元",
-      "content": "里昂：永利澳门维持“跑赢大市”评级 目标价7.1港元",
-      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-11-06/doc-inixuqhs8226809.shtml"
-    },
-    {
-      "time": "93944603",
-      "title": "高盛下调黄金目标价：牛市逻辑尚未终结，美联储却已改变游戏规则",
-      "content": "高盛下调黄金目标价：牛市逻辑尚未终结，美联储却已改变游戏规则",
-      "url": "https://finance.sina.com.cn/money/nmetal/hjzx/2026-11-06/doc-inixuqhs8227340.shtml"
     }
   ],
   "analysis": [
@@ -138,10 +138,6 @@
     {
       "topic": "资金面",
       "comment": "市场情绪指标"
-    },
-    {
-      "topic": "消费/游戏",
-      "comment": "内需复苏进度"
     }
   ],
   "total": 20,
