@@ -1231,19 +1231,31 @@ function sfDraw(){
     return;
   }
 
-  // 时间轴：合并所有时间点（按序）
-  const timeSet=new Set();
-  series.forEach(s=>(s.points||[]).forEach(p=>timeSet.add(p.t)));
-  const times=[...timeSet].sort();
-  if(times.length<2){
+  // 时间轴：固定 9:30-15:00 (240 交易分钟, 午休 11:30-13:00 跳过)
+  const TOTAL_MIN=240;
+  const minuteOf=t=>{
+    if(!t||typeof t!=='string') return null;
+    const p=t.split(':');
+    const h=+p[0], m=+p[1];
+    const tot=h*60+m;
+    if(tot<570||tot>900) return null;          // 09:30-15:00
+    return tot<=690 ? tot-570 : 120+(tot-780); // 上午: -570, 下午: 120+(分钟-780)
+  };
+  // 数据最大分钟(动画终点)
+  let maxMin=0;
+  series.forEach(s=>(s.points||[]).forEach(p=>{
+    const mm=minuteOf(p.t);
+    if(mm!=null&&mm>maxMin) maxMin=mm;
+  }));
+  if(maxMin<=0){
     ctx.fillStyle='#5c6b86';
     ctx.font='13px sans-serif';
     ctx.fillText('采样点不足 · 盘中每分钟累积', pad.l+10, H/2);
     return;
   }
 
-  // 动图: 只画到动画当前时间点
-  const upTo=(SF.anim&&SF.anim.on)?Math.min(SF.anim.idx,times.length-1):times.length-1;
+  // 动图: 动画当前分钟(0 → maxMin)
+  const upTo=(SF.anim&&SF.anim.on)?Math.min(SF.anim.idx,maxMin):maxMin;
 
   // Y 轴范围
   let vmin=0, vmax=0;
@@ -1254,7 +1266,7 @@ function sfDraw(){
   const padY=(vmax-vmin)*0.12||1;
   vmin-=padY; vmax+=padY;
 
-  const xAt=i=>pad.l+(i/(times.length-1))*plotW;
+  const xAt=min=>pad.l+(min/TOTAL_MIN)*plotW;
   const yAt=v=>pad.t+plotH-((v-vmin)/(vmax-vmin))*plotH;
 
   // 网格
@@ -1280,45 +1292,56 @@ function sfDraw(){
     ctx.setLineDash([]);
   }
 
-  // X 轴标签
+  // X 轴标签: 固定交易时刻 09:30-15:00
   ctx.fillStyle='#5c6b86';
   ctx.font='10px monospace';
   ctx.textAlign='center';
-  const step=Math.max(1,Math.floor(times.length/8));
-  for(let i=0;i<times.length;i+=step){
-    ctx.fillText(times[i], xAt(i), H-8);
-  }
+  ['09:30','10:00','10:30','11:00','11:30','13:00','13:30','14:00','14:30','15:00'].forEach(t=>{
+    const mm=minuteOf(t);
+    if(mm==null) return;
+    ctx.fillText(t, xAt(mm), H-8);
+  });
 
   // 折线
   series.forEach((s,si)=>{
     const color=SF_COLORS[si%SF_COLORS.length];
-    const tIndex=new Map(times.map((t,i)=>[t,i]));
     ctx.strokeStyle=color;
     ctx.lineWidth=2;
     ctx.beginPath();
     let started=false;
     (s.points||[]).forEach(p=>{
-      const i=tIndex.get(p.t);
-      if(i==null) return;
-      if(i>upTo) return;  // 动图: 截断到当前时间点
-      const x=xAt(i), y=yAt(p.cum);
+      const mm=minuteOf(p.t);
+      if(mm==null) return;
+      if(mm>upTo) return;  // 动图: 截断到当前分钟
+      const x=xAt(mm), y=yAt(p.cum);
       if(!started){ctx.moveTo(x,y);started=true;}
       else ctx.lineTo(x,y);
     });
     ctx.stroke();
+  });
 
-    // 末点(动图到 upTo 时刻)
-    let lastPt=null;
-    (s.points||[]).forEach(p=>{const i=tIndex.get(p.t); if(i!=null&&i<=upTo) lastPt={p,i};});
-    if(lastPt){
-      const x=xAt(lastPt.i), y=yAt(lastPt.p.cum);
-      ctx.fillStyle=color;
-      ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);ctx.fill();
-      ctx.fillStyle=color;
-      ctx.font='bold 10px monospace';
-      ctx.textAlign='left';
-      ctx.fillText(lastPt.p.cum.toFixed(1), x+6, y+3);
-    }
+  // 末点 + 板块名标签: 色块+名字+数值 直接跟在节点后(垂直错位防重叠)
+  const endPts=series.map((s,si)=>{
+    const color=SF_COLORS[si%SF_COLORS.length];
+    let last=null;
+    (s.points||[]).forEach(p=>{
+      const mm=minuteOf(p.t);
+      if(mm!=null&&mm<=upTo) last={p,mm};
+    });
+    return last?{color,name:s.name,x:xAt(last.mm),y:yAt(last.p.cum),val:last.p.cum}:null;
+  }).filter(Boolean).sort((a,b)=>a.y-b.y);
+  let lastTy=null;
+  endPts.forEach(e=>{
+    ctx.fillStyle=e.color;
+    ctx.beginPath();ctx.arc(e.x,e.y,3.5,0,Math.PI*2);ctx.fill();
+    let ty=e.y+3;
+    if(lastTy!=null&&ty-lastTy<13) ty=lastTy+13;
+    lastTy=ty;
+    ctx.fillStyle=e.color;
+    ctx.fillRect(e.x+5,ty-9,7,7);
+    ctx.font='bold 10px sans-serif';
+    ctx.textAlign='left';
+    ctx.fillText(e.name+' '+e.val.toFixed(1), e.x+15, ty);
   });
 
   // 单位
@@ -1330,7 +1353,13 @@ function sfDraw(){
 
 function sfMaxIdx(){
   let mx=0;
-  SF.sectors.forEach(s=>{ if(s.points&&s.points.length>mx) mx=s.points.length; });
+  SF.sectors.forEach(s=>(s.points||[]).forEach(p=>{
+    const p2=p.t.split(':');
+    const tot=+p2[0]*60+ +p2[1];
+    if(tot<570||tot>900) return;
+    const mm=tot<=690 ? tot-570 : 120+(tot-780);
+    if(mm>mx) mx=mm;
+  }));
   return mx;
 }
 function sfSetPlayBtn(){
@@ -1343,8 +1372,9 @@ function sfPlay(){
   SF.anim.on=true; SF.anim.idx=0;
   if(SF.anim.timer) clearInterval(SF.anim.timer);
   const n=sfMaxIdx();
+  const step=Math.max(1,Math.round(n/40));  // 约3-4秒播完
   SF.anim.timer=setInterval(()=>{
-    SF.anim.idx+=SF.anim.speed;
+    SF.anim.idx+=step;
     if(SF.anim.idx>=n){ SF.anim.idx=n; sfDraw(); clearInterval(SF.anim.timer); SF.anim.timer=null; sfSetPlayBtn(); return; }
     sfDraw();
   }, 80);
