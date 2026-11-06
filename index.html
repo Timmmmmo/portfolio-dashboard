@@ -383,6 +383,7 @@ input:focus,textarea:focus{outline:none;border-color:var(--info)}
       <div class="right">
         <span class="sf-live" id="sfLive"><span class="dot"></span><span id="sfLiveText">盘中每分钟采样</span></span>
         <span class="pill" id="sfStamp">--</span>
+        <button class="btn btn-sm" id="sfPlayBtn" onclick="sfTogglePlay()">▶ 播放动图</button>
         <button class="btn btn-sm" onclick="sfRefresh(true)">⟳ 立即刷新</button>
       </div>
     </div>
@@ -1070,7 +1071,8 @@ const SF={
   hidden:new Set(),
   timer:null,
   lastFetch:0,
-  ready:false
+  ready:false,
+  anim:{on:true,idx:0,timer:null,speed:2}  // 动图: 时间轴推进
 };
 
 function sfInit(){
@@ -1155,8 +1157,9 @@ async function sfRefresh(manual){
   };
 
   try{
-    const [ind, con]=await Promise.all([fetchTop('industry',5), fetchTop('concept',5)]);
-    const list=[...ind, ...con];
+    // 行业板块 top10 (概念板块 f62=0 无资金流数据, 不用)
+    const [ind]=await Promise.all([fetchTop('industry',10)]);
+    const list=[...ind];
     if(!list.length){ if(manual) toast('板块接口暂不可用'); return; }
 
     // 拉分钟序列
@@ -1183,6 +1186,7 @@ async function sfRefresh(manual){
     SF.sectors=withPts;
     SF.ready=true;
     sfRenderAll();
+    sfPlay();  // 实时刷新后自动重播动图
     if(manual) toast('板块资金流已刷新');
   }catch(e){
     if(manual) toast('刷新失败: '+e.message);
@@ -1237,6 +1241,9 @@ function sfDraw(){
     ctx.fillText('采样点不足 · 盘中每分钟累积', pad.l+10, H/2);
     return;
   }
+
+  // 动图: 只画到动画当前时间点
+  const upTo=(SF.anim&&SF.anim.on)?Math.min(SF.anim.idx,times.length-1):times.length-1;
 
   // Y 轴范围
   let vmin=0, vmax=0;
@@ -1293,25 +1300,24 @@ function sfDraw(){
     (s.points||[]).forEach(p=>{
       const i=tIndex.get(p.t);
       if(i==null) return;
+      if(i>upTo) return;  // 动图: 截断到当前时间点
       const x=xAt(i), y=yAt(p.cum);
       if(!started){ctx.moveTo(x,y);started=true;}
       else ctx.lineTo(x,y);
     });
     ctx.stroke();
 
-    // 末点
-    const last=(s.points||[])[(s.points||[]).length-1];
-    if(last){
-      const i=tIndex.get(last.t);
-      if(i!=null){
-        const x=xAt(i), y=yAt(last.cum);
-        ctx.fillStyle=color;
-        ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);ctx.fill();
-        ctx.fillStyle=color;
-        ctx.font='bold 10px monospace';
-        ctx.textAlign='left';
-        ctx.fillText(last.cum.toFixed(1), x+6, y+3);
-      }
+    // 末点(动图到 upTo 时刻)
+    let lastPt=null;
+    (s.points||[]).forEach(p=>{const i=tIndex.get(p.t); if(i!=null&&i<=upTo) lastPt={p,i};});
+    if(lastPt){
+      const x=xAt(lastPt.i), y=yAt(lastPt.p.cum);
+      ctx.fillStyle=color;
+      ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle=color;
+      ctx.font='bold 10px monospace';
+      ctx.textAlign='left';
+      ctx.fillText(lastPt.p.cum.toFixed(1), x+6, y+3);
     }
   });
 
@@ -1320,6 +1326,37 @@ function sfDraw(){
   ctx.font='10px sans-serif';
   ctx.textAlign='left';
   ctx.fillText('亿', pad.l, pad.t-4);
+}
+
+function sfMaxIdx(){
+  let mx=0;
+  SF.sectors.forEach(s=>{ if(s.points&&s.points.length>mx) mx=s.points.length; });
+  return mx;
+}
+function sfSetPlayBtn(){
+  const b=document.getElementById('sfPlayBtn');
+  if(!b) return;
+  b.textContent=(SF.anim.timer)?'⏸ 暂停':'▶ 播放动图';
+  b.classList.toggle('playing', !!SF.anim.timer);
+}
+function sfPlay(){
+  SF.anim.on=true; SF.anim.idx=0;
+  if(SF.anim.timer) clearInterval(SF.anim.timer);
+  const n=sfMaxIdx();
+  SF.anim.timer=setInterval(()=>{
+    SF.anim.idx+=SF.anim.speed;
+    if(SF.anim.idx>=n){ SF.anim.idx=n; sfDraw(); clearInterval(SF.anim.timer); SF.anim.timer=null; sfSetPlayBtn(); return; }
+    sfDraw();
+  }, 80);
+  sfSetPlayBtn();
+}
+function sfPause(){
+  SF.anim.on=false;
+  if(SF.anim.timer){ clearInterval(SF.anim.timer); SF.anim.timer=null; }
+  sfDraw(); sfSetPlayBtn();
+}
+function sfTogglePlay(){
+  if(SF.anim.timer){ sfPause(); } else { sfPlay(); }
 }
 
 function sfRenderLegend(){
