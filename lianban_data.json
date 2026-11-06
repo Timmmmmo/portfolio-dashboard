@@ -1,100 +1,15 @@
 {
-  "update_time": "2026-11-06 01:17",
-  "days": 8,
+  "update_time": "2026-11-06 15:05",
+  "days": 2,
   "data": {
-    "2026-07-31": {
+    "2026-08-27": {
       "stocks": [
         {
-          "code": "sh600418",
-          "name": "江淮汽车",
+          "code": "sh600969",
+          "name": "郴电国际",
           "streak": 2,
           "sector": "主板",
-          "chg": 11.74
-        },
-        {
-          "code": "sh603039",
-          "name": "泛微网络",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 13.42
-        }
-      ],
-      "count": 2,
-      "max_streak": 2
-    },
-    "2026-08-06": {
-      "stocks": [
-        {
-          "code": "sh603039",
-          "name": "泛微网络",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.56
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-08-31": {
-      "stocks": [
-        {
-          "code": "sz003005",
-          "name": "竞业达",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 9.98
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-04": {
-      "stocks": [
-        {
-          "code": "sh600865",
-          "name": "百大集团",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.82
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-07": {
-      "stocks": [
-        {
-          "code": "sz000892",
-          "name": "欢瑞世纪",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.48
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-21": {
-      "stocks": [
-        {
-          "code": "sz002285",
-          "name": "世联行",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 10.8
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-10-13": {
-      "stocks": [
-        {
-          "code": "sh603968",
-          "name": "醋化股份",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 10.46
+          "chg": 10.23
         }
       ],
       "count": 1,
