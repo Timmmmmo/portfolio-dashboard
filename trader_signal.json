@@ -1,5 +1,5 @@
 {
-  "update_time": "2026-11-10 15:33:10",
+  "update_time": "2026-11-10 15:57:11",
   "market": {
     "score": 64.1,
     "regime": "bull",
@@ -122,13 +122,13 @@
       "signal": {
         "action": "reduce",
         "action_cn": "减仓",
-        "stop": 46.12,
+        "stop": 46.06,
         "target": 67.48,
         "pos_pct": 30,
-        "reason": "浮亏 -19.8%，减仓或设好止损",
-        "pnl": -19.8,
-        "price": 47.06,
-        "chg": 2.22
+        "reason": "浮亏 -19.6%，减仓或设好止损",
+        "pnl": -19.63,
+        "price": 47.16,
+        "chg": 2.43
       }
     },
     {
