@@ -1,16 +1,22 @@
 {
-  "update_time": "2026-11-11 14:51",
-  "days": 11,
+  "update_time": "2026-11-11 15:29",
+  "days": 14,
   "data": {
-    "2026-08-06": {
+    "2026-07-17": {
       "stocks": [
         {
-          "code": "sh688549",
-          "name": "中巨芯",
+          "code": "sz002731",
+          "name": "萃华退",
           "streak": 2,
-          "sector": "科创板",
-          "chg": 21.78
-        },
+          "sector": "主板",
+          "chg": 15.0
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-08-06": {
+      "stocks": [
         {
           "code": "sh600330",
           "name": "天通股份",
@@ -26,7 +32,7 @@
           "chg": 12.61
         }
       ],
-      "count": 3,
+      "count": 2,
       "max_streak": 2
     },
     "2026-08-07": {
@@ -81,6 +87,19 @@
       "count": 1,
       "max_streak": 2
     },
+    "2026-09-11": {
+      "stocks": [
+        {
+          "code": "sz000823",
+          "name": "超声电子",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 10.41
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
     "2026-09-21": {
       "stocks": [
         {
@@ -89,6 +108,19 @@
           "streak": 2,
           "sector": "主板",
           "chg": 10.8
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-10-14": {
+      "stocks": [
+        {
+          "code": "sh600847",
+          "name": "万里股份",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 9.98
         }
       ],
       "count": 1,
