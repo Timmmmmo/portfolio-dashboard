@@ -1,6 +1,30 @@
 {
-  "update_time": "2026-11-12 15:34",
+  "update_time": "2026-11-12 15:58",
   "news": [
+    {
+      "time": "94469910",
+      "title": "李在明称韩国资本市场仍被低估，近期波动受到外部不确定因素影响",
+      "content": "李在明称韩国资本市场仍被低估，近期波动受到外部不确定因素影响",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-12/doc-iniyniex1199426.shtml"
+    },
+    {
+      "time": "94469369",
+      "title": "英国第三季度经济增长加快至0.7%",
+      "content": "英国第三季度经济增长加快至0.7%",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-12/doc-iniynife8532884.shtml"
+    },
+    {
+      "time": "94468900",
+      "title": "与黄仁勋关系密切的女子（黄乐）是否在北京，外交部：不了解情况",
+      "content": "与黄仁勋关系密切的女子（黄乐）是否在北京，外交部：不了解情况",
+      "url": "https://finance.sina.com.cn/jjxw/2026-11-12/doc-iniynifc1749612.shtml"
+    },
+    {
+      "time": "94468830",
+      "title": "外交部：中方奉劝七国集团管好自己的事情，履行好自身责任",
+      "content": "外交部：中方奉劝七国集团管好自己的事情，履行好自身责任",
+      "url": "https://finance.sina.com.cn/china/2026-11-12/doc-iniynifc1751962.shtml"
+    },
     {
       "time": "94468772",
       "title": "英伟达寻觅黄仁勋接班人并非易事 猎头视野里有哪些人选？",
@@ -30,6 +54,12 @@
       "title": "江苏吴中（600200）投资者索赔案持续推进",
       "content": "江苏吴中（600200）投资者索赔案持续推进",
       "url": "https://finance.sina.com.cn/stock/gmwq/rightscase/2026-11-12/doc-iniyniex1174026.shtml"
+    },
+    {
+      "time": "94468476",
+      "title": "中美外长通电话是否讨论中俄美元首会晤？外交部回应",
+      "content": "中美外长通电话是否讨论中俄美元首会晤？外交部回应",
+      "url": "https://finance.sina.com.cn/jjxw/2026-11-12/doc-iniyniff3833775.shtml"
     },
     {
       "time": "94468475",
@@ -90,46 +120,12 @@
       "title": "商务部：中美正就降税、贸易、投资等问题保持密切沟通",
       "content": "商务部：中美正就降税、贸易、投资等问题保持密切沟通",
       "url": "https://finance.sina.com.cn/china/2026-11-12/doc-iniynifc1725496.shtml"
-    },
-    {
-      "time": "94467275",
-      "title": "德国机器人初创公司Agile Robots估值达85亿美元",
-      "content": "德国机器人初创公司Agile Robots估值达85亿美元",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-12/doc-iniynife8498196.shtml"
-    },
-    {
-      "time": "94467173",
-      "title": "商务部回应欧盟有关国家禁用中国企业设备",
-      "content": "商务部回应欧盟有关国家禁用中国企业设备",
-      "url": "https://finance.sina.com.cn/china/2026-11-12/doc-iniynife8499785.shtml"
-    },
-    {
-      "time": "94467122",
-      "title": "SpaceX正研发AI芯片机架 降低对英伟达配套零部件依赖",
-      "content": "SpaceX正研发AI芯片机架 降低对英伟达配套零部件依赖",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-12/doc-iniyniff3805474.shtml"
-    },
-    {
-      "time": "94467036",
-      "title": "收评|国内期货主力合约涨跌互现 苹果涨超4%",
-      "content": "收评|国内期货主力合约涨跌互现 苹果涨超4%",
-      "url": "https://finance.sina.com.cn/money/future/fmnews/2026-11-12/doc-iniyniex1143237.shtml"
-    },
-    {
-      "time": "94466994",
-      "title": "龙大美食（002726）被证监会立案，投资者索赔分析",
-      "content": "龙大美食（002726）被证监会立案，投资者索赔分析",
-      "url": "https://finance.sina.com.cn/stock/gmwq/rightscase/2026-11-12/doc-iniynife8493380.shtml"
     }
   ],
   "analysis": [
     {
       "topic": "半导体/AI",
       "comment": "产业链催化，利好国产替代"
-    },
-    {
-      "topic": "AI应用",
-      "comment": "科技主线持续催化"
     },
     {
       "topic": "地缘政治",
