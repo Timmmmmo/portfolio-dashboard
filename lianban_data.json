@@ -1,20 +1,7 @@
 {
-  "update_time": "2026-11-12 15:58",
-  "days": 14,
+  "update_time": "2026-11-13 01:25",
+  "days": 13,
   "data": {
-    "2026-08-06": {
-      "stocks": [
-        {
-          "code": "sh688549",
-          "name": "中巨芯",
-          "streak": 2,
-          "sector": "科创板",
-          "chg": 21.78
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
     "2026-08-21": {
       "stocks": [
         {
