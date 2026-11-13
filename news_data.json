@@ -1,6 +1,54 @@
 {
-  "update_time": "2026-11-13 15:01",
+  "update_time": "2026-11-13 15:33",
   "news": [
+    {
+      "time": "94548696",
+      "title": "Vanda称黄仁勋去职难挡散户对英伟达热情 开盘半小时净买进史上最大",
+      "content": "Vanda称黄仁勋去职难挡散户对英伟达热情 开盘半小时净买进史上最大",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-13/doc-iniyqnec1233787.shtml"
+    },
+    {
+      "time": "94547584",
+      "title": "消息人士称英伟达临时CEO曾反对黄仁勋力推交易，并与其女儿女婿发生冲突",
+      "content": "消息人士称英伟达临时CEO曾反对黄仁勋力推交易，并与其女儿女婿发生冲突",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-13/doc-iniyqfvz1098365.shtml"
+    },
+    {
+      "time": "94547472",
+      "title": "伯克希尔·哈撒韦计划通过发行日元债券筹集11.4亿美元",
+      "content": "伯克希尔·哈撒韦计划通过发行日元债券筹集11.4亿美元",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-13/doc-iniyqfwh8121401.shtml"
+    },
+    {
+      "time": "94547100",
+      "title": "广发证券：中国海外发展维持“买入”评级 合理价值16.15港元/股",
+      "content": "广发证券：中国海外发展维持“买入”评级 合理价值16.15港元/股",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-11-13/doc-iniyqfwh8115694.shtml"
+    },
+    {
+      "time": "94546999",
+      "title": "瑞银：中国财险目标价20港元 维持“买入”评级",
+      "content": "瑞银：中国财险目标价20港元 维持“买入”评级",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-11-13/doc-iniyqfwi3750604.shtml"
+    },
+    {
+      "time": "94546937",
+      "title": "第一上海：华虹宏力维持“买入”评级 目标价降至125港元",
+      "content": "第一上海：华虹宏力维持“买入”评级 目标价降至125港元",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-11-13/doc-iniyqfwi3749685.shtml"
+    },
+    {
+      "time": "94546886",
+      "title": "财通证券：智算中心打开成长空间 浪潮数字企业调整为“增持”评级",
+      "content": "财通证券：智算中心打开成长空间 浪潮数字企业调整为“增持”评级",
+      "url": "https://finance.sina.com.cn/stock/hkstock/hkgg/2026-11-13/doc-iniyqfvz1088522.shtml"
+    },
+    {
+      "time": "94546775",
+      "title": "挚达科技午后涨逾5% 泰国充电桩出货激增300%公司加速推进全球化",
+      "content": "挚达科技午后涨逾5% 泰国充电桩出货激增300%公司加速推进全球化",
+      "url": "https://finance.sina.com.cn/stock/hkstock/marketalerts/2026-11-13/doc-iniyqfwf1335003.shtml"
+    },
     {
       "time": "94546667",
       "title": "受通胀担忧拖累，比特币跌破7万美元",
@@ -72,60 +120,12 @@
       "title": "中通快递-W于11月12日斥资4.6万美元回购2309股",
       "content": "中通快递-W于11月12日斥资4.6万美元回购2309股",
       "url": "https://finance.sina.com.cn/stock/hkstock/ggscyd/2026-11-13/doc-iniyqfwh8063844.shtml"
-    },
-    {
-      "time": "94543034",
-      "title": "微软称旨在提升服务能力的变更未按预期生效",
-      "content": "微软称旨在提升服务能力的变更未按预期生效",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-13/doc-iniyqfwf1281234.shtml"
-    },
-    {
-      "time": "94542940",
-      "title": "英伟达巨震，临时接替黄仁勋的女CEO是谁？",
-      "content": "英伟达巨震，临时接替黄仁勋的女CEO是谁？",
-      "url": "https://finance.sina.com.cn/jjxw/2026-11-13/doc-iniyqfvz1038882.shtml"
-    },
-    {
-      "time": "94542640",
-      "title": "美联储官员频放鹰、美国国债遭抛售，明年议息会议减至7次、10月改为战略讨论",
-      "content": "美联储官员频放鹰、美国国债遭抛售，明年议息会议减至7次、10月改为战略讨论",
-      "url": "https://finance.sina.com.cn/jjxw/2026-11-13/doc-iniyqfwf1277780.shtml"
-    },
-    {
-      "time": "94542406",
-      "title": "港股午评：恒指跌0.92% 科指跌1.75% 科网股普跌 PCB概念股下挫",
-      "content": "港股午评：恒指跌0.92% 科指跌1.75% 科网股普跌 PCB概念股下挫",
-      "url": "https://finance.sina.com.cn/stock/hkstock/marketalerts/2026-11-13/doc-iniyqfvz1031000.shtml"
-    },
-    {
-      "time": "94542249",
-      "title": "2026年10月全国期货市场交易情况：成交量同比增长50.08%",
-      "content": "2026年10月全国期货市场交易情况：成交量同比增长50.08%",
-      "url": "https://finance.sina.com.cn/money/future/fmnews/2026-11-13/doc-iniyqfwi3688002.shtml"
-    },
-    {
-      "time": "94542158",
-      "title": "美国商务部长霍华德·卢特尼克同意出席国会听证",
-      "content": "美国商务部长霍华德·卢特尼克同意出席国会听证",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-13/doc-iniyqfwi3686919.shtml"
-    },
-    {
-      "time": "94542104",
-      "title": "中国石油股份午前涨逾3% 公司三季度利润略超预期",
-      "content": "中国石油股份午前涨逾3% 公司三季度利润略超预期",
-      "url": "https://finance.sina.com.cn/stock/hkstock/marketalerts/2026-11-13/doc-iniyqfwh8044650.shtml"
-    },
-    {
-      "time": "94541486",
-      "title": "颓然自责与愧对家人 黄仁勋辞任英伟达CEO前的最后时光",
-      "content": "颓然自责与愧对家人 黄仁勋辞任英伟达CEO前的最后时光",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-13/doc-iniyqfvz1017969.shtml"
     }
   ],
   "analysis": [
     {
-      "topic": "资金面",
-      "comment": "市场情绪指标"
+      "topic": "地缘政治",
+      "comment": "关注潜在风险"
     }
   ],
   "total": 20,
