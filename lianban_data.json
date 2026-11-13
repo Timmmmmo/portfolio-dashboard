@@ -1,132 +1,28 @@
 {
-  "update_time": "2026-11-13 01:25",
-  "days": 13,
+  "update_time": "2026-11-13 15:01",
+  "days": 5,
   "data": {
-    "2026-08-21": {
+    "2026-08-27": {
       "stocks": [
         {
-          "code": "sh603838",
-          "name": "四通股份",
+          "code": "sh600969",
+          "name": "郴电国际",
           "streak": 2,
           "sector": "主板",
-          "chg": 10.57
+          "chg": 10.23
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-09-04": {
+    "2026-09-07": {
       "stocks": [
         {
-          "code": "sh600865",
-          "name": "百大集团",
+          "code": "sz000892",
+          "name": "欢瑞世纪",
           "streak": 2,
           "sector": "主板",
-          "chg": 12.82
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-08": {
-      "stocks": [
-        {
-          "code": "sz002172",
-          "name": "澳洋健康",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 9.94
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-11": {
-      "stocks": [
-        {
-          "code": "sz000823",
-          "name": "超声电子",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 10.41
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-21": {
-      "stocks": [
-        {
-          "code": "sz002285",
-          "name": "世联行",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 10.8
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-24": {
-      "stocks": [
-        {
-          "code": "sh600802",
-          "name": "福建水泥",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 14.14
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-10-14": {
-      "stocks": [
-        {
-          "code": "sh600847",
-          "name": "万里股份",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 9.98
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-10-27": {
-      "stocks": [
-        {
-          "code": "sz001318",
-          "name": "阳光乳业",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.04
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-10-28": {
-      "stocks": [
-        {
-          "code": "sh603037",
-          "name": "凯众股份",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 10.03
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-11-04": {
-      "stocks": [
-        {
-          "code": "sz002652",
-          "name": "扬子新材",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 13.33
+          "chg": 12.48
         }
       ],
       "count": 1,
@@ -140,9 +36,16 @@
           "streak": 2,
           "sector": "主板",
           "chg": 11.05
+        },
+        {
+          "code": "sh600892",
+          "name": "大晟文化",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 13.36
         }
       ],
-      "count": 1,
+      "count": 2,
       "max_streak": 2
     },
     "2026-11-11": {
