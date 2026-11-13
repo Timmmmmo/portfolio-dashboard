@@ -1,6 +1,6 @@
 {
-  "update_time": "2026-11-13 15:33",
-  "days": 6,
+  "update_time": "2026-11-14 01:00",
+  "days": 5,
   "data": {
     "2026-08-27": {
       "stocks": [
@@ -10,19 +10,6 @@
           "streak": 2,
           "sector": "主板",
           "chg": 10.23
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-09-01": {
-      "stocks": [
-        {
-          "code": "sz002942",
-          "name": "新农股份",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 11.57
         }
       ],
       "count": 1,
