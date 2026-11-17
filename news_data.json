@@ -1,6 +1,42 @@
 {
-  "update_time": "2026-11-17 16:13",
+  "update_time": "2026-11-17 16:47",
   "news": [
+    {
+      "time": "94905093",
+      "title": "哈萨克斯坦计划到2030年将铜精矿产量提升50%",
+      "content": "哈萨克斯坦计划到2030年将铜精矿产量提升50%",
+      "url": "https://finance.sina.com.cn/world/2026-11-17/doc-iniyzswc5434331.shtml"
+    },
+    {
+      "time": "94904730",
+      "title": "虎牙2026Q3财报：运营利润近四年首转正，直播与游戏相关服务持续提效",
+      "content": "虎牙2026Q3财报：运营利润近四年首转正，直播与游戏相关服务持续提效",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-17/doc-iniyzswc5429849.shtml"
+    },
+    {
+      "time": "94903264",
+      "title": "罕见拟签长期供货协议 苹果将采购三星DRAM锁定供应",
+      "content": "罕见拟签长期供货协议 苹果将采购三星DRAM锁定供应",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-17/doc-iniyzswc5413162.shtml"
+    },
+    {
+      "time": "94903217",
+      "title": "金科股份再“保壳”",
+      "content": "金科股份再“保壳”",
+      "url": "https://finance.sina.com.cn/stock/s/2026-11-17/doc-iniyzswf7629654.shtml"
+    },
+    {
+      "time": "94902953",
+      "title": "降价、减值拖累利润，福莱特首现三季报亏损",
+      "content": "降价、减值拖累利润，福莱特首现三季报亏损",
+      "url": "https://finance.sina.com.cn/stock/s/2026-11-17/doc-iniyzswf2206238.shtml"
+    },
+    {
+      "time": "94902953",
+      "title": "“增收不增利”的软通动力：1.8亿买亏损IDC资产",
+      "content": "“增收不增利”的软通动力：1.8亿买亏损IDC资产",
+      "url": "https://finance.sina.com.cn/stock/s/2026-11-17/doc-iniyzswf2205368.shtml"
+    },
     {
       "time": "94902475",
       "title": "港股收评：恒指跌1.03% 科指跌1.14% 科网股普跌 AI应用股走弱 MINIMAX跌超7%",
@@ -84,42 +120,6 @@
       "title": "特朗普说可能与金正恩会晤，外交部：没有这方面的信息",
       "content": "特朗普说可能与金正恩会晤，外交部：没有这方面的信息",
       "url": "https://finance.sina.com.cn/china/2026-11-17/doc-iniyzsvz1683736.shtml"
-    },
-    {
-      "time": "94900008",
-      "title": "外交部批美国经济胁迫：典型的“长臂管辖”",
-      "content": "外交部批美国经济胁迫：典型的“长臂管辖”",
-      "url": "https://finance.sina.com.cn/china/2026-11-17/doc-iniyzswc5371239.shtml"
-    },
-    {
-      "time": "94899919",
-      "title": "伯恩斯坦下调百事公司评级至跑输大盘，预计北美业务持续承压",
-      "content": "伯恩斯坦下调百事公司评级至跑输大盘，预计北美业务持续承压",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-17/doc-iniyznqi7696557.shtml"
-    },
-    {
-      "time": "94899815",
-      "title": "美联储警示韩国投资者杠杆ETF风险",
-      "content": "美联储警示韩国投资者杠杆ETF风险",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-17/doc-iniyznqc1812133.shtml"
-    },
-    {
-      "time": "94899744",
-      "title": "外交部回应美国政府调查涉英伟达芯片一事",
-      "content": "外交部回应美国政府调查涉英伟达芯片一事",
-      "url": "https://finance.sina.com.cn/jjxw/2026-11-17/doc-iniyzsvz1689576.shtml"
-    },
-    {
-      "time": "94899723",
-      "title": "外交部：中方期待同各方进一步凝聚共识 取得更多务实成果",
-      "content": "外交部：中方期待同各方进一步凝聚共识 取得更多务实成果",
-      "url": "https://finance.sina.com.cn/jjxw/2026-11-17/doc-iniyzswf7573407.shtml"
-    },
-    {
-      "time": "94898962",
-      "title": "1500万份德银文件遭泄露，系统性治理失效浮出水面",
-      "content": "1500万份德银文件遭泄露，系统性治理失效浮出水面",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-17/doc-iniyznqc1800190.shtml"
     }
   ],
   "analysis": [
@@ -130,6 +130,14 @@
     {
       "topic": "AI应用",
       "comment": "科技主线持续催化"
+    },
+    {
+      "topic": "存储/封测",
+      "comment": "利好封测产业链"
+    },
+    {
+      "topic": "消费/游戏",
+      "comment": "内需复苏进度"
     }
   ],
   "total": 20,
