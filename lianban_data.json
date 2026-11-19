@@ -1,59 +1,7 @@
 {
-  "update_time": "2026-11-19 15:47",
-  "days": 5,
+  "update_time": "2026-11-19 16:20",
+  "days": 1,
   "data": {
-    "2026-11-04": {
-      "stocks": [
-        {
-          "code": "sz002652",
-          "name": "扬子新材",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 13.33
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-11-10": {
-      "stocks": [
-        {
-          "code": "sh603706",
-          "name": "东方环宇",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 11.05
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-11-11": {
-      "stocks": [
-        {
-          "code": "sh603706",
-          "name": "东方环宇",
-          "streak": 3,
-          "sector": "主板",
-          "chg": 9.95
-        }
-      ],
-      "count": 1,
-      "max_streak": 3
-    },
-    "2026-11-12": {
-      "stocks": [
-        {
-          "code": "sh603706",
-          "name": "东方环宇",
-          "streak": 4,
-          "sector": "主板",
-          "chg": 11.96
-        }
-      ],
-      "count": 1,
-      "max_streak": 4
-    },
     "2026-11-19": {
       "stocks": [
         {

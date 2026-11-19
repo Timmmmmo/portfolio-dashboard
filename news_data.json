@@ -1,6 +1,42 @@
 {
-  "update_time": "2026-11-19 15:47",
+  "update_time": "2026-11-19 16:21",
   "news": [
+    {
+      "time": "95076258",
+      "title": "意大利联合圣保罗银行与德国政府就收购德国商业银行达成协议",
+      "content": "意大利联合圣保罗银行与德国政府就收购德国商业银行达成协议",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-19/doc-inizhfac6238430.shtml"
+    },
+    {
+      "time": "95076010",
+      "title": "铜：宏观贴现主导下的系统性溢价出清",
+      "content": "铜：宏观贴现主导下的系统性溢价出清",
+      "url": "https://finance.sina.com.cn/money/future/2026-11-19/doc-inizhezx0353703.shtml"
+    },
+    {
+      "time": "95075816",
+      "title": "中兴通讯发债“补流”背后：负债总额1685亿创新高",
+      "content": "中兴通讯发债“补流”背后：负债总额1685亿创新高",
+      "url": "https://finance.sina.com.cn/stock/s/2026-11-19/doc-inizhfae7770694.shtml"
+    },
+    {
+      "time": "95075730",
+      "title": "港股收评：恒指跌1.95% 科指跌2.33% 科网股普跌 光通信板块逆势活跃 腾讯跌超6%",
+      "content": "港股收评：恒指跌1.95% 科指跌2.33% 科网股普跌 光通信板块逆势活跃 腾讯跌超6%",
+      "url": "https://finance.sina.com.cn/stock/hkstock/marketalerts/2026-11-19/doc-inizhfac6233718.shtml"
+    },
+    {
+      "time": "95074658",
+      "title": "Anthropic股价在暗盘市场上涨约20%",
+      "content": "Anthropic股价在暗盘市场上涨约20%",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-19/doc-inizhfah4528677.shtml"
+    },
+    {
+      "time": "95074491",
+      "title": "三星电子淡化AI泡沫担忧：当前投资热潮属于结构性而非周期性现象",
+      "content": "三星电子淡化AI泡沫担忧：当前投资热潮属于结构性而非周期性现象",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-19/doc-inizhezx0336039.shtml"
+    },
     {
       "time": "95073978",
       "title": "亚马逊创始人贝索斯：英伟达应当从公司内部寻找下一任CEO",
@@ -36,6 +72,12 @@
       "title": "Bret Taylor旗下人工智能公司Sierra洽谈新一轮融资，估值或达300亿美元",
       "content": "Bret Taylor旗下人工智能公司Sierra洽谈新一轮融资，估值或达300亿美元",
       "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-19/doc-inizhfac6204975.shtml"
+    },
+    {
+      "time": "95072961",
+      "title": "三家房企，打响“1元保卫战”",
+      "content": "三家房企，打响“1元保卫战”",
+      "url": "https://finance.sina.com.cn/stock/s/2026-11-19/doc-inizhfae7770407.shtml"
     },
     {
       "time": "95072958",
@@ -78,70 +120,16 @@
       "title": "比特币跌至6.35万美元，美联储加息预期持续打压加密货币市场",
       "content": "比特币跌至6.35万美元，美联储加息预期持续打压加密货币市场",
       "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-19/doc-inizfyuh7841844.shtml"
-    },
-    {
-      "time": "95071828",
-      "title": "收评|国内期货主力合约跌多涨少，苹果跌超7%",
-      "content": "收评|国内期货主力合约跌多涨少，苹果跌超7%",
-      "url": "https://finance.sina.com.cn/money/future/fmnews/2026-11-19/doc-inizfyuh7840207.shtml"
-    },
-    {
-      "time": "95071827",
-      "title": "国际能源署预警：到2030年数据中心碳排放将增加70%",
-      "content": "国际能源署预警：到2030年数据中心碳排放将增加70%",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-19/doc-inizfyuh7840188.shtml"
-    },
-    {
-      "time": "95071772",
-      "title": "习近平将主持中俄美元首会晤",
-      "content": "习近平将主持中俄美元首会晤",
-      "url": "https://finance.sina.com.cn/china/2026-11-19/doc-inizhfae7721687.shtml"
-    },
-    {
-      "time": "95071720",
-      "title": "欧盟推迟实施化石燃料进口甲烷排放规定",
-      "content": "欧盟推迟实施化石燃料进口甲烷排放规定",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-19/doc-inizfyuf6316464.shtml"
-    },
-    {
-      "time": "95071403",
-      "title": "诺华预计2031年前销售额年均增长5%，2029年核心营业利润率恢复至40%以上",
-      "content": "诺华预计2031年前销售额年均增长5%，2029年核心营业利润率恢复至40%以上",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-19/doc-inizfytz0428621.shtml"
-    },
-    {
-      "time": "95071272",
-      "title": "芯片需求旺盛，韩国出口首次突破1万亿美元",
-      "content": "芯片需求旺盛，韩国出口首次突破1万亿美元",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-19/doc-inizfyuk4608646.shtml"
-    },
-    {
-      "time": "95071116",
-      "title": "意大利裕信银行与德国政府就收购德国商业银行达成关键协议",
-      "content": "意大利裕信银行与德国政府就收购德国商业银行达成关键协议",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-11-19/doc-inizfyuk4606363.shtml"
     }
   ],
   "analysis": [
-    {
-      "topic": "半导体/AI",
-      "comment": "产业链催化，利好国产替代"
-    },
     {
       "topic": "AI应用",
       "comment": "科技主线持续催化"
     },
     {
-      "topic": "资金面",
-      "comment": "市场情绪指标"
-    },
-    {
       "topic": "金融/券商",
       "comment": "权重股表现"
-    },
-    {
-      "topic": "天气/灾害",
-      "comment": "关注受损行业"
     }
   ],
   "total": 20,
