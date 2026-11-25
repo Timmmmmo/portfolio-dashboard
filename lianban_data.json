@@ -1,15 +1,178 @@
 {
-  "update_time": "2026-11-25 04:00",
-  "days": 10,
+  "update_time": "2026-11-25 17:01",
+  "days": 19,
   "data": {
-    "2026-08-21": {
+    "2024-06-06": {
       "stocks": [
         {
-          "code": "sh603838",
-          "name": "四通股份",
+          "code": "sz300262",
+          "name": "*ST巴安",
+          "streak": 2,
+          "sector": "创业板",
+          "chg": 27.27
+        },
+        {
+          "code": "sh600766",
+          "name": "退市园城",
           "streak": 2,
           "sector": "主板",
-          "chg": 10.57
+          "chg": 15.15
+        }
+      ],
+      "count": 2,
+      "max_streak": 2
+    },
+    "2024-06-07": {
+      "stocks": [
+        {
+          "code": "sh600766",
+          "name": "退市园城",
+          "streak": 3,
+          "sector": "主板",
+          "chg": 13.51
+        }
+      ],
+      "count": 1,
+      "max_streak": 3
+    },
+    "2024-07-02": {
+      "stocks": [
+        {
+          "code": "sh600297",
+          "name": "广汇汽车",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 10.53
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2025-01-09": {
+      "stocks": [
+        {
+          "code": "sh603963",
+          "name": "*ST大药",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 10.05
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2025-05-16": {
+      "stocks": [
+        {
+          "code": "sh600190",
+          "name": "退市锦港",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 10.0
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-01-28": {
+      "stocks": [
+        {
+          "code": "sz300344",
+          "name": "立方退",
+          "streak": 2,
+          "sector": "创业板",
+          "chg": 21.05
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-01-29": {
+      "stocks": [
+        {
+          "code": "sz300344",
+          "name": "立方退",
+          "streak": 3,
+          "sector": "创业板",
+          "chg": 26.14
+        }
+      ],
+      "count": 1,
+      "max_streak": 3
+    },
+    "2026-02-04": {
+      "stocks": [
+        {
+          "code": "sz300344",
+          "name": "立方退",
+          "streak": 4,
+          "sector": "创业板",
+          "chg": 50.65
+        }
+      ],
+      "count": 1,
+      "max_streak": 4
+    },
+    "2026-02-11": {
+      "stocks": [
+        {
+          "code": "sz000638",
+          "name": "*ST万方",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 10.5
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-03-23": {
+      "stocks": [
+        {
+          "code": "sh600355",
+          "name": "*ST精伦",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 10.81
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-06-30": {
+      "stocks": [
+        {
+          "code": "sz000004",
+          "name": "国华退",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 13.33
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-07-03": {
+      "stocks": [
+        {
+          "code": "sz000004",
+          "name": "国华退",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 12.5
+        }
+      ],
+      "count": 1,
+      "max_streak": 2
+    },
+    "2026-09-01": {
+      "stocks": [
+        {
+          "code": "sz002942",
+          "name": "新农股份",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 11.57
         }
       ],
       "count": 1,
@@ -28,66 +191,27 @@
       "count": 1,
       "max_streak": 2
     },
-    "2026-09-08": {
+    "2026-09-11": {
       "stocks": [
         {
-          "code": "sz002172",
-          "name": "澳洋健康",
+          "code": "sz000823",
+          "name": "超声电子",
           "streak": 2,
           "sector": "主板",
-          "chg": 9.94
+          "chg": 10.41
         }
       ],
       "count": 1,
       "max_streak": 2
     },
-    "2026-10-23": {
+    "2026-10-19": {
       "stocks": [
         {
-          "code": "sh603728",
-          "name": "鸣志电器",
+          "code": "sz000530",
+          "name": "冰山冷热",
           "streak": 2,
           "sector": "主板",
-          "chg": 12.17
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-10-27": {
-      "stocks": [
-        {
-          "code": "sz001318",
-          "name": "阳光乳业",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.04
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-10-28": {
-      "stocks": [
-        {
-          "code": "sh603037",
-          "name": "凯众股份",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 10.03
-        }
-      ],
-      "count": 1,
-      "max_streak": 2
-    },
-    "2026-11-09": {
-      "stocks": [
-        {
-          "code": "sh600371",
-          "name": "万向德农",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 9.93
+          "chg": 11.27
         }
       ],
       "count": 1,
@@ -109,18 +233,18 @@
     "2026-11-23": {
       "stocks": [
         {
-          "code": "sh600715",
-          "name": "文投控股",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 15.38
-        },
-        {
           "code": "sh605018",
           "name": "长华集团",
           "streak": 2,
           "sector": "主板",
           "chg": 12.56
+        },
+        {
+          "code": "sh603466",
+          "name": "风语筑",
+          "streak": 2,
+          "sector": "主板",
+          "chg": 11.68
         }
       ],
       "count": 2,
@@ -129,36 +253,15 @@
     "2026-11-24": {
       "stocks": [
         {
-          "code": "sh600715",
-          "name": "文投控股",
-          "streak": 3,
-          "sector": "主板",
-          "chg": 12.14
-        },
-        {
           "code": "sh603030",
           "name": "全筑股份",
           "streak": 2,
           "sector": "主板",
           "chg": 11.27
-        },
-        {
-          "code": "sh605255",
-          "name": "天普股份",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 13.11
-        },
-        {
-          "code": "sh600261",
-          "name": "阳光照明",
-          "streak": 2,
-          "sector": "主板",
-          "chg": 12.27
         }
       ],
-      "count": 4,
-      "max_streak": 3
+      "count": 1,
+      "max_streak": 2
     }
   }
 }
