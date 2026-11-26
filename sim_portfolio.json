@@ -1,0 +1,143 @@
+{
+  "updated": "2026-11-26 11:19:39",
+  "account": {
+    "cash": 877309.0,
+    "position_value": 118633.0,
+    "total_asset": 995942.0,
+    "total_pnl": -4058.0,
+    "total_return_pct": -0.406,
+    "float_pl": -2933.0
+  },
+  "positions": [
+    {
+      "code": "sz300308",
+      "name": "中际旭创",
+      "shares": 100,
+      "cost": 433.61,
+      "price": 424.0,
+      "pct": 3.67,
+      "float_pl": -961.0,
+      "float_pct": -2.22,
+      "batches": 1,
+      "entry_time": "2026-11-26 10:20:00",
+      "sellable_today": 0,
+      "locked_today": 100
+    },
+    {
+      "code": "sz300502",
+      "name": "新易盛",
+      "shares": 400,
+      "cost": 188.18,
+      "price": 183.25,
+      "pct": 1.08,
+      "float_pl": -1972.0,
+      "float_pct": -2.62,
+      "batches": 2,
+      "entry_time": "2026-11-26 10:20:00",
+      "sellable_today": 0,
+      "locked_today": 400
+    }
+  ],
+  "trades": [
+    {
+      "time": "2026-11-26 10:30:00",
+      "action": "BUY",
+      "name": "新易盛",
+      "code": "sz300502",
+      "price": 188.36,
+      "shares": 200,
+      "amount": 37672.0,
+      "rule": "B2/B4",
+      "reason": "抛压释放后横住+微放量往上走(>=3tick确认), 非高开/未超7%/科创50>-2.5%"
+    },
+    {
+      "time": "2026-11-26 10:20:00",
+      "action": "BUY",
+      "name": "新易盛",
+      "code": "sz300502",
+      "price": 188.0,
+      "shares": 200,
+      "amount": 37600.0,
+      "rule": "B2/B4",
+      "reason": "抛压释放后横住+微放量往上走(>=3tick确认), 非高开/未超7%/科创50>-2.5%"
+    },
+    {
+      "time": "2026-11-26 10:20:00",
+      "action": "BUY",
+      "name": "中际旭创",
+      "code": "sz300308",
+      "price": 433.61,
+      "shares": 100,
+      "amount": 43361.0,
+      "rule": "B2/B4",
+      "reason": "抛压释放后横住+微放量往上走(>=3tick确认), 非高开/未超7%/科创50>-2.5%"
+    },
+    {
+      "time": "2026-11-25 13:30:00",
+      "action": "SELL",
+      "name": "新易盛",
+      "code": "sz300502",
+      "price": 179.7,
+      "shares": 400,
+      "amount": 71880.0,
+      "rule": "S3",
+      "reason": "跌破止损位"
+    },
+    {
+      "time": "2026-11-25 13:10:00",
+      "action": "SELL",
+      "name": "中际旭创",
+      "code": "sz300308",
+      "price": 416.06,
+      "shares": 200,
+      "amount": 83212.0,
+      "rule": "S2",
+      "reason": "放量滞涨转弱"
+    },
+    {
+      "time": "2026-11-25 11:20:00",
+      "action": "BUY",
+      "name": "新易盛",
+      "code": "sz300502",
+      "price": 183.98,
+      "shares": 200,
+      "amount": 36796.0,
+      "rule": "B2/B4",
+      "reason": "抛压释放后横住+微放量往上走(>=3tick确认), 非高开/未超7%/科创50>-2.5%"
+    },
+    {
+      "time": "2026-11-25 11:20:00",
+      "action": "BUY",
+      "name": "中际旭创",
+      "code": "sz300308",
+      "price": 419.98,
+      "shares": 100,
+      "amount": 41998.0,
+      "rule": "B2/B4",
+      "reason": "抛压释放后横住+微放量往上走(>=3tick确认), 非高开/未超7%/科创50>-2.5%"
+    },
+    {
+      "time": "2026-11-25 09:57:56",
+      "action": "BUY",
+      "name": "新易盛",
+      "code": "sz300502",
+      "price": 187.99,
+      "shares": 200,
+      "amount": 37598.0,
+      "rule": "B2/B4",
+      "reason": "抛压释放后横住+微放量往上走(>=3tick确认), 非高开/未超7%/科创50>-2.5%"
+    },
+    {
+      "time": "2026-11-25 09:57:56",
+      "action": "BUY",
+      "name": "中际旭创",
+      "code": "sz300308",
+      "price": 427.58,
+      "shares": 100,
+      "amount": 42758.0,
+      "rule": "B2/B4",
+      "reason": "抛压释放后横住+微放量往上走(>=3tick确认), 非高开/未超7%/科创50>-2.5%"
+    }
+  ],
+  "note": "野人×六边形逻辑模拟仓 · 非投资建议 · A股T+1当日买入次日可卖"
+}
