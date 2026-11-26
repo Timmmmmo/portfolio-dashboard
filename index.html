@@ -132,27 +132,6 @@ label{font-size:11px;color:var(--label);display:block;margin-bottom:3px}
   <div id="simTrades"></div>
 </div>
 
-<!-- 小时情报流（持仓&板块，保留30条） -->
-<div class="cd" style="border-color:#22d3ee">
-  <div class="ct">
-    ⚡ 持仓&amp;板块情报 <span class="tag" id="intelFeedTag">加载中...</span>
-    <span style="font-size:10px;color:var(--label);font-weight:400">每小时自动更新 · 保留最近30条</span>
-  </div>
-  <div id="intelFeedList"></div>
-  <div class="feed-meta" id="intelFeedMeta"></div>
-</div>
-
-<!-- A股市场小时总结 -->
-<div class="cd" style="border-color:#f472b6">
-  <div class="ct">
-    📈 A股市场小时总结 <span class="tag" id="intelSumTag">加载中...</span>
-    <span style="font-size:10px;color:var(--label);font-weight:400">每小时整点自动更新</span>
-  </div>
-  <div id="intelSumContent">
-    <div class="state-box"><span class="sp"></span>加载市场总结...</div>
-  </div>
-</div>
-
 <!-- 板块资金流向（动态图） -->
 <div class="cd" style="border-color:#fbbf24;background:#fff">
   <div id="cfHeader" style="background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);border-radius:8px;padding:10px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
@@ -231,31 +210,12 @@ label{font-size:11px;color:var(--label);display:block;margin-bottom:3px}
   </div>
 </div>
 
-<!-- 每日分析 -->
-<div class="cd" style="border-color:var(--s9)">
-  <div class="ct">
-    📰 每日持仓分析 <span class="tag" id="dailyTag">加载中...</span>
-    <span style="font-size:10px;color:var(--label);font-weight:400">每日17:30自动更新</span>
-  </div>
-  <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px" id="dailyDates"></div>
-  <div id="dailyContent">
-    <div class="state-box"><span class="sp"></span>加载每日分析...</div>
-  </div>
-</div>
-
-<!-- 快照 -->
-<div class="cd" style="border-color:#818cf8">
-  <div class="ct">📸 分析快照 <span class="tag" id="snapCount">0条</span></div>
-  <div id="snapList"></div>
-</div>
-
 <div class="disclaimer-bar">⚠️ 数据仅供参考，不构成投资建议 | 投资有风险，入市需谨慎</div>
 
 <script>
 'use strict';
 /* ═══════════ State ═══════════ */
 const PF_KEY='pd_portfolio';
-const SNAP_KEY='pd_snapshots';
 const DS_KEY='pd_disclaimer2';
 
 const DEFAULT_PF=[
@@ -272,7 +232,6 @@ const DEFAULT_PF=[
 ];
 
 let portfolio=loadPortfolio();
-let snapshots=loadSnapshots();
 let marketData={};
 
 /* ═══════════ Init ═══════════ */
@@ -292,11 +251,8 @@ function acceptDisclaimer(){
 }
 
 function startApp(){
-  seedSnapshots();
   renderPortfolio();
-  loadDailyReports();
   loadSim();
-  loadIntel();
   refreshAll();
 }
 
@@ -476,108 +432,6 @@ function importCSV(ev){
   ev.target.value='';
 }
 
-/* ═══════════ Snapshots ═══════════ */
-function loadSnapshots(){
-  try{const d=localStorage.getItem(SNAP_KEY);if(d)return JSON.parse(d);}catch(e){}
-  return [];
-}
-function saveSnapshots(){
-  localStorage.setItem(SNAP_KEY,JSON.stringify(snapshots));
-  document.getElementById('snapCount').textContent=snapshots.length+'条';
-  renderSnapshots();
-}
-function seedSnapshots(){
-  if(snapshots.length)return;
-  snapshots=[
-    {code:'sz300346',name:'南大光电',time:'2026-08-17T19:30:00Z',
-     result:'①角色：国内半导体光刻胶+MO源双主业供应商，卡位半导体材料国产替代核心环节\n\n②通俗比喻：芯片制造的"墨水+颜料"供应商——光刻需要光刻胶（墨水），LED/显示需要MO源（颜料）\n\n③核心催化：光刻胶国产替代加速；晶圆厂扩产带动MO源需求【AI推演】\n\n④盈利概况：PE 121 ⚠️估值极高；毛利率35-45%【AI推演·未核验财报】\n\n⑤赛道拉动逻辑：利好-国产替代是战略；利空-验证周期长(1-3年)，估值透支\n\n⑥风险：PE 121估值极高；验证不及预期；LED周期波动；竞争加剧\n\n⑦置信：主营事实；推演-验证进度/竞争'},
-    {code:'sh601069',name:'华钰矿业',time:'2026-08-17T19:31:00Z',
-     result:'①角色：国内黄金+锑矿开采企业，锑资源储量有优势\n\n②通俗比喻：地下挖金+挖锑的矿工——黄金是避险硬通货，锑是军工新材料\n\n③核心催化：金价（地缘+降息）；锑价（供应紧张+出口管制）【AI推演】\n\n④盈利概况：PE 27 合理；黄金毛利30-50%，锑矿40-60%【AI推演·未核验财报】\n\n⑤赛道拉动逻辑：利好-避险需求+战略金属；利空-金价波动，锑价高位\n\n⑥风险：金价下跌；锑价回调；成本上升；矿山依赖\n\n⑦置信：主营事实；推演-金价/锑价趋势'},
-    {code:'sh600338',name:'西藏珠峰',time:'2026-08-17T19:32:00Z',
-     result:'①角色：铅锌矿开采+盐湖提锂资源布局\n\n②通俗比喻：高原矿工+盐湖晒盐——铅锌是主业（稳），盐湖锂是新业务（梦）\n\n③核心催化：铅锌价格；盐湖提锂产能释放（阿根廷项目）【AI推演】\n\n④盈利概况：PE 22 合理偏低；铅锌毛利20-30%【AI推演·未核验财报】\n\n⑤赛道拉动逻辑：利好-铅锌需求韧性，锂价反弹弹性；利空-锂产能过剩，项目多次延期\n\n⑥风险：盐湖项目延期；铅锌宏观需求；锂供需宽松；高原成本高\n\n⑦置信：主营事实；推演-项目节奏/锂价'},
-  ];
-  saveSnapshots();
-}
-function renderSnapshots(){
-  const el=document.getElementById('snapList');
-  if(!snapshots.length){el.innerHTML='<div class="state-box">暂无快照</div>';return;}
-  el.innerHTML=snapshots.map((s,i)=>
-    '<div class="snap-item"><span><strong>'+s.name+'（'+s.code+'）</strong></span>'+
-    '<span style="font-size:11px;color:var(--label)">'+new Date(s.time).toLocaleString('zh-CN',{hour12:false})+'</span>'+
-    '<span><button class="btn btn-sm" onclick="viewSnap('+i+')">查看</button> '+
-    '<button class="btn btn-sm" onclick="exportMD('+i+')">MD</button> '+
-    '<button class="btn btn-sm btn-d" onclick="delSnap('+i+')">✕</button></span></div>'
-  ).join('');
-}
-function viewSnap(i){
-  const s=snapshots[i];
-  if(!s)return;
-  const el=document.createElement('div');
-  el.className='modal-overlay';
-  el.innerHTML='<div class="modal-box"><h2>'+s.name+'（'+s.code+'）7步分析</h2><div class="ai-body">'+s.result+'</div><p style="text-align:right;margin-top:8px"><button class="btn" onclick="this.closest(\'.modal-overlay\').remove()">关闭</button></p></div>';
-  el.onclick=e=>{if(e.target===el)el.remove();};
-  document.body.appendChild(el);
-}
-function exportMD(i){
-  const s=snapshots[i];
-  if(!s)return;
-  const md='# '+s.name+'（'+s.code+'）\n\n> '+new Date(s.time).toLocaleString('zh-CN',{hour12:false})+'\n\n'+s.result;
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob(['\uFEFF'+md],{type:'text/markdown;charset=utf-8'}));
-  a.download=s.code+'_analysis.md';a.click();
-}
-function delSnap(i){
-  if(!confirm('删除此快照？'))return;
-  snapshots.splice(i,1);
-  saveSnapshots();
-}
-
-/* ═══════════ Daily Reports (GitHub Pages 同源) ═══════════ */
-// 使用相对路径——dashboard与reports/同属一个GitHub Pages站点，同源fetch无CORS问题
-const REPO_BASE='';
-let dailyReports=[];
-
-async function loadDailyReports(){
-  const datesEl=document.getElementById('dailyDates');
-  const contentEl=document.getElementById('dailyContent');
-  const tagEl=document.getElementById('dailyTag');
-  try{
-    const resp=await fetchWithTimeout('reports/index.json',8000);
-    if(!resp.ok)throw new Error('HTTP '+resp.status);
-    const data=await resp.json();
-    dailyReports=data.reports||[];
-    if(!dailyReports.length){throw new Error('empty');}
-    tagEl.textContent=dailyReports.length+'天';
-    // 渲染日期标签
-    datesEl.innerHTML=dailyReports.map((r,i)=>{
-      const d=r.date.replace(/-/g,'.');
-      return '<button class="btn btn-sm'+(i===0?' btn-p':'')+'" data-date="'+r.date+'" onclick="viewDailyReport(\''+r.date+'\')">'+d+'</button>';
-    }).join('');
-    // 默认显示最新报告
-    viewDailyReport(dailyReports[0].date);
-  }catch(e){
-    tagEl.textContent='暂无报告';
-    contentEl.innerHTML='<div class="state-box">每日分析尚未生成<br><span style="font-size:11px">首次报告将在下一个工作日17:30自动生成<br>（若刚部署请等待1-2分钟CDN刷新）</span></div>';
-  }
-}
-
-async function viewDailyReport(date){
-  const contentEl=document.getElementById('dailyContent');
-  contentEl.innerHTML='<div class="state-box"><span class="sp"></span>加载 '+date+' 报告...</div>';
-  // 高亮选中日期
-  document.querySelectorAll('#dailyDates .btn').forEach(b=>{
-    b.classList.toggle('btn-p',b.dataset.date===date);
-  });
-  try{
-    const resp=await fetchWithTimeout('reports/'+date+'.json',8000);
-    if(!resp.ok)throw new Error('HTTP '+resp.status);
-    const md=await resp.text();
-    contentEl.innerHTML='<div class="ai-body" style="max-height:none">'+mdToHtml(md)+'</div>';
-  }catch(e){
-    contentEl.innerHTML='<div class="state-box">报告加载失败，请稍后重试</div>';
-  }
-}
-
 /* 简单markdown→HTML渲染（标题/表格/列表/粗体/引用） */
 function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function inlineMd(s){return escHtml(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\*(.+?)\*/g,'<i>$1</i>').replace(/`(.+?)`/g,'<code>$1</code>');}
@@ -695,52 +549,6 @@ async function loadSim(){
   }
 }
 function fmtNum(n){n=Number(n||0);return n.toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2});}
-
-/* ═══════════ 小时情报 + A股总结（intel_state.json，同源fetch） ═══════════ */
-let intelLoaded=false;
-async function loadIntel(){
-  const feedEl=document.getElementById('intelFeedList');
-  const sumEl=document.getElementById('intelSumContent');
-  const tagEl=document.getElementById('intelFeedTag');
-  const sumTag=document.getElementById('intelSumTag');
-  const metaEl=document.getElementById('intelFeedMeta');
-  try{
-    const resp=await fetchWithTimeout('intel_state.json?t='+Date.now(),8000);
-    if(!resp.ok)throw new Error('HTTP '+resp.status);
-    const data=await resp.json();
-    intelLoaded=true;
-    // 情报流
-    const feed=(data.feed||[]).slice(0,30);
-    tagEl.textContent=feed.length+'条/30';
-    if(metaEl)metaEl.textContent='最近更新 '+(data.updated||'--');
-    if(!feed.length){
-      feedEl.innerHTML='<div class="state-box">已清理过期情报 · 暂无新情报</div>';
-    }else{
-      feedEl.innerHTML=feed.map(it=>{
-        const c=(it.cat||'').trim();
-        const cls=c==='up'||c==='dn'||c==='warn'?c:'';
-        const tagTxt=it.tag||'';
-        const chip=tagTxt?('<span class="feed-tag '+(cls==='warn'||c==='up'||c==='dn'?cls:'')+'">'+escHtml(tagTxt)+'</span>'):'';
-        const timeTxt=it.t||'';
-        const time=timeTxt?('<span class="feed-time">'+escHtml(timeTxt)+'</span>'):'';
-        return '<div class="feed-item">'+time+chip+'<span class="feed-txt">'+escHtml(it.txt||'').replace(/\n/g,'<br>')+'</span></div>';
-      }).join('');
-    }
-    // 市场总结
-    sumTag.textContent=(data.updated||'--')+' 更新';
-    const md=(data.summary||'').trim();
-    if(md){
-      sumEl.innerHTML='<div class="ai-body" style="max-height:none">'+mdToHtml(md)+'</div>';
-    }else{
-      sumEl.innerHTML='<div class="state-box">已清理过期总结 · 暂无市场总结</div>';
-    }
-  }catch(e){
-    tagEl.textContent='待生成';
-    feedEl.innerHTML='<div class="state-box">暂无情报</div>';
-    sumTag.textContent='暂无';
-    sumEl.innerHTML='<div class="state-box">暂无市场总结</div>';
-  }
-}
 
 /* ═══════════ ① 个股资金流（持仓主力净流入） ═══════════ */
 function sfSecid(code){
