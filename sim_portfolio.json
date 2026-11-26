@@ -1,37 +1,37 @@
 {
-  "updated": "2026-11-26 11:19:39",
+  "updated": "2026-11-26 13:53:37",
   "account": {
-    "cash": 877309.0,
-    "position_value": 118633.0,
+    "cash": 834795.0,
+    "position_value": 161147.0,
     "total_asset": 995942.0,
     "total_pnl": -4058.0,
     "total_return_pct": -0.406,
-    "float_pl": -2933.0
+    "float_pl": -4915.0
   },
   "positions": [
     {
       "code": "sz300308",
       "name": "中际旭创",
-      "shares": 100,
-      "cost": 433.61,
-      "price": 424.0,
-      "pct": 3.67,
-      "float_pl": -961.0,
-      "float_pct": -2.22,
-      "batches": 1,
+      "shares": 200,
+      "cost": 429.375,
+      "price": 419.9,
+      "pct": 2.67,
+      "float_pl": -1895.0,
+      "float_pct": -2.21,
+      "batches": 2,
       "entry_time": "2026-11-26 10:20:00",
       "sellable_today": 0,
-      "locked_today": 100
+      "locked_today": 200
     },
     {
       "code": "sz300502",
       "name": "新易盛",
       "shares": 400,
       "cost": 188.18,
-      "price": 183.25,
-      "pct": 1.08,
-      "float_pl": -1972.0,
-      "float_pct": -2.62,
+      "price": 180.63,
+      "pct": -0.37,
+      "float_pl": -3020.0,
+      "float_pct": -4.01,
       "batches": 2,
       "entry_time": "2026-11-26 10:20:00",
       "sellable_today": 0,
@@ -39,6 +39,17 @@
     }
   ],
   "trades": [
+    {
+      "time": "2026-11-26 11:30:00",
+      "action": "BUY",
+      "name": "中际旭创",
+      "code": "sz300308",
+      "price": 425.14,
+      "shares": 100,
+      "amount": 42514.0,
+      "rule": "B2/B4",
+      "reason": "抛压释放后横住+微放量往上走(>=3tick确认), 非高开/未超7%/科创50>-2.5%"
+    },
     {
       "time": "2026-11-26 10:30:00",
       "action": "BUY",
